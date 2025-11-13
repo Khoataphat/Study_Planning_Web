@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Glass Layout Login</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+        body {
+            min-height: 100vh;
+            background: #111;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* --- BACKGROUND ANIMATION --- */
+        .background-anim {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            filter: blur(80px);
+            animation: float 10s infinite alternate;
+            opacity: 0.8;
+        }
+
+        .shape:nth-child(1) { width: 600px; height: 600px; background: #ff0055; top: -10%; left: -10%; }
+        .shape:nth-child(2) { width: 500px; height: 500px; background: #00d2ff; bottom: -10%; right: -5%; animation-delay: -5s; }
+        .shape:nth-child(3) { width: 300px; height: 300px; background: #8a2be2; top: 40%; left: 40%; animation-duration: 15s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            100% { transform: translate(40px, 40px) rotate(20deg); }
+        }
+
+        /* --- GLASS STYLE --- */
+        .glass-style {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            color: white;
+        }
+
+        /* --- HEADER --- */
+        header {
+            height: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 50px;
+            z-index: 100;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo { font-size: 1.5rem; font-weight: 700; color: #fff; letter-spacing: 1px; }
+        nav ul { display: flex; list-style: none; }
+        nav ul li { margin-left: 30px; }
+        nav ul li a { color: #fff; text-decoration: none; font-size: 0.9rem; transition: 0.3s; opacity: 0.8; }
+        nav ul li a:hover { opacity: 1; color: #00d2ff; }
+
+        /* --- MAIN CONTENT --- */
+        main {
+            flex: 1;
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            gap: 40px;
+            align-items: center;
+        }
+
+        /* Left Section */
+        .left-section {
+            flex: 1.5;
+            height: 500px;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        
+        .image-placeholder {
+            width: 100%; height: 100%;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            border-radius: 20px;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .image-placeholder i { font-size: 8rem; color: rgba(255,255,255,0.2); margin-bottom: 20px; }
+        .image-placeholder h2 { font-size: 2rem; color: #fff; margin-bottom: 10px; }
+        .image-placeholder p { color: #ccc; }
+
+        /* Right Section (Login Box) */
+        .right-section {
+            flex: 1;
+            max-width: 450px;
+        }
+
+        .login-card {
+            padding: 40px 30px;
+            border-radius: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            min-height: 560px; /* Tăng chiều cao lên một chút để chứa đủ nút */
+        }
+
+        .form-content {
+            transition: transform 0.5s ease, opacity 0.5s ease;
+            position: absolute;
+            top: 40px; left: 30px; right: 30px;
+        }
+
+        .form-login { transform: translateX(0); opacity: 1; z-index: 2; }
+        .form-register { transform: translateX(100%); opacity: 0; z-index: 1; pointer-events: none; }
+
+        .login-card.active .form-login { transform: translateX(-100%); opacity: 0; pointer-events: none; }
+        .login-card.active .form-register { transform: translateX(0); opacity: 1; pointer-events: all; z-index: 2; }
+
+        h2.form-title { margin-bottom: 5px; color: #fff; }
+        p.sub-title { font-size: 13px; color: #ccc; margin-bottom: 30px; }
+
+        .input-box { margin-bottom: 20px; text-align: left; }
+        .input-box label { display: block; color: #ddd; font-size: 12px; margin-bottom: 5px; margin-left: 10px;}
+        .input-box input {
+            width: 100%; padding: 12px 20px;
+            background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 30px; color: #fff; outline: none; transition: 0.3s;
+        }
+        .input-box input:focus { border-color: #00d2ff; box-shadow: 0 0 10px rgba(0, 210, 255, 0.5); }
+
+        .btn-submit {
+            width: 100%; padding: 12px;
+            background: linear-gradient(45deg, #ff0055, #00d2ff);
+            border: none; border-radius: 30px;
+            color: white; font-weight: 600; cursor: pointer;
+            transition: 0.3s; margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .btn-submit:hover { transform: scale(1.02); opacity: 0.9; }
+
+        .toggle-text { font-size: 13px; color: #fff; margin-top: 10px; }
+        .toggle-text span { color: #00d2ff; cursor: pointer; font-weight: 600; }
+        .toggle-text span:hover { text-decoration: underline; }
+
+        .social-login { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
+        .social-login a {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: rgba(255,255,255,0.1); color: white;
+            display: flex; align-items: center; justify-content: center;
+            text-decoration: none; transition: 0.3s; border: 1px solid rgba(255,255,255,0.2);
+        }
+        .social-login a:hover { background: white; color: #333; }
+
+        /* --- FOOTER --- */
+        footer {
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive Mobile */
+        @media (max-width: 768px) {
+            main { flex-direction: column; }
+            .left-section { width: 100%; height: 200px; }
+            .right-section { width: 100%; }
+            .login-card { min-height: 550px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="background-anim">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <header class="glass-style">
+        <div class="logo">MY BRAND</div>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="left-section glass-style">
+            <div class="image-placeholder">
+                <i class="fa-solid fa-rocket"></i> 
+                <h2>Welcome to Future</h2>
+                <p>Experience the next generation platform with unique design.</p>
+            </div>
+        </div>
+
+        <div class="right-section">
+            <div class="login-card glass-style" id="loginCard">
+                
+                <div class="form-content form-login">
+                    <h2 class="form-title">Login</h2>
+                    <div class="social-login">
+                        <a href="#"><i class="fa-brands fa-google"></i></a>
+                        <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                    </div>
+                    <p class="sub-title">or use your username account</p>
+
+                    <form id="signinForm">
+                        <div class="input-box">
+                            <label>Username</label>
+                            <input type="text" placeholder="Enter your username" required>
+                        </div>
+                        <div class="input-box">
+                            <label>Password</label>
+                            <input type="password" placeholder="Enter your password" required>
+                        </div>
+                        
+                        <button class="btn-submit">SIGN IN</button>
+                        
+                        <p class="toggle-text">
+                            Don't have an account? <span id="goto-register">Sign Up</span>
+                        </p>
+                    </form>
+                    <div style="margin-top: 20px; font-size: 12px; opacity: 0.7;">
+                        <a href="#" style="color: white; text-decoration: none;">Forgot Password?</a>
+                    </div>
+                </div>
+
+                <div class="form-content form-register">
+                    <h2 class="form-title">Register</h2>
+                    <div class="social-login">
+                        <a href="#"><i class="fa-brands fa-google"></i></a>
+                        <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+                    </div>
+                    <p class="sub-title">Create a new account</p>
+
+                    <form id="signupForm">
+                        <div class="input-box">
+                            <label>Username</label>
+                            <input type="text" placeholder="Choose a username" required>
+                        </div>
+                        <div class="input-box">
+                            <label>Email</label>
+                            <input type="email" placeholder="Enter your email" required>
+                        </div>
+                        <div class="input-box">
+                            <label>Password</label>
+                            <input type="password" placeholder="Create a password" required>
+                        </div>
+
+                        <button class="btn-submit">SIGN UP</button>
+
+                        <p class="toggle-text">
+                            Already have an account? <span id="goto-login">Sign In</span>
+                        </p>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <footer class="glass-style">
+        <p>&copy; 2024 Website Name. All rights reserved.</p>
+    </footer>
+
+    <script>
+        const loginCard = document.getElementById('loginCard');
+        const gotoRegister = document.getElementById('goto-register');
+        const gotoLogin = document.getElementById('goto-login');
+        const signinForm = document.getElementById('signinForm');
+        const signupForm = document.getElementById('signupForm');
+
+        // Chuyển qua form đăng ký
+        gotoRegister.addEventListener('click', () => {
+            loginCard.classList.add('active');
+        });
+
+        // Chuyển về form đăng nhập
+        gotoLogin.addEventListener('click', () => {
+            loginCard.classList.remove('active');
+        });
+
+        // Redirect
+        signinForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            window.location.href = "home.html";
+        });
+
+        signupForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert("Registration successful!");
+            window.location.href = "home.html";
+        });
+    </script>
+
+</body>
+</html>
