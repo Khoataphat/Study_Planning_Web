@@ -1,1 +1,9 @@
 /Study_Planning_Web/target/
+# Bỏ qua tất cả các thư mục target/ ở mọi cấp độ (để giải quyết lỗi build file)
+target/
+
+# Bổ sung các file build thường thấy của Java/Maven
+*.log
+*.class
+*.war
+*.jar
