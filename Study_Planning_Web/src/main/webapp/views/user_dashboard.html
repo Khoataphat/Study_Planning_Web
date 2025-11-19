@@ -4,17 +4,17 @@ Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to c
 Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
 -->
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Theo dõi Tiến độ</title>
-    <link rel="stylesheet" href="/resources/css/style-dashboard.css">
-</head>
-<body>
-    <div class="dashboard-container">
-        <aside class="sidebar">
-            <div class="profile-circle"></div>
-            <div class="sidebar-menu">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dashboard - Theo dõi Tiến độ</title>
+        <link rel="stylesheet" href="/resources/css/style-dashboard.css">
+    </head>
+    <body>
+        <div class="dashboard-container">
+            <aside class="sidebar">
+                <div class="profile-circle"></div>
+                <div class="sidebar-menu">
                     <a class="menu-item" href="/views/user_dashboard.html">
                         1
                     </a>
@@ -22,58 +22,60 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                     <a class="menu-item" href="/views/timetable_creator.html">
                         2
                     </a>
-                <div class="menu-item"></div>
-                <div class="menu-item"></div>
-                <div class="menu-item"></div>
-            </div>
-        </aside>
-
-        <main class="main-area">
-            <header class="top-header">
-                <div class="search-bar"></div>
-                <div class="header-actions">
-                    <div class="settings-icon">⚙️</div>
-                    <div class="arrow-icon">➡️</div>
+                    <a class="menu-item" href="/views/task_manager.html">
+                        3
+                    </a>
+                    <div class="menu-item"></div>
+                    <div class="menu-item"></div>
                 </div>
-            </header>
+            </aside>
 
-            <section class="content-grid">
-                
-                <div class="chart-line card">
-                    <p class="chart-title">Biểu đồ Tiến độ (Chuỗi 1 & 2)</p>
-                    <div class="chart-placeholder line-chart-placeholder"></div>
-                </div>
+            <main class="main-area">
+                <header class="top-header">
+                    <div class="search-bar"></div>
+                    <div class="header-actions">
+                        <div class="settings-icon">⚙️</div>
+                        <div class="arrow-icon">➡️</div>
+                    </div>
+                </header>
 
-                <div class="chart-bar card">
-                    <p class="chart-title">Hiệu suất (Mục 1-4)</p>
-                    <div class="chart-placeholder bar-chart-placeholder"></div>
-                </div>
+                <section class="content-grid">
 
-                <div class="timetable-table card">
-                    <p class="chart-title table-header">Timetable Hiện tại</p>
-                    <table class="table-placeholder">
-                        <thead>
-                            <tr class="table-head-row">
-                                <th colspan="5"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr><td></td><td></td><td></td><td></td><td></td></tr>
-                            <tr><td></td><td></td><td></td><td></td><td></td></tr>
-                            <tr><td></td><td></td><td></td><td></td><td></td></tr>
-                            <tr><td></td><td></td><td></td><td></td><td></td></tr>
-                            <tr><td></td><td></td><td></td><td></td><td></td></tr>
-                        </tbody>
-                    </table>
-                </div>
+                    <div class="chart-line card">
+                        <p class="chart-title">Biểu đồ Tiến độ (Chuỗi 1 & 2)</p>
+                        <div class="chart-placeholder line-chart-placeholder"></div>
+                    </div>
 
-                <div class="chart-pie card">
-                    <p class="chart-title">Phân bổ Thời gian</p>
-                    <div class="chart-placeholder pie-chart-placeholder"></div>
-                </div>
+                    <div class="chart-bar card">
+                        <p class="chart-title">Hiệu suất (Mục 1-4)</p>
+                        <div class="chart-placeholder bar-chart-placeholder"></div>
+                    </div>
 
-            </section>
-        </main>
-    </div>
-</body>
+                    <div class="timetable-table card">
+                        <p class="chart-title table-header">Timetable Hiện tại</p>
+                        <table class="table-placeholder">
+                            <thead>
+                                <tr class="table-head-row">
+                                    <th colspan="5"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="chart-pie card">
+                        <p class="chart-title">Phân bổ Thời gian</p>
+                        <div class="chart-placeholder pie-chart-placeholder"></div>
+                    </div>
+
+                </section>
+            </main>
+        </div>
+    </body>
 </html>
