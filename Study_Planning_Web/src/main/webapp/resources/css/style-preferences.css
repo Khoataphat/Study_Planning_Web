@@ -1,0 +1,106 @@
+:root {
+    --bg-gradient-start: #333; /* Màu tối ở đầu */
+    --bg-gradient-end: #666;   /* Màu sáng hơn ở cuối */
+    --item-bg: #fff;           /* Nền các ô chọn */
+    --item-border: #aaa;
+    --next-btn-bg: #555;
+    --light-text-color: #fff;
+    --border-radius: 25px; /* Bo tròn lớn hơn cho các ô chọn */
+    --border-style: dashed;
+    --border-width: 2px;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    /* Tạo gradient nền giống như hình */
+    background: linear-gradient(to right, var(--bg-gradient-start), var(--bg-gradient-end)); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.preferences-container {
+    width: 90%;
+    max-width: 1000px;
+    padding: 30px;
+    border: var(--border-width) var(--border-style) var(--item-border);
+    border-radius: var(--border-radius);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.prompt-text {
+    color: var(--light-text-color);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.selection-grid {
+    display: flex;
+    flex-wrap: wrap; /* Cho phép các mục tự động xuống dòng */
+    justify-content: center; /* Căn giữa các mục */
+    gap: 15px; /* Khoảng cách giữa các mục */
+    padding: 20px;
+}
+
+.selection-item {
+    background-color: var(--item-bg);
+    color: #333;
+    padding: 12px 25px;
+    border-radius: var(--border-radius);
+    border: var(--border-width) var(--border-style) var(--item-border);
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+/* Hiệu ứng khi chọn (chỉ là phác thảo, cần JS để thêm class 'selected') */
+.selection-item:hover {
+    background-color: #e0e0e0;
+    transform: translateY(-2px);
+}
+
+.footer-action {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end; /* Đẩy nút NEXT sang phải */
+    padding-top: 30px;
+}
+
+.btn-next {
+    background-color: var(--next-btn-bg);
+    color: var(--light-text-color);
+    padding: 12px 30px;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-next:hover {
+    background-color: #444;
+}
+
+/* Điều chỉnh responsive cơ bản */
+@media (max-width: 768px) {
+    .preferences-container {
+        width: 95%;
+        padding: 20px;
+    }
+    .selection-grid {
+        gap: 10px;
+    }
+    .selection-item {
+        padding: 10px 20px;
+        font-size: 0.9em;
+    }
+}
