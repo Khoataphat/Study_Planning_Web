@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
+<html lang="vi">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Lập lịch & Quản lý Timetable</title>
+        <link rel="stylesheet" href="/resources/css/style-scheduler.css">
+    </head>
+    <body>
+        <div class="scheduler-container">
+            <aside class="sidebar">
+                <div class="profile-circle"></div>
+                <div class="sidebar-menu">
+                    <a class="menu-item" href="/views/user_dashboard.html">
+                        1
+                    </a>
+
+                    <a class="menu-item" href="/views/timetable_creator.html">
+                        2
+                    </a>
+
+                    <div class="menu-item"></div>
+                    <div class="menu-item"></div>
+                    <div class="menu-item"></div>
+                </div>
+            </aside>
+
+            <main class="main-area">
+                <header class="top-header">
+                    <div class="search-bar"></div>
+                    <div class="header-actions">
+                        <div class="settings-icon">⚙️</div>
+                        <div class="arrow-icon">➡️</div>
+                    </div>
+                </header>
+
+                <section class="scheduler-content-grid">
+
+                    <div class="calendar-card">
+                        <div class="calendar-header">
+                            <div class="calendar-title"></div>
+                            <div class="calendar-action-dot"></div>
+                        </div>
+                        <table class="calendar-grid-placeholder">
+                            <tbody>
+                                <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                            </tbody>
+                        </table>
+                        <div class="calendar-footer-line"></div>
+                    </div>
+
+                    <div class="calendar-card">
+                        <div class="calendar-header">
+                            <div class="calendar-title"></div>
+                            <div class="calendar-action-dot"></div>
+                        </div>
+                        <table class="calendar-grid-placeholder">
+                            <tbody>
+                                <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                                <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                            </tbody>
+                        </table>
+                        <div class="calendar-footer-line"></div>
+                    </div>
+
+                    <div class="add-new-card">
+                        <div class="add-icon">
+                            <span class="plus-sign">+</span>
+                            <a href="/views/drag_scheduler.html">
+                                1
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="action-buttons-row">
+                        <div class="action-button"></div>
+                        <div class="action-button"></div>
+                        <div class="action-button"></div>
+                    </div>
+
+                </section>
+            </main>
+        </div>
+    </body>
+</html>
