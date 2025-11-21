@@ -28,7 +28,7 @@ public class LoginController extends HttpServlet {
 
             if (user != null) {
                 req.getSession().setAttribute("user", user);
-                resp.sendRedirect("views/index.html");
+                resp.sendRedirect("views/survey.html");
             } else {
                 req.setAttribute("error", "Sai username hoặc password");
                 req.getRequestDispatcher("views/login.jsp").forward(req, resp);
