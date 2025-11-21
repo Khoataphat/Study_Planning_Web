@@ -13,9 +13,9 @@
         <nav class="sidebar glass-style">
             <div class="sidebar-header"><div class="profile-avatar"><i class="fa-solid fa-user"></i></div></div>
             <ul class="sidebar-nav">
-                <li><a href="home.html"><i class="fa-solid fa-table-cells-large"></i> Dashboard</a></li>
-                <li><a href="schedules.html" style="color: #00d2ff; background: rgba(255,255,255,0.2);"><i class="fa-solid fa-calendar-days"></i> My Schedule</a></li>
-                <li><a href="tasks.html"><i class="fa-solid fa-list-check"></i> Tasks</a></li>
+                <li><a href="/views/home.html"><i class="fa-solid fa-table-cells-large"></i> Dashboard</a></li>
+                <li><a href="/views/schedules.html" style="color: #00d2ff; background: rgba(255,255,255,0.2);"><i class="fa-solid fa-calendar-days"></i> My Schedule</a></li>
+                <li><a href="/views/tasks.html"><i class="fa-solid fa-list-check"></i> Tasks</a></li>
                 <li><a href="#"><i class="fa-solid fa-chart-pie"></i> Analytics</a></li>
                 <li><a href="#"><i class="fa-solid fa-brain"></i> AI Suggest</a></li>
             </ul>
@@ -25,12 +25,12 @@
             <header class="main-header glass-style">
                 <h2>All Schedules</h2>
                 <div style="flex:1"></div>
-                <a href="index.html" class="icon-button"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+                <a href="/views/index.html" class="icon-button"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
             </header>
 
             <div class="schedule-list" id="scheduleListContainer">
                 
-                <a href="designer.html?id=new" class="schedule-card glass-style card-add-new">
+                <a href="/views/designer.html?id=new" class="schedule-card glass-style card-add-new">
                     <i class="fa-solid fa-plus-circle" style="font-size: 3rem; margin-bottom: 10px;"></i>
                     <span>Create New Schedule</span>
                 </a>
@@ -49,7 +49,7 @@
             // Render các lịch đã lưu
             schedules.forEach(schedule => {
                 const card = document.createElement('a');
-                card.href = `designer.html?id=${schedule.id}`; // Truyền ID lịch để chỉnh sửa
+                card.href = `/views/designer.html?id=${schedule.id}`; // Truyền ID lịch để chỉnh sửa
                 card.classList.add('schedule-card', 'glass-style');
                 card.innerHTML = `
                     <h3><i class="fa-solid fa-calendar-alt"></i> ${schedule.name}</h3>
