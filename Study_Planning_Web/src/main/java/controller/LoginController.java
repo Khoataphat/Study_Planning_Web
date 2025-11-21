@@ -9,6 +9,7 @@ import model.User;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
+
 /**
  *
  * @author Admin
@@ -27,10 +28,10 @@ public class LoginController extends HttpServlet {
 
             if (user != null) {
                 req.getSession().setAttribute("user", user);
-                resp.sendRedirect("dashboard.jsp");
+                resp.sendRedirect("views/index.html");
             } else {
                 req.setAttribute("error", "Sai username hoặc password");
-                req.getRequestDispatcher("login.jsp").forward(req, resp);
+                req.getRequestDispatcher("views/login.jsp").forward(req, resp);
             }
 
         } catch (Exception e) {
