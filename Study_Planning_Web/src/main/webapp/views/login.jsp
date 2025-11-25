@@ -1,3 +1,10 @@
+<%-- 
+    Document   : login
+    Created on : 21 thg 11, 2025, 14:16:35
+    Author     : Admin
+--%>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -47,16 +54,16 @@
                         <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
                     </div>
                     <p class="sub-title">or use your username account</p>
-                    <form id="signinForm">
+                    <form id="signinForm" action="login" method="post">
                         <div class="input-box">
                             <label>Username</label>
-                            <input type="text" placeholder="Enter your username" required>
+                            <input name="username" type="text" placeholder="Enter your username" required>
                         </div>
                         <div class="input-box">
                             <label>Password</label>
-                            <input type="password" placeholder="Enter your password" required>
+                            <input name="password" type="password" placeholder="Enter your password" required>
                         </div>
-                        <button class="btn-submit">SIGN IN</button>
+                        <button type="submit" class="btn-submit">SIGN IN</button>
                         <p class="toggle-text">
                             Don't have an account? <span id="goto-register">Sign Up</span>
                         </p>
@@ -134,3 +141,22 @@
 -->
 </body>
 </html>
+
+
+<!--<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>JSP Page</title>
+    </head>
+    <body>
+        <form action="login" method="post">
+            <input type="text" name="username" placeholder="Username" required /><br>
+            <input type="password" name="password" placeholder="Password" required /><br>
+            <button type="submit">Login</button>
+        </form>
+
+        <p style="color:red;">${error}</p>
+    </body>
+</html>
+-->
