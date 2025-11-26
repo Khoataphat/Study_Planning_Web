@@ -9,6 +9,7 @@ import model.User;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
+import java.io.IOException;
 
 /**
  *
@@ -19,7 +20,7 @@ public class LoginController extends HttpServlet {
 
     private AuthService authService = new AuthService();
 
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             String username = req.getParameter("username");
             String password = req.getParameter("password");
@@ -28,7 +29,8 @@ public class LoginController extends HttpServlet {
 
             if (user != null) {
                 req.getSession().setAttribute("user", user);
-                resp.sendRedirect("views/survey.html");
+                String redirectURL = req.getContextPath() + "/views/survey.html";
+                resp.sendRedirect(redirectURL);
             } else {
                 req.setAttribute("error", "Sai username hoặc password");
                 req.getRequestDispatcher("views/login.jsp").forward(req, resp);
@@ -36,6 +38,9 @@ public class LoginController extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
+            req.setAttribute("error", "System error");
+            req.getRequestDispatcher("views/login.jsp").forward(req, resp);
+
         }
     }
 }
