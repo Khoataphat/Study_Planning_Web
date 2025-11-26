@@ -54,7 +54,7 @@
                         <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
                     </div>
                     <p class="sub-title">or use your username account</p>
-                    <form id="signinForm" action="login" method="post">
+                    <form id="signinForm" action="/login" method="post">
                         <div class="input-box">
                             <label>Username</label>
                             <input name="username" type="text" placeholder="Enter your username" required>
