@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Personalization</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<style type="text/tailwindcss">
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    .chip-checkbox:checked + label {
+      background-image: linear-gradient(to right, #38BDF8, #F472B6);
+      color: #0F172A;
+      box-shadow: 0 0 15px -3px rgba(56, 189, 248, 0.4), 0 0 10px -4px rgba(244, 114, 182, 0.4);
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body class="bg-[#0F172A] text-[#F1F5F9] antialiased">
+<div class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 md:p-8">
+<div class="w-full max-w-4xl mx-auto">
+<header class="text-center mb-8 md:mb-12">
+<h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-2">Cho chúng tôi biết về bạn</h1>
+<p class="text-base sm:text-lg text-slate-400">Chọn những gì phù hợp nhất với bạn để cá nhân hóa trải nghiệm.</p>
+</header>
+<main>
+<div class="flex flex-wrap justify-center items-center gap-3 sm:gap-4">
+<input class="hidden chip-checkbox" id="chip1" type="checkbox"/>
+<label class="cursor-pointer select-none rounded-full bg-[#1E293B] text-[#F1F5F9] px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:border-[#38BDF8] hover:shadow-[0_0_10px_-2px_#38bdf8] border border-transparent hover:-translate-y-1" for="chip1">Đọc sách</label>
+<input class="hidden chip-checkbox" id="chip2" type="checkbox"/>
+<label class="cursor-pointer select-none rounded-full bg-[#1E293B] text-[#F1F5F9] px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:border-[#F472B6] hover:shadow-[0_0_10px_-2px_#f472b6] border border-transparent hover:-translate-y-1" for="chip2">Nghe nhạc</label>
+<input class="hidden chip-checkbox" id="chip3" type="checkbox"/>
+<label class="cursor-pointer select-none rounded-full bg-[#1E293B] text-[#F1F5F9] px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:border-[#38BDF8] hover:shadow-[0_0_10px_-2px_#38bdf8] border border-transparent hover:-translate-y-1" for="chip3">Hướng nội</label>
+<input class="hidden chip-checkbox" id="chip4" type="checkbox"/>
+<label class="cursor-pointer select-none rounded-full bg-[#1E293B] text-[#F1F5F9] px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:border-[#F472B6] hover:shadow-[0_0_10px_-2px_#f472b6] border border-transparent hover:-translate-y-1" for="chip4">Sáng tạo</label>
+<input class="hidden chip-checkbox" id="chip5" type="checkbox"/>
+<label class="cursor-pointer select-none rounded-full bg-[#1E293B] text-[#F1F5F9] px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:border-[#38BDF8] hover:shadow-[0_0_10px_-2px_#38bdf8] border border-transparent hover:-translate-y-1" for="chip5">Sinh viên</label>
+<input class="hidden chip-checkbox" id="chip6" type="checkbox"/>
+<label class="cursor-pointer select-none rounded-full bg-[#1E293B] text-[#F1F5F9] px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:border-[#F472B6] hover:shadow-[0_0_10px_-2px_#f472b6] border border-transparent hover:-translate-y-1" for="chip6">Tập thể dục</label>
+<input class="hidden chip-checkbox" id="chip7" type="checkbox"/>
+<label class="cursor-pointer select-none rounded-full bg-[#1E293B] text-[#F1F5F9] px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:border-[#38BDF8] hover:shadow-[0_0_10px_-2px_#38bdf8] border border-transparent hover:-translate-y-1" for="chip7">Đi du lịch</label>
+<input class="hidden chip-checkbox" id="chip8" type="checkbox"/>
+<label class="cursor-pointer select-none rounded-full bg-[#1E293B] text-[#F1F5F9] px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:border-[#F472B6] hover:shadow-[0_0_10px_-2px_#f472b6] border border-transparent hover:-translate-y-1" for="chip8">Hướng ngoại</label>
+<input class="hidden chip-checkbox" id="chip9" type="checkbox"/>
+<label class="cursor-pointer select-none rounded-full bg-[#1E293B] text-[#F1F5F9] px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:border-[#38BDF8] hover:shadow-[0_0_10px_-2px_#38bdf8] border border-transparent hover:-translate-y-1" for="chip9">Chơi game</label>
+<input class="hidden chip-checkbox" id="chip10" type="checkbox"/>
+<label class="cursor-pointer select-none rounded-full bg-[#1E293B] text-[#F1F5F9] px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:border-[#F472B6] hover:shadow-[0_0_10px_-2px_#f472b6] border border-transparent hover:-translate-y-1" for="chip10">Nhân viên văn phòng</label>
+<input class="hidden chip-checkbox" id="chip11" type="checkbox"/>
+<label class="cursor-pointer select-none rounded-full bg-[#1E293B] text-[#F1F5F9] px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:border-[#38BDF8] hover:shadow-[0_0_10px_-2px_#38bdf8] border border-transparent hover:-translate-y-1" for="chip11">Logic</label>
+<input class="hidden chip-checkbox" id="chip12" type="checkbox"/>
+<label class="cursor-pointer select-none rounded-full bg-[#1E293B] text-[#F1F5F9] px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:border-[#F472B6] hover:shadow-[0_0_10px_-2px_#f472b6] border border-transparent hover:-translate-y-1" for="chip12">Học ngôn ngữ mới</label>
+<input class="hidden chip-checkbox" id="chip13" type="checkbox"/>
+<label class="cursor-pointer select-none rounded-full bg-[#1E293B] text-[#F1F5F9] px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:border-[#38BDF8] hover:shadow-[0_0_10px_-2px_#38bdf8] border border-transparent hover:-translate-y-1" for="chip13">Freelancer</label>
+</div>
+</main>
+</div>
+<footer class="fixed bottom-0 right-0 p-6 sm:p-8">
+<button class="bg-gradient-to-r from-[#38BDF8] to-[#F472B6] text-[#0F172A] rounded-full px-8 py-3 font-bold text-lg shadow-lg hover:shadow-[0_0_20px_-5px_#f472b6] focus:outline-none focus:ring-4 focus:ring-sky-400/50 transition-all duration-300 ease-in-out hover:scale-105">
+        Tiếp theo
+      </button>
+</footer>
+</div>
+</body></html>

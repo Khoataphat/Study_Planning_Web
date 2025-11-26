@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tạo Thời Khóa Biểu</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        'deep-slate': '#0F172A',
+                        'mid-slate': '#1E293B',
+                        'cyan-accent': '#38BDF8',
+                        'pink-accent': '#F472B6',
+                        'light-contrast': '#F1F5F9',
+                        // Keeping old for reference if needed, but new palette is primary
+                        primary: "#38BDF8", // Set to Cyan Accent
+                        "background-light": "#F8FAFC", // slate-50
+                        "background-dark": "#0F172A", // Deep Slate
+                        'text-dark': '#1E293B',
+                    },
+                    fontFamily: {
+                        display: ["'Plus Jakarta Sans'", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "1rem", // 16px
+                    },
+                    boxShadow: {
+                        'cyan-glow': '0 0 15px rgba(56, 189, 248, 0.2)',
+                        'pink-glow': '0 0 15px rgba(244, 114, 182, 0.2)',
+                    }
+                },
+            },
+        };
+    </script>
+<style>
+        .material-icons-outlined {
+            font-size: 24px;
+        }
+        .form-input-custom {
+            @apply w-full rounded-lg border-mid-slate bg-deep-slate focus:ring-cyan-accent/70 focus:border-cyan-accent/70 text-light-contrast placeholder:text-slate-500 text-sm;
+        }
+        .form-label-custom {
+            @apply block text-sm font-semibold text-slate-300 mb-1.5;
+        }
+    </style>
+</head>
+<body class="font-display bg-deep-slate text-light-contrast antialiased">
+<div class="flex h-screen overflow-hidden">
+<aside class="w-64 flex-shrink-0 bg-mid-slate/30 border-r border-mid-slate flex flex-col">
+<div class="p-6 text-center border-b border-mid-slate">
+<h1 class="text-2xl font-bold text-cyan-accent">Scheduler</h1>
+</div>
+<nav class="flex-grow p-4 space-y-2">
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-deep-slate bg-cyan-accent font-semibold shadow-cyan-glow" href="#">
+<span class="material-icons-outlined">dashboard</span>
+<span>Bảng điều khiển</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-400 hover:bg-mid-slate hover:text-light-contrast" href="#">
+<span class="material-icons-outlined">calendar_today</span>
+<span>Lịch của tôi</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-400 hover:bg-mid-slate hover:text-light-contrast" href="#">
+<span class="material-icons-outlined">add_task</span>
+<span>Nhiệm vụ</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-400 hover:bg-mid-slate hover:text-light-contrast" href="#">
+<span class="material-icons-outlined">bar_chart</span>
+<span>Thống kê</span>
+</a>
+</nav>
+<div class="p-4 border-t border-mid-slate">
+<div class="flex items-center gap-4">
+<img alt="Avatar người dùng" class="w-10 h-10 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBEFCdBV0QFGF7t1ybmzNLDezfwR31utjEGmgcr4LXF9wBe5Wn25OSdk_dTlt4vWSTLX1KtxW996LuiFhhoL6wz-58LWHslwYMP1I7tvqHbCR8_-GMHBd0T4dkQy3py1JJUY1Kym8rt8Wdnvn1NQKpEMSm7uhzuhds6rbuJX9kvfsp_Sw_AhIBadAds1el_Z1u2HOhhlFUx1BpSp2wmLUtGoJEvIfvVtWTnTt1F-UxyiuTPFZV-ohw8tuwhTUGmAETdZlJOGsl0P00"/>
+<div>
+<p class="font-semibold text-sm text-light-contrast">GenZ User</p>
+<a class="text-xs text-slate-400 hover:text-cyan-accent" href="#">Xem hồ sơ</a>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col overflow-hidden">
+<header class="flex items-center justify-between px-8 py-4 border-b border-mid-slate bg-deep-slate">
+<div>
+<h2 class="text-xl font-bold text-light-contrast">Tạo Thời Khóa Biểu Mới</h2>
+<p class="text-sm text-slate-400">Kéo thả sự kiện vào lịch để bắt đầu</p>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-mid-slate">
+<span class="material-icons-outlined text-slate-400">notifications</span>
+</button>
+<button class="p-2 rounded-full hover:bg-mid-slate">
+<span class="material-icons-outlined text-slate-400">settings</span>
+</button>
+<button class="bg-cyan-accent text-deep-slate font-semibold px-4 py-2 rounded-lg flex items-center gap-2 hover:opacity-90 transition-opacity shadow-cyan-glow">
+<span class="material-icons-outlined" style="font-size: 20px;">save</span>
+<span>Lưu</span>
+</button>
+</div>
+</header>
+<div class="flex-1 overflow-y-auto p-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+<div class="lg:col-span-2 bg-mid-slate/30 p-6 rounded-lg border border-mid-slate">
+<div class="grid grid-cols-7 text-center font-semibold text-sm text-slate-400 mb-4">
+<div>Thứ 2</div>
+<div>Thứ 3</div>
+<div>Thứ 4</div>
+<div>Thứ 5</div>
+<div>Thứ 6</div>
+<div>Thứ 7</div>
+<div>Chủ Nhật</div>
+</div>
+<div class="grid grid-cols-7 grid-rows-5 gap-px bg-mid-slate border border-mid-slate rounded-md overflow-hidden">
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1 relative">
+<div class="absolute inset-1 border-2 border-dashed border-slate-600 rounded-lg flex items-center justify-center">
+<span class="text-slate-500 text-xs">Thả vào đây</span>
+</div>
+</div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+<div class="bg-deep-slate min-h-[100px] p-1"></div>
+</div>
+</div>
+<div class="flex flex-col gap-8">
+<div class="bg-mid-slate/30 p-6 rounded-lg border border-mid-slate">
+<h3 class="font-bold text-lg text-light-contrast mb-4">Hộp công cụ</h3>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-cyan-accent/20 border border-cyan-accent/50 text-cyan-accent p-4 rounded-lg cursor-grab active:cursor-grabbing text-center font-semibold text-sm shadow-cyan-glow">Học tập</div>
+<div class="bg-pink-accent/20 border border-pink-accent/50 text-pink-accent p-4 rounded-lg cursor-grab active:cursor-grabbing text-center font-semibold text-sm shadow-pink-glow">Giải lao</div>
+<div class="bg-cyan-accent/20 border border-cyan-accent/50 text-cyan-accent p-4 rounded-lg cursor-grab active:cursor-grabbing text-center font-semibold text-sm">Làm việc</div>
+<div class="bg-pink-accent/20 border border-pink-accent/50 text-pink-accent p-4 rounded-lg cursor-grab active:cursor-grabbing text-center font-semibold text-sm">Sở thích</div>
+</div>
+</div>
+<div class="bg-mid-slate/30 p-6 rounded-lg border border-mid-slate flex-grow">
+<h3 class="font-bold text-lg text-light-contrast mb-4">Chi tiết sự kiện</h3>
+<form class="space-y-4">
+<div>
+<label class="form-label-custom" for="event-name">Tên sự kiện</label>
+<input class="form-input-custom" id="event-name" placeholder="Ví dụ: Học Thiết kế UI/UX" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="form-label-custom" for="start-time">Bắt đầu</label>
+<input class="form-input-custom" id="start-time" type="time" value="09:00"/>
+</div>
+<div>
+<label class="form-label-custom" for="end-time">Kết thúc</label>
+<input class="form-input-custom" id="end-time" type="time" value="11:00"/>
+</div>
+</div>
+<div>
+<label class="form-label-custom" for="event-location">Địa điểm</label>
+<input class="form-input-custom" id="event-location" placeholder="Ví dụ: Thư viện trường" type="text"/>
+</div>
+<div>
+<label class="form-label-custom" for="description">Mô tả</label>
+<textarea class="form-input-custom" id="description" placeholder="Thêm mô tả ngắn..." rows="2"></textarea>
+</div>
+<div>
+<label class="form-label-custom" for="repeat">Tần suất lặp lại</label>
+<select class="form-input-custom" id="repeat">
+<option>Hàng ngày</option>
+<option>Hàng tuần</option>
+<option>Tùy chỉnh</option>
+<option selected="">Không lặp lại</option>
+</select>
+</div>
+<div>
+<label class="form-label-custom">Màu sắc sự kiện</label>
+<div class="flex items-center gap-3">
+<label class="cursor-pointer">
+<input class="sr-only peer" name="event-color" type="radio" value="#38BDF8"/>
+<div class="w-7 h-7 rounded-full bg-cyan-accent ring-2 ring-offset-2 ring-offset-deep-slate ring-transparent peer-checked:ring-cyan-accent transition-all"></div>
+</label>
+<label class="cursor-pointer">
+<input checked="" class="sr-only peer" name="event-color" type="radio" value="#F472B6"/>
+<div class="w-7 h-7 rounded-full bg-pink-accent ring-2 ring-offset-2 ring-offset-deep-slate ring-transparent peer-checked:ring-pink-accent transition-all"></div>
+</label>
+<label class="cursor-pointer">
+<input class="sr-only peer" name="event-color" type="radio" value="#38BDF8"/>
+<div class="w-7 h-7 rounded-full bg-cyan-accent/70 ring-2 ring-offset-2 ring-offset-deep-slate ring-transparent peer-checked:ring-cyan-accent/70 transition-all"></div>
+</label>
+<label class="cursor-pointer">
+<input class="sr-only peer" name="event-color" type="radio" value="#F472B6"/>
+<div class="w-7 h-7 rounded-full bg-pink-accent/70 ring-2 ring-offset-2 ring-offset-deep-slate ring-transparent peer-checked:ring-pink-accent/70 transition-all"></div>
+</label>
+</div>
+</div>
+<div class="pt-2 flex items-center gap-4">
+<button class="w-full bg-cyan-accent text-deep-slate font-semibold py-2.5 rounded-lg hover:opacity-90 transition-opacity shadow-cyan-glow" type="submit">
+                                    Lưu
+                                </button>
+<button class="w-full bg-mid-slate text-light-contrast font-semibold py-2.5 rounded-lg hover:bg-slate-700 transition-colors" type="button">
+                                    Hủy
+                                </button>
+</div>
+</form>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

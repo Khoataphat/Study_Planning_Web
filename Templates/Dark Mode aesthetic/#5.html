@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Tạo Thời Khóa Biểu</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<style type="text/tailwindcss">
+    @layer base {
+      :root {--deep-slate: #0F172A;
+        --mid-slate: #1E293B;
+        --cyan-accent: #38BDF8;
+        --pink-accent: #F472B6;
+        --light-contrast-text: #F1F5F9;--pastel-purple: #A5B4FC;
+        --pastel-light-purple: #C7D2FE;
+        --pastel-pink: #F9A8D4;
+        --pastel-yellow: #FDE68A;
+        --text-color: #1E293B;
+      }
+    }
+  </style>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "var(--cyan-accent)",
+            "background-light": "#F8FAFC","background-dark": "var(--deep-slate)",
+            "surface-dark": "var(--mid-slate)",
+            "accent-cyan": "var(--cyan-accent)",
+            "accent-pink": "var(--pink-accent)",
+            "text-light": "var(--light-contrast-text)",
+          },
+          fontFamily: {
+            display: ["Inter", "sans-serif"],
+          },
+          borderRadius: {
+            DEFAULT: "0.75rem",
+          },
+        },
+      },
+    };
+  </script>
+</head>
+<body class="font-display bg-background-dark text-text-light">
+<div class="flex h-screen">
+<aside class="w-24 bg-surface-dark flex flex-col items-center py-6 space-y-8 border-r border-slate-800">
+<div class="w-14 h-14 bg-accent-cyan/20 rounded-full flex items-center justify-center border-2 border-accent-cyan">
+<span class="material-icons-outlined text-accent-cyan text-3xl">face</span>
+</div>
+<nav class="flex flex-col items-center space-y-4 flex-grow">
+<a class="w-14 h-14 bg-slate-800 text-slate-400 rounded-2xl flex items-center justify-center hover:bg-accent-cyan/20 hover:text-accent-cyan transition-colors" href="#">
+<span class="material-icons-outlined text-3xl">dashboard</span>
+</a>
+<a class="w-14 h-14 bg-accent-cyan text-deep-slate rounded-2xl flex items-center justify-center shadow-md shadow-accent-cyan/30" href="#">
+<span class="material-icons-outlined text-3xl">add_task</span>
+</a>
+<a class="w-14 h-14 bg-slate-800 text-slate-400 rounded-2xl flex items-center justify-center hover:bg-accent-cyan/20 hover:text-accent-cyan transition-colors" href="#">
+<span class="material-icons-outlined text-3xl">interests</span>
+</a>
+<a class="w-14 h-14 bg-slate-800 text-slate-400 rounded-2xl flex items-center justify-center hover:bg-accent-cyan/20 hover:text-accent-cyan transition-colors" href="#">
+<span class="material-icons-outlined text-3xl">event</span>
+</a>
+</nav>
+<div class="w-14 h-14 bg-slate-800 text-slate-400 rounded-2xl flex items-center justify-center hover:bg-accent-pink/20 hover:text-accent-pink transition-colors">
+<span class="material-icons-outlined text-3xl">logout</span>
+</div>
+</aside>
+<main class="flex-1 flex flex-col p-6 lg:p-8 overflow-y-auto">
+<header class="flex justify-between items-center mb-8">
+<div>
+</div>
+<div class="flex items-center space-x-4">
+<button class="p-2 rounded-full hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined text-slate-300">settings</span>
+</button>
+<button class="flex items-center justify-center bg-accent-cyan text-deep-slate px-4 py-2 rounded-lg shadow-md shadow-accent-cyan/25 hover:opacity-90 transition-opacity">
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</header>
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+<div class="bg-surface-dark p-6 rounded-2xl shadow-lg border border-slate-700">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-bold text-lg text-text-light">Lịch học kỳ 1</h3>
+<span class="w-6 h-6 rounded-full bg-accent-cyan/20 border-2 border-accent-cyan"></span>
+</div>
+<div class="grid grid-cols-7 text-center text-sm font-semibold text-slate-400 border-b border-slate-700 pb-2 mb-2">
+<span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span>
+</div>
+<div class="grid grid-cols-7 text-sm text-slate-300">
+<div class="py-2 text-center text-slate-500">27</div><div class="py-2 text-center text-slate-500">28</div><div class="py-2 text-center text-slate-500">29</div><div class="py-2 text-center text-slate-500">30</div><div class="py-2 text-center text-slate-500">31</div>
+<div class="py-2 text-center">1</div><div class="py-2 text-center">2</div>
+<div class="py-2 text-center">3</div><div class="py-2 text-center">4</div><div class="py-2 text-center">5</div><div class="py-2 text-center">6</div><div class="py-2 text-center">7</div><div class="py-2 text-center">8</div><div class="py-2 text-center">9</div>
+<div class="py-2 text-center">10</div><div class="py-2 text-center">11</div><div class="py-2 text-center bg-accent-cyan/20 text-accent-cyan rounded-full font-bold">12</div><div class="py-2 text-center">13</div><div class="py-2 text-center">14</div><div class="py-2 text-center">15</div><div class="py-2 text-center">16</div>
+<div class="py-2 text-center">17</div><div class="py-2 text-center">18</div><div class="py-2 text-center">19</div><div class="py-2 text-center">20</div><div class="py-2 text-center">21</div><div class="py-2 text-center">22</div><div class="py-2 text-center">23</div>
+<div class="py-2 text-center">24</div><div class="py-2 text-center">25</div><div class="py-2 text-center">26</div><div class="py-2 text-center">27</div><div class="py-2 text-center">28</div><div class="py-2 text-center">29</div><div class="py-2 text-center">30</div>
+</div>
+</div>
+<div class="bg-surface-dark p-6 rounded-2xl shadow-lg border-2 border-accent-cyan/50">
+<div class="flex justify-between items-center mb-4">
+<h3 class="font-bold text-lg text-text-light">Lịch học kỳ 2</h3>
+<span class="w-6 h-6 rounded-full bg-accent-pink/20 border-2 border-accent-pink"></span>
+</div>
+<div class="grid grid-cols-7 text-center text-sm font-semibold text-slate-400 border-b border-slate-700 pb-2 mb-2">
+<span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span>
+</div>
+<div class="grid grid-cols-7 text-sm text-slate-300">
+<div class="py-2 text-center text-slate-500">1</div><div class="py-2 text-center text-slate-500">2</div><div class="py-2 text-center text-slate-500">3</div><div class="py-2 text-center text-slate-500">4</div><div class="py-2 text-center text-slate-500">5</div><div class="py-2 text-center text-slate-500">6</div><div class="py-2 text-center text-slate-500">7</div>
+<div class="py-2 text-center">1</div><div class="py-2 text-center">2</div><div class="py-2 text-center">3</div><div class="py-2 text-center">4</div><div class="py-2 text-center">5</div><div class="py-2 text-center">6</div><div class="py-2 text-center">7</div>
+<div class="py-2 text-center">8</div><div class="py-2 text-center">9</div><div class="py-2 text-center">10</div><div class="py-2 text-center">11</div><div class="py-2 text-center">12</div><div class="py-2 text-center">13</div><div class="py-2 text-center">14</div>
+<div class="py-2 text-center">15</div><div class="py-2 text-center">16</div><div class="py-2 text-center">17</div><div class="py-2 text-center">18</div><div class="py-2 text-center">19</div><div class="py-2 text-center">20</div><div class="py-2 text-center">21</div>
+<div class="py-2 text-center">22</div><div class="py-2 text-center">23</div><div class="py-2 text-center">24</div><div class="py-2 text-center">25</div><div class="py-2 text-center">26</div><div class="py-2 text-center">27</div><div class="py-2 text-center">28</div>
+<div class="py-2 text-center">29</div><div class="py-2 text-center">30</div><div class="py-2 text-center">31</div>
+</div>
+</div>
+<div class="bg-surface-dark/50 border-2 border-dashed border-slate-700 rounded-2xl flex items-center justify-center">
+<button class="w-20 h-20 bg-surface-dark rounded-full flex items-center justify-center shadow-lg hover:bg-slate-700 transition-colors">
+<span class="material-symbols-outlined text-4xl text-accent-cyan">add</span>
+</button>
+</div>
+</div>
+</main>
+</div>
+</body></html>
