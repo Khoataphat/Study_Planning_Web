@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Personalization</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#A5B4FC",
+            "background-light": "#f8fafc",
+            "background-dark": "#0f172a",
+          },
+          fontFamily: {
+            display: ["Poppins", "sans-serif"],
+          },
+          borderRadius: {
+            DEFAULT: "1rem", // Using 1rem for a modern, rounded look
+          },
+        },
+      },
+    };
+  </script>
+<style>.chip-checkbox:checked + label {
+      background-color: #4338ca;color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-800 dark:text-slate-200 antialiased">
+<div class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 md:p-8">
+<div class="w-full max-w-4xl mx-auto">
+<header class="text-center mb-8 md:mb-12">
+<h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-2">Cho chúng tôi biết về bạn</h1>
+<p class="text-base sm:text-lg text-slate-600 dark:text-slate-400">Chọn những gì phù hợp nhất với bạn để cá nhân hóa trải nghiệm.</p>
+</header>
+<main>
+<div class="flex flex-wrap justify-center items-center gap-3 sm:gap-4">
+<input class="hidden chip-checkbox" id="chip1" type="checkbox"/>
+<label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1" for="chip1" style="background-color: #A5B4FC; color: #1E293B;">Đọc sách</label>
+<input class="hidden chip-checkbox" id="chip2" type="checkbox"/>
+<label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1" for="chip2" style="background-color: #F9A8D4; color: #1E293B;">Nghe nhạc</label>
+<input class="hidden chip-checkbox" id="chip3" type="checkbox"/>
+<label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1" for="chip3" style="background-color: #FDE68A; color: #1E293B;">Hướng nội</label>
+<input class="hidden chip-checkbox" id="chip4" type="checkbox"/>
+<label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1" for="chip4" style="background-color: #C7D2FE; color: #1E293B;">Sáng tạo</label>
+<input class="hidden chip-checkbox" id="chip5" type="checkbox"/>
+<label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1" for="chip5" style="background-color: #A5B4FC; color: #1E293B;">Sinh viên</label>
+<input class="hidden chip-checkbox" id="chip6" type="checkbox"/>
+<label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1" for="chip6" style="background-color: #FDE68A; color: #1E293B;">Tập thể dục</label>
+<input class="hidden chip-checkbox" id="chip7" type="checkbox"/>
+<label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1" for="chip7" style="background-color: #C7D2FE; color: #1E293B;">Đi du lịch</label>
+<input class="hidden chip-checkbox" id="chip8" type="checkbox"/>
+<label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1" for="chip8" style="background-color: #F9A8D4; color: #1E293B;">Hướng ngoại</label>
+<input class="hidden chip-checkbox" id="chip9" type="checkbox"/>
+<label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1" for="chip9" style="background-color: #A5B4FC; color: #1E293B;">Chơi game</label>
+<input class="hidden chip-checkbox" id="chip10" type="checkbox"/>
+<label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1" for="chip10" style="background-color: #C7D2FE; color: #1E293B;">Nhân viên văn phòng</label>
+<input class="hidden chip-checkbox" id="chip11" type="checkbox"/>
+<label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1" for="chip11" logic-based="" style="background-color: #F9A8D4; color: #1E293B;">Logic</label>
+<input class="hidden chip-checkbox" id="chip12" type="checkbox"/>
+<label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1" for="chip12" style="background-color: #FDE68A; color: #1E293B;">Học ngôn ngữ mới</label>
+<input class="hidden chip-checkbox" id="chip13" type="checkbox"/>
+<label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1" for="chip13" style="background-color: #A5B4FC; color: #1E293B;">Freelancer</label>
+</div>
+</main>
+</div>
+<footer class="fixed bottom-0 right-0 p-6 sm:p-8">
+<button class="bg-slate-900 text-white dark:bg-slate-200 dark:text-slate-900 rounded-full px-8 py-3 font-bold text-lg shadow-lg hover:bg-slate-700 dark:hover:bg-white focus:outline-none focus:ring-4 focus:ring-slate-400 dark:focus:ring-slate-500 transition-all duration-300 ease-in-out">
+        Tiếp theo
+      </button>
+</footer>
+</div>
+
+</body></html>

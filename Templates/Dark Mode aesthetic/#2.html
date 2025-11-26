@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html class="dark" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Đăng Ký Tài Khoản</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "deep-slate": "#0F172A",
+                        "mid-slate": "#1E293B",
+                        "cyan-accent": "#38BDF8",
+                        "pink-accent": "#F472B6",
+                        "light-text": "#F1F5F9",
+                        // Kept old for reference but new ones will be used
+                        "primary": "#A5B4FC",
+                        "soft-blue": "#C7D2FE",
+                        "pinky": "#F9A8D4",
+                        "warm-yellow": "#FDE68A",
+                        "slate-dark": "#1E293B",
+                        "background-light": "#f8f9ff",
+                        "background-dark": "#0F172A",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "2rem",
+                        "xl": "3rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+            font-size: 20px;
+        }
+        .form-input-container:focus-within {
+            border-color: #38BDF8;
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.3);
+        }
+        .form-input:focus {
+            outline: none;
+            border: none;
+            box-shadow: none;
+            ring: 0;
+        }
+        .bg-pattern {
+            background-image: radial-gradient(circle at 1px 1px, #1e293b 1px, transparent 0), radial-gradient(circle at 10px 10px, #1e293b 1px, transparent 0);
+            background-size: 20px 20px;
+        }
+    </style>
+</head>
+<body class="font-display bg-background-dark text-light-text antialiased">
+<div class="relative flex min-h-screen w-full flex-col overflow-hidden bg-pattern p-4 lg:p-8">
+<header class="absolute top-0 left-0 right-0 z-10 p-4 lg:p-6">
+<div class="container mx-auto max-w-6xl">
+<nav class="flex items-center justify-between">
+<a class="inline-flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-cyan-accent" style="font-size: 28px;">stacks</span>
+<span class="text-xl font-bold text-light-text">PlanZ</span>
+</a>
+<div class="hidden items-center gap-6 text-sm font-semibold md:flex">
+<a class="text-light-text/80 hover:text-cyan-accent transition-colors" href="#">Tính năng</a>
+<a class="text-light-text/80 hover:text-cyan-accent transition-colors" href="#">Bảng giá</a>
+<a class="text-light-text/80 hover:text-cyan-accent transition-colors" href="#">Về chúng tôi</a>
+<a class="ml-4 flex h-10 items-center justify-center rounded-full bg-cyan-accent/10 px-5 text-cyan-accent transition hover:bg-cyan-accent/20" href="#">Đăng nhập</a>
+</div>
+<button class="md:hidden">
+<span class="material-symbols-outlined text-light-text" style="font-size: 28px;">menu</span>
+</button>
+</nav>
+</div>
+</header>
+<div class="flex flex-1 items-center justify-center pt-20 pb-8 md:pt-0 md:pb-0">
+<div class="grid w-full max-w-6xl grid-cols-1 overflow-hidden rounded-lg bg-black/20 shadow-2xl backdrop-blur-lg md:grid-cols-2">
+<div class="relative hidden h-full flex-col items-center justify-center bg-pink-accent/5 p-10 md:flex">
+<img alt="A playful illustration of a person organizing tasks on a giant calendar with colorful sticky notes and icons, in a GenZ art style." class="w-full max-w-sm" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARpcrLiXozzjiqQSZGNhQn-ar6rRVxoaJFFGY7S2Q7Y3sR0HtUGtXvQOgpHTrlr1L1vIO7iD0bSzlN7L4SIaFToML4AaQ3jWXPzvxgbUnGQ8WNjetJVzsSvZAJzzbP7dzhOGxCAauWmVfrbIBAGn_9_iGdB4jIrQoQnXSH7YAsSs09iceFTXEbaDBlh4rcxt0uJhmIGNXKYgHeP4IstlkU7DqKJVwP3chG_i9lxwC3nKYzxUeMXm1OQcPSgAUXjNSItQAmZdswH8I"/>
+<div class="absolute bottom-8 left-8 right-8 rounded-lg bg-black/30 p-4 text-center backdrop-blur-sm">
+<p class="font-semibold text-light-text/80">"Biến kế hoạch thành hiện thực, một cách thật chill."</p>
+</div>
+</div>
+<div class="flex w-full flex-col justify-center bg-background-dark p-8 sm:p-12 lg:p-16">
+<div class="w-full max-w-md">
+<header class="mb-8 text-center md:text-left">
+<h1 class="text-3xl font-bold tracking-tight text-light-text">Sẵn sàng bùng nổ năng suất chưa?</h1>
+<p class="mt-2 text-base text-light-text/70">Cùng tạo thời khóa biểu chất lừ của riêng bạn nào!</p>
+</header>
+<form class="space-y-5">
+<div class="flex max-w-[480px] flex-wrap items-end">
+<label class="flex w-full flex-col">
+<p class="pb-2 text-sm font-medium text-light-text">Tên người dùng</p>
+<div class="form-input-container flex w-full items-center gap-3 overflow-hidden rounded border border-mid-slate bg-mid-slate px-3 transition-all duration-300">
+<span class="material-symbols-outlined text-gray-500">sentiment_satisfied</span>
+<input class="form-input h-12 w-full flex-1 border-0 bg-transparent p-0 text-base font-normal leading-normal text-light-text placeholder:text-gray-500 focus:outline-none focus:ring-0" placeholder="Tên của bạn nè" type="text"/>
+</div>
+</label>
+</div>
+<div class="flex max-w-[480px] flex-wrap items-end">
+<label class="flex w-full flex-col">
+<p class="pb-2 text-sm font-medium text-light-text">Email</p>
+<div class="form-input-container flex w-full items-center gap-3 overflow-hidden rounded border border-mid-slate bg-mid-slate px-3 transition-all duration-300">
+<span class="material-symbols-outlined text-gray-500">mail</span>
+<input class="form-input h-12 w-full flex-1 border-0 bg-transparent p-0 text-base font-normal leading-normal text-light-text placeholder:text-gray-500 focus:outline-none focus:ring-0" placeholder="Nhập email của bạn" type="email"/>
+</div>
+</label>
+</div>
+<div class="flex max-w-[480px] flex-wrap items-end">
+<label class="flex w-full flex-col">
+<p class="pb-2 text-sm font-medium text-light-text">Mật khẩu</p>
+<div class="form-input-container flex w-full items-center gap-3 overflow-hidden rounded border border-mid-slate bg-mid-slate px-3 transition-all duration-300">
+<span class="material-symbols-outlined text-gray-500">lock</span>
+<input class="form-input h-12 w-full flex-1 border-0 bg-transparent p-0 text-base font-normal leading-normal text-light-text placeholder:text-gray-500 focus:outline-none focus:ring-0" placeholder="Tạo mật khẩu" type="password"/>
+<button class="text-gray-500" type="button">
+<span class="material-symbols-outlined">visibility</span>
+</button>
+</div>
+</label>
+</div>
+<button class="flex h-14 w-full items-center justify-center rounded-full bg-pink-accent/90 px-6 text-base font-bold text-deep-slate shadow-lg shadow-pink-accent/20 transition hover:bg-pink-accent focus:outline-none focus:ring-2 focus:ring-pink-accent/50 focus:ring-offset-2 focus:ring-offset-background-dark" type="submit">
+                                Bắt đầu thôi!
+                            </button>
+</form>
+<div class="relative my-8 flex items-center">
+<div class="flex-grow border-t border-mid-slate"></div>
+<span class="mx-4 flex-shrink text-sm text-gray-400">Hoặc đăng ký bằng</span>
+<div class="flex-grow border-t border-mid-slate"></div>
+</div>
+<div class="flex items-center justify-center gap-4">
+<button class="flex h-12 w-12 items-center justify-center rounded-full border border-mid-slate bg-mid-slate transition hover:bg-slate-700">
+<img alt="Google logo" class="h-6 w-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB030qILtK0iJs_cEfIHxVLcduDzfy8-vWoEhw5L6LekoVbJq9E5fApTQvZQG0zEF34sBvfJbugdw_CYwr9lRxQsZoqg0jfDUrliX29RVdV6BICqvZHIcMVKZw8Jkata5qdi4aUrzwqL4Gn82j5YdqEKIEGkUK52kVzRv9PT7h1ZwPZbOSPPMYLxPFfbOKCuk2fOyMBkp0VR7wGTVNBdceDhACh_jfuPvbTLs1KlbzScpSOEqlgNSAFVuiyEWItiRtuTGBhsa1Nqxg"/>
+</button>
+<button class="flex h-12 w-12 items-center justify-center rounded-full border border-mid-slate bg-mid-slate transition hover:bg-slate-700">
+<img alt="Facebook logo" class="h-6 w-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-sRZ3m-vgrmCoKwAatk50b4O6rvShI-WH4Gpy9u-ITGtwVp_OqORK5xEhovqIH4UvyKXGBmWJIpGIbcVhShRlsicSRySXuu4Htvw4Jf-PE8KbZVcxWOtpLtIQEhS9_dXVps1BGzP5MspuSKvUUXJGIEp-cAAJu0a2WCCjut_-los-4Ot01Jbx0KuQaTG2VzESp4xFksGrTvAWAdFih72ZyoyMK2NpdYlbIVqQWTJzRSFXpKXfh_y3M_mwRCAPV0IsFB4vLVCNHTY"/>
+</button>
+</div>
+<p class="mt-8 text-center text-sm text-gray-400">
+                            Đã có tài khoản?
+                            <a class="font-bold text-cyan-accent hover:underline" href="#">Đăng nhập ngay</a>
+</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</body></html>
