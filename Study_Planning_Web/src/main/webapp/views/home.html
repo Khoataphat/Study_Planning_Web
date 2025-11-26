@@ -1,91 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Student Schedule</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Dashboard - Student Schedule</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
-    <link rel="stylesheet" href="/resources/css/style.css">
-</head>
-<body>
-    
+        <link rel="stylesheet" href="/resources/css/style.css">
+    </head>
     <body>
-    <div class="background-anim">
-        <div class="shape"></div>
-        <div class="shape"></div>
-        <div class="shape"></div>
-    </div>
 
-    <div class="app-container">
+    <body>
+        <div class="background-anim">
+            <div class="shape"></div>
+            <div class="shape"></div>
+            <div class="shape"></div>
+        </div>
 
-        <nav class="sidebar glass-style">
+        <div class="app-container">
 
-            <div class="sidebar-header">
-                <div class="profile-avatar">
-                    <i class="fa-solid fa-user"></i>
-                </div>
-            </div>
+            <nav class="sidebar glass-style">
 
-            <ul class="sidebar-nav">
-                <li><a href="/views/home.html" style="color: #00d2ff; background: rgba(255,255,255,0.2);"><i class="fa-solid fa-table-cells-large"></i> Dashboard</a></li>
-                <li><a href="/views/schedules.html"><i class="fa-solid fa-calendar-days"></i> My Schedule</a></li>
-                <li><a href="/views/tasks.html"><i class="fa-solid fa-list-check"></i> Tasks</a></li>
-                <li><a href="#"><i class="fa-solid fa-chart-pie"></i> Analytics</a></li>
-                <li><a href="#"><i class="fa-solid fa-brain"></i> AI Suggest</a></li>
-            </ul>
-
-        </nav> <main class="main-content">
-
-            <header class="main-header glass-style">
-                <a href="#" class="icon-button" title="Settings">
-                    <i class="fa-solid fa-cog"></i>
-                </a>
-                <a href="${pageContext.request.contextPath}/logout" class="icon-button" title="Logout">
-                    <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                </a>
-            </header>
-
-            <div class="dashboard-grid">
-
-                <div class="widget glass-style chart-line">
-                    <h3>Progress Analytics (Line Chart)</h3>
-                    <div class="widget-content">
-                                                </div>
-                </div>
-
-                <div class="widget glass-style chart-bar">
-                    <h3>Task Summary (Bar Chart)</h3>
-                    <div class="widget-content">
-                                                </div>
-                </div>
-
-                <div class="widget glass-style calendar-grid">
-                    <h3>My Schedule (Calendar)</h3>
-                    <div class="widget-content" style="padding: 0; align-items: flex-start;">
-                        <table class="calendar-table">
-                            <thead>
-                                <tr><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr>
-                            </thead>
-                            <tbody>
-                                <tr><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td></td><td></td><td></td><td></td><td></td></tr>
-                                <tr><td></td><td></td><td></td><td></td><td></td></tr>
-                            </tbody>
-                        </table>
+                <div class="sidebar-header">
+                    <div class="profile-avatar">
+                        <i class="fa-solid fa-user"></i>
                     </div>
                 </div>
 
-                <div class="widget glass-style chart-pie">
-                    <h3>Categories (Pie Chart)</h3>
-                    <div class="widget-content">
-                                                </div>
+                <ul class="sidebar-nav">
+                    <li><a href="/views/home.html" style="color: #00d2ff; background: rgba(255,255,255,0.2);"><i class="fa-solid fa-table-cells-large"></i> Dashboard</a></li>
+                    <li><a href="/views/schedules.html"><i class="fa-solid fa-calendar-days"></i> My Schedule</a></li>
+                    <li><a href="/views/tasks.html"><i class="fa-solid fa-list-check"></i> Tasks</a></li>
+                    <li><a href="#"><i class="fa-solid fa-chart-pie"></i> Analytics</a></li>
+                    <li><a href="#"><i class="fa-solid fa-brain"></i> AI Suggest</a></li>
+                </ul>
+
+            </nav> <main class="main-content">
+
+                <header class="main-header glass-style">
+                    <a href="#" class="icon-button" title="Settings">
+                        <i class="fa-solid fa-cog"></i>
+                    </a>
+                    
+                    <form id="logoutForm" action="/logout" method="POST" style="display: none;">
+                        <input type="hidden" name="logout" value="true"/>
+                    </form>
+
+                    <a href="#" onclick="document.getElementById('logoutForm').submit(); return false;" 
+                       class="icon-button" title="Logout">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    </a>
+                    
+                </header>
+
+                <div class="dashboard-grid">
+
+                    <div class="widget glass-style chart-line">
+                        <h3>Progress Analytics (Line Chart)</h3>
+                        <div class="widget-content">
+                        </div>
+                    </div>
+
+                    <div class="widget glass-style chart-bar">
+                        <h3>Task Summary (Bar Chart)</h3>
+                        <div class="widget-content">
+                        </div>
+                    </div>
+
+                    <div class="widget glass-style calendar-grid">
+                        <h3>My Schedule (Calendar)</h3>
+                        <div class="widget-content" style="padding: 0; align-items: flex-start;">
+                            <table class="calendar-table">
+                                <thead>
+                                    <tr><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                                    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                                    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                                    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="widget glass-style chart-pie">
+                        <h3>Categories (Pie Chart)</h3>
+                        <div class="widget-content">
+                        </div>
+                    </div>
+
                 </div>
+            </main>
+        </div>
 
-            </div>
-        </main>
-    </div>
-
-</body>
+    </body>
 </html>

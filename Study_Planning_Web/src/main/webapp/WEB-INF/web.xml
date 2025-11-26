@@ -18,7 +18,11 @@
 
     <filter-mapping>
         <filter-name>AuthFilter</filter-name>
-        <url-pattern>/views/*</url-pattern>
+        <url-pattern>/views/designer.html</url-pattern>
+        <url-pattern>/views/home.html</url-pattern>
+        <url-pattern>/views/schedules.html</url-pattern>
+        <url-pattern>/views/survey.html</url-pattern>
+        <url-pattern>/views/tasks.html</url-pattern>
     </filter-mapping>
 
 </web-app>

@@ -19,22 +19,37 @@ import java.io.IOException;
 @WebServlet("/logout")
 public class LogoutController extends HttpServlet {
 
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
-            throws ServletException, IOException {
-
-        // 1. NGĂN CHẶN CACHE CỦA TRÌNH DUYỆT
-        resp.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
-        resp.setHeader("Pragma", "no-cache"); // HTTP 1.0
-        resp.setHeader("Expires", "0"); // Proxies
+    // Logic cốt lõi: Hủy Session và Chuyển hướng
+    private void processLogout(HttpServletRequest req, HttpServletResponse resp)
+            throws IOException {
+        
+        // 1. NGĂN CHẶN CACHE
+        resp.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+        resp.setHeader("Pragma", "no-cache");
+        resp.setHeader("Expires", "0");
 
         // 2. HỦY SESSION
-        HttpSession session = req.getSession(false); // Lấy Session hiện tại, không tạo mới
+        HttpSession session = req.getSession(false);
         if (session != null) {
             session.invalidate();
         }
 
         // 3. CHUYỂN HƯỚNG VỀ LOGIN (Tuyệt đối)
-        String redirectURL = req.getContextPath() + "/views/login.jsp";
+        String redirectURL = req.getContextPath() + "/views/login.jsp"; 
         resp.sendRedirect(redirectURL);
+    }
+    
+    // Xử lý yêu cầu GET
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        processLogout(req, resp);
+    }
+    
+    // Xử lý yêu cầu POST (Yêu cầu từ nút Logout mới)
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        processLogout(req, resp);
     }
 }
