@@ -1,3 +1,10 @@
+<%-- 
+    Document   : dashboard
+    Created on : 28 thg 11, 2025, 22:43:37
+    Author     : Admin
+--%>
+
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="vi">
 
