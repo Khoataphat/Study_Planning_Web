@@ -27,13 +27,23 @@ public class LoginController extends HttpServlet {
 
             User user = authService.login(username, password);
 
-            if (user != null) {
-                req.getSession().setAttribute("user", user);
-                String redirectURL = req.getContextPath() + "/views/survey.html";
-                resp.sendRedirect(redirectURL);
-            } else {
-                req.setAttribute("error", "Sai username hoặc password");
+            if (user == null) {
+                // Xử lý đăng nhập thất bại
+                req.setAttribute("error", "Sai tài khoản hoặc mật khẩu");
                 req.getRequestDispatcher("views/login.jsp").forward(req, resp);
+                return; 
+            }
+
+            // Xử lý đăng nhập thành công
+            HttpSession session = req.getSession();
+            session.setAttribute("user", user);
+
+            if (user.getisFirstLogin() == 1) {
+                // Redirect đến trang chọn thông tin
+                resp.sendRedirect(req.getContextPath() + "/views/basic-setup.jsp"); 
+            } else {
+                // Redirect đến trang dashboard
+                resp.sendRedirect(req.getContextPath() + "/views/home.html");
             }
 
         } catch (Exception e) {

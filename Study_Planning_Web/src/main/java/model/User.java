@@ -24,6 +24,8 @@ public class User {
     private Role role = Role.STUDENT; // Ánh xạ cột 'role'
     private LocalDateTime createdAt;
     
+    private int isFirstLogin; // 0 or 1
+    
     // getter setter
     public int getUserId() { return userId; }
     public void setUserId(int userId) { this.userId = userId; }
@@ -50,4 +52,8 @@ public class User {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+    
+    public int getisFirstLogin() { return isFirstLogin; }
+    public void setisFirstLogin(int isFirstLogin) { this.isFirstLogin = isFirstLogin; }
+    
 }
