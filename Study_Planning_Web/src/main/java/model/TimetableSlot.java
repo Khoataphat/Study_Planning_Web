@@ -68,8 +68,6 @@ public class TimetableSlot {
     // ----------------------------------------------------
 
     // Các Getters và Setters chuẩn cho từng thuộc tính...
-    // ... (Để giữ cho phản hồi ngắn gọn, tôi không liệt kê tất cả Getters/Setters ở đây, 
-    //      nhưng bạn cần tự động tạo chúng trong IDE)
     
     public int getScheduleId() {
         return scheduleId;
