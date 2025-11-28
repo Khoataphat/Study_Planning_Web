@@ -17,8 +17,7 @@ public class UserDAO {
     public User login(String username, String password) {
         String sql = "SELECT * FROM users WHERE username = ? AND password = ?";
 
-        try (Connection con = DBUtil.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+        try (Connection con = DBUtil.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setString(1, username);
             ps.setString(2, password);
@@ -31,6 +30,7 @@ public class UserDAO {
                 u.setUsername(rs.getString("username"));
                 u.setPassword(rs.getString("password"));
                 u.setEmail(rs.getString("email"));
+                u.setisFirstLogin(rs.getInt("is_first_login"));
                 return u;
             }
 
@@ -40,6 +40,16 @@ public class UserDAO {
 
         return null;
     }
-    
-    
+
+    //Setup = 0 để ko gọi lại file basic-setup nữa
+    public void markSetupDone(int userId) throws Exception {
+        String sql = "UPDATE users SET is_first_login = 0 WHERE id = ?";
+        try (Connection con = DBUtil.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
