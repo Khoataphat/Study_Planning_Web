@@ -49,7 +49,7 @@
                     <p class="text-base sm:text-lg text-slate-600 dark:text-slate-400">Chọn những gì phù hợp nhất với bạn để cá nhân hóa trải nghiệm.</p>
                 </header>
                 <main>
-                    <form id="setup-form" action="basic-setup/save" method="POST"> 
+                    <form id="setup-form" action="/basic-setup-save" method="POST"> 
 
                         <div id="step-1" class="step-content">
                             <p class="text-base sm:text-lg text-slate-600 dark:text-slate-400 mb-4 hidden">
@@ -57,38 +57,38 @@
                                 <span id="current-step">1</span>/3: 
                                 <span id="step-subtitle">Mục tiêu học tập (Goals)</span>
                             </p>
-                            
+
                             <h2 class="text-xl sm:text-2xl font-semibold mb-6 text-center text-slate-700 dark:text-slate-300">
                                 Bạn đang muốn **đạt được điều gì** trong thời gian tới?
                             </h2>
                             <div class="flex flex-wrap justify-center items-center gap-3 sm:gap-4">
                                 <input class="hidden chip-checkbox" id="goal1" type="radio" name="goals" value="TangGPA"/>
                                 <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-indigo-200 text-slate-900" for="goal1">Tăng GPA</label>
-                                
+
                                 <input class="hidden chip-checkbox" id="goal2" type="radio" name="goals" value="OnThiGiuaKy"/>
                                 <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-indigo-200 text-slate-900" for="goal2">Ôn thi giữa kỳ</label>
-                                
+
                                 <input class="hidden chip-checkbox" id="goal3" type="radio" name="goals" value="OnThiCuoiKy"/>
                                 <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-indigo-200 text-slate-900" for="goal3">Ôn thi cuối kỳ</label>
-                                
+
                                 <input class="hidden chip-checkbox" id="goal4" type="radio" name="goals" value="LuyenIELTS"/>
                                 <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-indigo-200 text-slate-900" for="goal4">Luyện IELTS</label>
-                                
+
                                 <input class="hidden chip-checkbox" id="goal5" type="radio" name="goals" value="HocLapTrinh"/>
                                 <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-indigo-200 text-slate-900" for="goal5">Học lập trình</label>
-                                
+
                                 <input class="hidden chip-checkbox" id="goal6" type="radio" name="goals" value="HocNgoaiNgu"/>
                                 <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-indigo-200 text-slate-900" for="goal6">Học ngoại ngữ</label>
-                                
+
                                 <input class="hidden chip-checkbox" id="goal7" type="radio" name="goals" value="CaiThienKyNangMem"/>
                                 <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-indigo-200 text-slate-900" for="goal7">Cải thiện kỹ năng mềm</label>
-                                
+
                                 <input class="hidden chip-checkbox" id="goal8" type="radio" name="goals" value="ChuanBiPhongVan"/>
                                 <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-indigo-200 text-slate-900" for="goal8">Chuẩn bị phỏng vấn</label>
-                                
+
                                 <input class="hidden chip-checkbox" id="goal9" type="radio" name="goals" value="LuyenChungChi"/>
                                 <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-indigo-200 text-slate-900" for="goal9">Luyện chứng chỉ (MOS/Google/...)</label>
-                                
+
                             </div>
                         </div>
 
@@ -98,31 +98,20 @@
                                 <span id="current-step">1</span>/3: 
                                 <span id="step-subtitle">Phong cách học (Study Style)</span>
                             </p>
-                            
+
                             <h2 class="text-xl sm:text-2xl font-semibold mb-6 text-center text-slate-700 dark:text-slate-300">
                                 Bạn **học tập hiệu quả nhất** với phong cách nào?
                             </h2>
                             <div class="flex flex-wrap justify-center items-center gap-3 sm:gap-4">
-                                <input class="hidden chip-checkbox" id="style1" type="radio" name="study_style" value="DeepWork"/>
-                                <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-purple-200 text-slate-900" for="style1">Deep Work</label>
-                                
-                                <input class="hidden chip-checkbox" id="style2" type="radio" name="study_style" value="Pomodoro"/>
-                                <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-purple-200 text-slate-900" for="style2">Pomodoro</label>
-                                
-                                <input class="hidden chip-checkbox" id="style3" type="radio" name="study_style" value="NganTapTrungNhanh"/>
-                                <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-purple-200 text-slate-900" for="style3">Ngắn – tập trung nhanh</label>
-                                
-                                <input class="hidden chip-checkbox" id="style4" type="radio" name="study_style" value="HocNhom"/>
-                                <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-purple-200 text-slate-900" for="style4">Học nhóm</label>
-                                
-                                <input class="hidden chip-checkbox" id="style5" type="radio" name="study_style" value="TuHocMotMinh"/>
-                                <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-purple-200 text-slate-900" for="style5">Tự học một mình</label>
-                                
-                                <input class="hidden chip-checkbox" id="style6" type="radio" name="study_style" value="DeXaoNhac"/>
-                                <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-purple-200 text-slate-900" for="style6">Dễ xao nhãng</label>
-                                
-                                <input class="hidden chip-checkbox" id="style7" type="radio" name="study_style" value="CanNhacNho"/>
-                                <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-purple-200 text-slate-900" for="style7">Cần nhắc nhở</label>
+                                <input class="hidden chip-checkbox" id="style1" type="radio" name="study_style" value="visual"/>
+                                <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-purple-200 text-slate-900" for="style1">Học qua hình ảnh/biểu đồ</label>
+
+                                <input class="hidden chip-checkbox" id="style2" type="radio" name="study_style" value="auditory"/>
+                                <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-purple-200 text-slate-900" for="style2">Học qua nghe/thảo luận</label>
+
+                                <input class="hidden chip-checkbox" id="style3" type="radio" name="study_style" value="kinesthetic"/>
+                                <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-purple-200 text-slate-900" for="style3">Học qua vận động/thực hành</label>
+
                             </div>
                         </div>
 
@@ -132,35 +121,23 @@
                                 <span id="current-step">1</span>/3: 
                                 <span id="step-subtitle">Năng lượng & thói quen (Lifestyle)</span>
                             </p>
-                            
+
                             <h2 class="text-xl sm:text-2xl font-semibold mb-6 text-center text-slate-700 dark:text-slate-300">
                                 **Năng lượng** và **thói quen** học tập của bạn như thế nào?
                             </h2>
                             <div class="flex flex-wrap justify-center items-center gap-3 sm:gap-4">
-                                <input class="hidden chip-checkbox" id="life1" type="radio" name="lifestyle" value="MorningPerson"/>
-                                <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-yellow-200 text-slate-900" for="life1">Morning person</label>
-                                
-                                <input class="hidden chip-checkbox" id="life2" type="radio" name="lifestyle" value="NightOwl"/>
-                                <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-yellow-200 text-slate-900" for="life2">Night owl</label>
-                                
-                                <input class="hidden chip-checkbox" id="life3" type="radio" name="lifestyle" value="NangLuongBuoiSang"/>
-                                <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-yellow-200 text-slate-900" for="life3">Năng lượng buổi sáng</label>
-                                
-                                <input class="hidden chip-checkbox" id="life4" type="radio" name="lifestyle" value="NangLuongBuoiToi"/>
-                                <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-yellow-200 text-slate-900" for="life4">Năng lượng buổi tối</label>
-                                
-                                <input class="hidden chip-checkbox" id="life5" type="radio" name="lifestyle" value="HayBuonNgu"/>
-                                <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-yellow-200 text-slate-900" for="life5">Hay buồn ngủ</label>
-                                
-                                <input class="hidden chip-checkbox" id="life6" type="radio" name="lifestyle" value="DeStress"/>
-                                <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-yellow-200 text-slate-900" for="life6">Dễ stress</label>
-                                
-                                <input class="hidden chip-checkbox" id="life7" type="radio" name="lifestyle" value="LamViecTotDuoiApLuc"/>
-                                <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-yellow-200 text-slate-900" for="life7">Làm việc tốt dưới áp lực</label>
-                                
-                                <input class="hidden chip-checkbox" id="life8" type="radio" name="lifestyle" value="CanLichNheNhang"/>
-                                <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-yellow-200 text-slate-900" for="life8">Cần lịch nhẹ nhàng</label>
-                                
+                                <input class="hidden chip-checkbox" id="life1" type="radio" name="lifestyle" value="morning"/>
+                                <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-yellow-200 text-slate-900" for="life1">Morning person (Sáng)</label>
+
+                                <input class="hidden chip-checkbox" id="life2" type="radio" name="lifestyle" value="night"/>
+                                <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-yellow-200 text-slate-900" for="life2">Night owl (Đêm)</label>
+
+                                <input class="hidden chip-checkbox" id="life3" type="radio" name="lifestyle" value="morning"/>
+                                <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-yellow-200 text-slate-900" for="life3">Năng lượng buổi sáng (Sáng)</label>
+
+                                <input class="hidden chip-checkbox" id="life4" type="radio" name="lifestyle" value="evening"/>
+                                <label class="cursor-pointer select-none rounded-full px-5 py-3 text-sm sm:text-base font-semibold transition-all duration-300 ease-in-out hover:shadow-md hover:-translate-y-1 bg-yellow-200 text-slate-900" for="life4">Năng lượng buổi tối (Tối)</label>
+
                             </div>
                         </div>
                     </form>

@@ -39,7 +39,7 @@ public class UserProfilesDAO {
             
             // Sử dụng các Getter mới (year_of_study, learning_style, preferred_study_time, goal)
             // Cần xử lý giá trị null/mặc định nếu các trường này không được lấy từ form
-            ps.setInt(2, info.getYearOfStudy() != null ? info.getYearOfStudy() : 0); // Ví dụ: sử dụng 0 nếu null
+            ps.setInt(2, info.getYearOfStudy() != null ? info.getYearOfStudy() : 1); // Ví dụ: sử dụng 0 nếu null
             ps.setString(3, info.getPersonalityType());
             ps.setString(4, info.getPreferredStudyTime());
             ps.setString(5, info.getLearningStyle());

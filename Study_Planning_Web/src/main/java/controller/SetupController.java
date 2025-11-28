@@ -21,7 +21,7 @@ import service.UserProfilesService;
  *
  * @author Admin
  */
-@WebServlet("/basic-setup/save")
+@WebServlet("/basic-setup-save")
 public class SetupController extends HttpServlet {
 // Khai báo Service Layer
     private UserProfilesService userProfilesService;
@@ -82,14 +82,13 @@ public class SetupController extends HttpServlet {
             session.setAttribute("user", user);
 
             // 5. Chuyển hướng người dùng đến Dashboard
-            resp.sendRedirect(req.getContextPath() + "/dashboard");
+            resp.sendRedirect(req.getContextPath() + "/views/home.html");
             
         } catch (Exception e) {
             System.err.println("Lỗi khi xử lý setup cơ bản: " + e.getMessage());
             e.printStackTrace();
             // Gửi lỗi về trang lỗi hoặc hiển thị thông báo
             req.setAttribute("errorMessage", "Đã xảy ra lỗi khi lưu cấu hình: " + e.getMessage());
-            req.getRequestDispatcher("/error.jsp").forward(req, resp);
         }
     }
 }
