@@ -1,0 +1,665 @@
+/* --- PHẦN 1: CSS NỀN TẢNG (TRANG LOGIN) --- */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+/* --- SỬA LỖI XUNG ĐỘT BODY --- */
+
+/* Cài đặt BODY chung (cho cả 2 trang) */
+body {
+    min-height: 100vh;
+    background: #111;
+    color: white; /* Thêm màu chữ mặc định */
+}
+
+/* Cài đặt BODY đặc biệt (CHỈ cho trang login) */
+body.page-login {
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    position: relative;
+}
+
+/* --- BACKGROUND ANIMATION --- */
+.background-anim {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.shape {
+    position: absolute;
+    filter: blur(80px);
+    animation: float 10s infinite alternate;
+    opacity: 0.8;
+}
+
+.shape:nth-child(1) { width: 600px; height: 600px; background: #ff0055; top: -10%; left: -10%; }
+.shape:nth-child(2) { width: 500px; height: 500px; background: #00d2ff; bottom: -10%; right: -5%; animation-delay: -5s; }
+.shape:nth-child(3) { width: 300px; height: 300px; background: #8a2be2; top: 40%; left: 40%; animation-duration: 15s; }
+
+@keyframes float {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    100% { transform: translate(40px, 40px) rotate(20deg); }
+}
+
+/* --- GLASS STYLE --- */
+.glass-style {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    color: white;
+}
+
+/* --- HEADER (CỦA TRANG LOGIN) --- */
+header {
+    height: 70px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 50px;
+    z-index: 100;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logo { font-size: 1.5rem; font-weight: 700; color: #fff; letter-spacing: 1px; }
+
+/* --- SỬA LỖI XUNG ĐỘT NAV UL --- */
+/* Chỉ áp dụng cho NAV bên trong HEADER (trang login) */
+header nav ul {
+    display: flex;
+    list-style: none;
+}
+header nav ul li { margin-left: 30px; }
+header nav ul li a { color: #fff; text-decoration: none; font-size: 0.9rem; transition: 0.3s; opacity: 0.8; }
+header nav ul li a:hover { opacity: 1; color: #00d2ff; }
+
+/* --- MAIN CONTENT (TRANG LOGIN) --- */
+/* Thêm class .page-login để CSS này không ảnh hưởng home.html */
+body.page-login main {
+    flex: 1;
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 0 20px;
+    gap: 40px;
+    align-items: center;
+}
+
+/* Left Section */
+.left-section {
+    flex: 1.5;
+    height: 500px;
+    border-radius: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+.image-placeholder {
+    width: 100%; height: 100%;
+    display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    border-radius: 20px;
+    text-align: center;
+    padding: 20px;
+}
+
+.image-placeholder i { font-size: 8rem; color: rgba(255,255,255,0.2); margin-bottom: 20px; }
+.image-placeholder h2 { font-size: 2rem; color: #fff; margin-bottom: 10px; }
+.image-placeholder p { color: #ccc; }
+
+/* Right Section (Login Box) */
+.right-section {
+    flex: 1;
+    max-width: 450px;
+}
+
+.login-card {
+    padding: 40px 30px;
+    border-radius: 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    min-height: 560px;
+}
+
+.form-content {
+    transition: transform 0.5s ease, opacity 0.5s ease;
+    position: absolute;
+    top: 40px; left: 30px; right: 30px;
+}
+
+.form-login { transform: translateX(0); opacity: 1; z-index: 2; }
+.form-register { transform: translateX(100%); opacity: 0; z-index: 1; pointer-events: none; }
+
+.login-card.active .form-login { transform: translateX(-100%); opacity: 0; pointer-events: none; }
+.login-card.active .form-register { transform: translateX(0); opacity: 1; pointer-events: all; z-index: 2; }
+
+h2.form-title { margin-bottom: 5px; color: #fff; }
+p.sub-title { font-size: 13px; color: #ccc; margin-bottom: 30px; }
+
+.input-box { margin-bottom: 20px; text-align: left; }
+.input-box label { display: block; color: #ddd; font-size: 12px; margin-bottom: 5px; margin-left: 10px;}
+.input-box input {
+    width: 100%; padding: 12px 20px;
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 30px; color: #fff; outline: none; transition: 0.3s;
+}
+.input-box input:focus { border-color: #00d2ff; box-shadow: 0 0 10px rgba(0, 210, 255, 0.5); }
+
+.btn-submit {
+    width: 100%; padding: 12px;
+    background: linear-gradient(45deg, #ff0055, #00d2ff);
+    border: none; border-radius: 30px;
+    color: white; font-weight: 600; cursor: pointer;
+    transition: 0.3s; margin-bottom: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+.btn-submit:hover { transform: scale(1.02); opacity: 0.9; }
+
+.toggle-text { font-size: 13px; color: #fff; margin-top: 10px; }
+.toggle-text span { color: #00d2ff; cursor: pointer; font-weight: 600; }
+.toggle-text span:hover { text-decoration: underline; }
+
+.social-login { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
+.social-login a {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(255,255,255,0.1); color: white;
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none; transition: 0.3s; border: 1px solid rgba(255,255,255,0.2);
+}
+.social-login a:hover { background: white; color: #333; }
+
+/* --- FOOTER (CỦA TRANG LOGIN) --- */
+body.page-login footer {
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.6);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive Mobile */
+@media (max-width: 768px) {
+    body.page-login main { flex-direction: column; }
+    .left-section { width: 100%; height: 200px; }
+    .right-section { width: 100%; }
+    .login-card { min-height: 550px; }
+}
+
+
+/* --- PHẦN 2: CSS BỔ SUNG CHO HOME.HTML (DASHBOARD) --- */
+.app-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    overflow: hidden; /* Ngăn cuộn toàn bộ trang */
+}
+
+/* --- Sidebar (Thanh bên trái - Dựa trên phác thảo) --- */
+.sidebar {
+    width: 240px;
+    flex-shrink: 0; /* Sidebar sẽ không bị co lại */
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    height: 100vh;
+    z-index: 10;
+}
+
+.sidebar-header {
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+/* Vòng tròn ảnh đại diện (phác thảo) */
+.profile-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    margin-top: 20px;
+}
+.profile-avatar /* Bạn có thể dùng thẻ <img> thay vì div */ {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    color: rgba(255,255,255,0.7);
+}
+
+
+.sidebar-nav {
+    list-style: none;
+    width: 100%;
+}
+
+/* Các nút điều hướng hình oval (phác thảo) */
+.sidebar-nav li a {
+    display: block;
+    color: white;
+    text-decoration: none;
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    border-radius: 30px; /* Tạo hình oval */
+    background: rgba(255, 255, 255, 0.1);
+    transition: 0.3s;
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.sidebar-nav li a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 0 10px rgba(0, 210, 255, 0.5);
+    color: #00d2ff;
+}
+
+/* --- Main Content (Khu vực nội dung chính) --- */
+.main-content {
+    flex-grow: 1; /* Chiếm toàn bộ không gian còn lại */
+    height: 100vh;
+    overflow-y: auto; /* Cho phép cuộn nội dung chính */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header của nội dung chính (chứa icon Cài đặt,...) */
+.main-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0 30px;
+    height: 70px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
+}
+
+.main-header .icon-button {
+    color: white;
+    font-size: 1.2rem;
+    margin-left: 20px;
+    cursor: pointer;
+    opacity: 0.8;
+    transition: 0.3s;
+}
+
+.main-header .icon-button:hover {
+    opacity: 1;
+    color: #00d2ff;
+}
+
+/* Lưới Dashboard (dựa trên phác thảo trang 3) */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 cột */
+    gap: 20px;
+    padding: 30px;
+    flex-grow: 1;
+}
+
+.widget {
+    border-radius: 15px;
+    padding: 20px;
+    min-height: 300px; /* Chiều cao tối thiểu cho widget */
+    display: flex;
+    flex-direction: column;
+}
+
+.widget h3 {
+    color: white;
+    margin-bottom: 20px;
+    font-weight: 500;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    padding-bottom: 10px;
+}
+
+.widget-content {
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: rgba(255,255,255,0.5);
+}
+
+/* Định vị các widget theo phác thảo */
+.widget.chart-line {
+    grid-column: 1 / 2; /* Widget 1 */
+}
+.widget.chart-bar {
+    grid-column: 2 / 3; /* Widget 2 */
+}
+.widget.calendar-grid {
+    grid-column: 1 / 2; /* Widget 3 (Lịch) */
+}
+.widget.chart-pie {
+    grid-column: 2 / 3; /* Widget 4 */
+}
+
+/* Giả lập bảng lịch (calendar) */
+.calendar-table {
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+}
+.calendar-table th, .calendar-table td {
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 10px;
+    text-align: left;
+    vertical-align: top;
+    height: 80px; /* Chiều cao ô */
+    font-size: 0.8rem;
+}
+.calendar-table th {
+    background: rgba(0,0,0,0.2);
+    text-align: center;
+}
+
+/* XÓA DẤU } THỪA Ở CUỐI */
+
+/* --- BỔ SUNG CHO CÁC TRANG MỚI (PAGE 2, 4, 5, 6) --- */
+
+/* --- Page 2: Survey (Khảo sát) --- */
+.survey-container {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.survey-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin: 30px 0;
+}
+
+.survey-option {
+    position: relative;
+}
+
+.survey-option input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.survey-option label {
+    display: block;
+    padding: 15px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+    user-select: none;
+}
+
+.survey-option input:checked + label {
+    background: rgba(0, 210, 255, 0.3);
+    border-color: #00d2ff;
+    box-shadow: 0 0 15px rgba(0, 210, 255, 0.4);
+    transform: scale(1.05);
+}
+
+/* --- Page 4: Schedule List (Danh sách lịch) --- */
+.schedule-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.schedule-card {
+    padding: 20px;
+    border-radius: 15px;
+    text-decoration: none;
+    color: white;
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 150px;
+}
+
+.schedule-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255,255,255,0.15);
+}
+
+.card-add-new {
+    border: 2px dashed rgba(255,255,255,0.3);
+    background: transparent;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.card-add-new:hover {
+    border-color: #00d2ff;
+    color: #00d2ff;
+}
+
+/* --- Page 5: Schedule Designer (Thiết kế lịch) --- */
+.designer-layout {
+    display: flex;
+    gap: 20px;
+    height: calc(100vh - 100px);
+}
+
+.tools-panel {
+    width: 250px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+}
+
+.draggable-item {
+    padding: 10px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+    cursor: grab;
+    margin-bottom: 10px;
+}
+
+.designer-area {
+    flex: 1;
+    overflow: auto;
+    padding: 20px;
+}
+
+/* --- Page 6: Task Manager --- */
+.task-form {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.task-list-preview {
+    margin-top: 30px;
+}
+
+.task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: rgba(255,255,255,0.05);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.task-item:first-child { border-top-left-radius: 10px; border-top-right-radius: 10px; }
+.task-item:last-child { border-bottom: none; border-bottom-left-radius: 10px; border-bottom-right-radius: 10px; }
+
+/* --- BỔ SUNG CHO CHỨC NĂNG DESIGNER MỚI --- */
+
+/* 1. Input tiêu đề chỉnh sửa được */
+.editable-title {
+    background: transparent;
+    border: none;
+    border-bottom: 2px dashed rgba(255,255,255,0.3);
+    color: white;
+    font-size: 1.5rem;
+    font-weight: 600;
+    width: 300px;
+    padding: 5px;
+    outline: none;
+    transition: 0.3s;
+}
+.editable-title:focus {
+    border-bottom-color: #00d2ff;
+}
+
+/* 2. Các loại thẻ màu sắc (Task Types) */
+.draggable-item.yellow { border-left: 5px solid #f1c40f; background: rgba(241, 196, 15, 0.1); }
+.draggable-item.green { border-left: 5px solid #2ecc71; background: rgba(46, 204, 113, 0.1); }
+.draggable-item.blue { border-left: 5px solid #3498db; background: rgba(52, 152, 219, 0.1); }
+
+/* Style cho item khi đã thả vào lịch */
+.dropped-item {
+    padding: 5px;
+    margin: 2px 0;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    color: white;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.dropped-item.yellow { background: #f1c40f; color: #000; }
+.dropped-item.green { background: #2ecc71; }
+.dropped-item.blue { background: #3498db; }
+
+/* 3. Modal (Bảng hiện lên khi thả) */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    z-index: 1000;
+    display: none; /* Mặc định ẩn */
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+}
+
+.modal-overlay.active { display: flex; }
+
+.modal-box {
+    background: #1a1a1a;
+    width: 400px;
+    padding: 30px;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    color: white;
+}
+
+.modal-box h3 { margin-bottom: 20px; color: #00d2ff; }
+.modal-buttons { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+.btn-cancel {
+    padding: 10px 20px;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border: none; border-radius: 30px;
+    cursor: pointer;
+}
+.btn-save {
+    padding: 10px 20px;
+    background: #00d2ff;
+    color: white;
+    border: none; border-radius: 30px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+
+
+/* --- TASKS.HTML SPECIFIC LAYOUT --- */
+.task-manager-layout {
+    display: grid;
+    grid-template-columns: 1fr 2fr; /* List/Form layout */
+    gap: 30px;
+    padding: 30px;
+    flex-grow: 1;
+}
+
+.task-list-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.task-list-container {
+    background: rgba(0,0,0,0.2);
+    padding: 15px;
+    border-radius: 15px;
+}
+
+.task-card-item {
+    padding: 12px 15px;
+    margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 30px; /* Oval shape */
+    cursor: grab;
+    transition: 0.2s;
+    font-size: 0.9rem;
+    color: white; /* Đảm bảo chữ trắng */
+}
+.task-card-item:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.schedule-selector {
+    padding: 10px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    width: 100%;
+    margin-bottom: 15px;
+    outline: none;
+    cursor: pointer;
+}
+.schedule-selector option {
+    color: black; /* Makes options visible */
+}
+
+/* Calendar Preview */
+.calendar-preview-container {
+    grid-column: 1 / 3; /* Spans both columns */
+    background: rgba(255, 255, 255, 0.05); /* glass-style */
+    backdrop-filter: blur(15px);
+    border-radius: 15px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
+.calendar-preview-table {
+    width: 100%;
+    height: 300px;
+    overflow-y: auto;
+}
+.calendar-preview-table table {
+    width: 100%;
+    height: 100%;
+    border-collapse: collapse;
+}
+.calendar-preview-table th, .calendar-preview-table td {
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 5px;
+    vertical-align: top;
+    height: 40px;
+    font-size: 0.8rem;
+}
