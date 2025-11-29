@@ -44,7 +44,7 @@ public class DashboardService {
 //        data.setProgressTasks(
 //                taskDAO.getTasksByUser(userId)
 //        );
-        data.setTimetable(timetableDAO.getUserTimetable(userId));  // thêm nè
+        data.setTimetableList(timetableDAO.getUserTimetable(userId));  // thêm nè
 
         return data;
     }

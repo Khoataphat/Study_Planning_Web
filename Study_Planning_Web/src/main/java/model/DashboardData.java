@@ -11,9 +11,23 @@ import java.util.List;
  * @author Admin
  */
 public class DashboardData {
-    private List<TimetableSlot> timetable;
+// Đã đổi tên thuộc tính thành timetableList cho rõ ràng hơn
+    private List<TimetableSlot> timetableList; 
 
-    public void setTimetable(List<TimetableSlot> userTimetable) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    // Constructor (Tùy chọn)
+    public DashboardData() {
+        
+    }
+
+    // Setter: Đã sửa lỗi UnsupportedOperationException
+    public void setTimetableList(List<TimetableSlot> userTimetable) {
+        this.timetableList = userTimetable;
+    }
+
+    // **********************************************
+    // PHƯƠNG THỨC GETTER CẦN THIẾT CHO JSP/EL
+    // **********************************************
+    public List<TimetableSlot> getTimetableList() {
+        return timetableList;
     }
 }

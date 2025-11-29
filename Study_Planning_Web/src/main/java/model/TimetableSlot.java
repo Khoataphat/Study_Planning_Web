@@ -26,7 +26,7 @@ public class TimetableSlot {
     private LocalDate scheduleDate; // Tương ứng với schedule_date (Dùng cho các sự kiện không lặp lại)
     private LocalTime startTime;  // Tương ứng với start_time
     private LocalTime endTime;    // Tương ứng với end_time
-    private String location;      // (Bạn không liệt kê, nhưng thường cần cho slot)
+    //private String location;      // (Bạn không liệt kê, nhưng thường cần cho slot)
 
     // Thuộc tính hệ thống
     private LocalDateTime createdAt; // Tương ứng với created_at
@@ -35,7 +35,7 @@ public class TimetableSlot {
     // 1. Constructor (Toàn bộ trường)
     // ----------------------------------------------------
     
-    public TimetableSlot(int scheduleId, int userId, String subject, String type, DayOfWeek dayOfWeek, LocalDate scheduleDate, LocalTime startTime, LocalTime endTime, String location, LocalDateTime createdAt) {
+    public TimetableSlot(int scheduleId, int userId, String subject, String type, DayOfWeek dayOfWeek, LocalDate scheduleDate, LocalTime startTime, LocalTime endTime, LocalDateTime createdAt) {
         this.scheduleId = scheduleId;
         this.userId = userId;
         this.subject = subject;
@@ -44,7 +44,7 @@ public class TimetableSlot {
         this.scheduleDate = scheduleDate;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.location = location;
+        //this.location = location;
         this.createdAt = createdAt;
     }
 
@@ -52,7 +52,7 @@ public class TimetableSlot {
     // 2. Constructor (Dùng cho việc chèn (INSERT) vào DB, không cần ID và created_at)
     // ----------------------------------------------------
 
-    public TimetableSlot(int userId, String subject, String type, DayOfWeek dayOfWeek, LocalDate scheduleDate, LocalTime startTime, LocalTime endTime, String location) {
+    public TimetableSlot(int userId, String subject, String type, DayOfWeek dayOfWeek, LocalDate scheduleDate, LocalTime startTime, LocalTime endTime) {
         this.userId = userId;
         this.subject = subject;
         this.type = type;
@@ -60,7 +60,7 @@ public class TimetableSlot {
         this.scheduleDate = scheduleDate;
         this.startTime = startTime;
         this.endTime = endTime;
-        this.location = location;
+        //this.location = location;
     }
 
     // ----------------------------------------------------
@@ -133,13 +133,13 @@ public class TimetableSlot {
         this.endTime = endTime;
     }
 
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
+//    public String getLocation() {
+//        return location;
+//    }
+//
+//    public void setLocation(String location) {
+//        this.location = location;
+//    }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;

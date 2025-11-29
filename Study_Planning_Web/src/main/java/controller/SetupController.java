@@ -82,7 +82,7 @@ public class SetupController extends HttpServlet {
             session.setAttribute("user", user);
 
             // 5. Chuyển hướng người dùng đến Dashboard
-            resp.sendRedirect(req.getContextPath() + "/views/home.html");
+            resp.sendRedirect(req.getContextPath() + "/dashboard");
             
         } catch (Exception e) {
             System.err.println("Lỗi khi xử lý setup cơ bản: " + e.getMessage());

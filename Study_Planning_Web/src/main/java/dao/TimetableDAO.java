@@ -28,56 +28,113 @@ public class TimetableDAO {
         this.conn = conn;
     }
 
+    private DayOfWeek mapDayOfWeek(String dbDay) {
+        if (dbDay == null) {
+            return null;
+        }
+
+        // Đảm bảo chữ HOA hoàn toàn để khớp với Enum Java
+        String normalizedDay = dbDay.toUpperCase();
+
+        // Chuyển đổi các giá trị viết tắt hoặc giá trị sai khác (nếu cần)
+        switch (normalizedDay) {
+            case "MON":
+                return DayOfWeek.MONDAY;
+            case "TUE":
+                return DayOfWeek.TUESDAY;
+            case "WED":
+                return DayOfWeek.WEDNESDAY;
+            case "THU":
+                return DayOfWeek.THURSDAY;
+            case "FRI":
+                return DayOfWeek.FRIDAY;
+            case "SAT":
+                return DayOfWeek.SATURDAY;
+            case "SUN":
+                return DayOfWeek.SUNDAY;
+            default:
+                // Nếu giá trị đã là định dạng đầy đủ (ví dụ: MONDAY), vẫn hoạt động
+                return DayOfWeek.valueOf(normalizedDay);
+        }
+    }
+
     public List<TimetableSlot> getUserTimetable(int userId) throws Exception {
 
-        String sql = "SELECT * FROM user_schedule /* Đã sửa tên bảng */"
+//        String sql = "SELECT * FROM user_schedule /* Đã sửa tên bảng */"
+//                + " WHERE user_id = ?"
+//                + " ORDER BY FIELD(day_of_week, "
+//                + " 'MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY','SUNDAY'),"
+//                + " start_time";
+// LOẠI BỎ CÚ PHÁP ORDER BY FIELD()
+        String sql = "SELECT * FROM user_schedule"
                 + " WHERE user_id = ?"
-                + " ORDER BY FIELD(day_of_week, "
-                + " 'MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY','SUNDAY'),"
-                + " start_time";
+                + " ORDER BY day_of_week, start_time"; // Sắp xếp đơn giản
 
         List<TimetableSlot> list = new ArrayList<>();
 
         // Sử dụng try-with-resources để tự động đóng PreparedStatement và ResultSet
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, userId);
+// ********** SỬA Ở ĐÂY **********
+            // Thay vì ps.setInt(1, userId);
+            ps.setString(1, String.valueOf(userId)); // Ép kiểu số thành chuỗi "25"
+            // ********************************
+
+            int rowCount = 0; // Thêm biến đếm
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
 
-                    // Lấy giá trị từ ResultSet
+                    rowCount++;
+
+                    // **********************************************
+                    // THÊM DÒNG DEBUG QUAN TRỌNG NÀY VÀO ĐẦU VÒNG LẶP
+                    System.out.println("DEBUG: Đã tìm thấy dữ liệu dòng " + rowCount);
+                    // **********************************************
+
+                    // Lấy giá trị theo đúng thứ tự cột trong DB (hoặc thứ tự mong muốn trong constructor)
+                    // 1. schedule_id
                     int scheduleId = rs.getInt("schedule_id");
+                    // 2. user_id
                     int slotUserId = rs.getInt("user_id");
-                    String subject = rs.getString("subject"); // Đã sửa từ 'title' sang 'subject'
-                    String type = rs.getString("type");       // Thêm trường 'type'
-
-                    // Chuyển đổi String/SQL sang Java Time API và Enum
-                    DayOfWeek dayOfWeek = DayOfWeek.valueOf(rs.getString("day_of_week"));
-                    LocalDate scheduleDate = rs.getDate("schedule_date") != null ? rs.getDate("schedule_date").toLocalDate() : null; // Xử lý null
+                    // 3. day_of_week
+                    String dayString = rs.getString("day_of_week");
+                    DayOfWeek dayOfWeek = null;//mapDayOfWeek(dayString);
+                    // 4. schedule_date
+                    LocalDate scheduleDate = null;//rs.getDate("schedule_date") != null ? rs.getDate("schedule_date").toLocalDate() : null;
+                    // 5. start_time
                     LocalTime startTime = rs.getTime("start_time").toLocalTime();
+                    // 6. end_time
                     LocalTime endTime = rs.getTime("end_time").toLocalTime();
+                    // 7. subject
+                    String subject = rs.getString("subject");
 
-                    // Giả định bảng có thêm cột 'location' (nếu không có, cần bỏ đi)
-                    String location = rs.getString("location");
+                    // KIỂM TRA LỖI: IN RA MỘT GIÁ TRỊ TỪ DÒNG NÀY
+                    System.out.println("DEBUG: Subject = " + subject);
+                    // 8. type
+                    String type = rs.getString("type");
+                    // 9. created_at
+                    LocalDateTime createdAt = rs.getTimestamp("created_at").toLocalDateTime();
 
-                    LocalDateTime createdAt = rs.getTimestamp("created_at").toLocalDateTime(); // Thêm trường created_at
-
-                    // Tạo đối tượng TimetableSlot đầy đủ
+                    // Tạo đối tượng TimetableSlot. Đảm bảo constructor của bạn có thứ tự khớp với thứ tự này
                     TimetableSlot s = new TimetableSlot(
                             scheduleId,
-                            slotUserId,
+                            slotUserId, // user_id
                             subject,
                             type,
                             dayOfWeek,
                             scheduleDate,
                             startTime,
                             endTime,
-                            location,
-                            createdAt
+                            createdAt // Cuối cùng
                     );
 
                     list.add(s);
+                    System.out.println("DEBUG: Đã thêm slot vào danh sách. Kích thước hiện tại: " + list.size());
                 }
+                // **********************************************
+                // THÊM DÒNG DEBUG CUỐI CÙNG
+                System.out.println("DEBUG: Vòng lặp kết thúc. Tổng số dòng được xử lý: " + rowCount);
+                // **********************************************
             }
         } // Không cần khối catch e.printStackTrace() ở đây, ném Exception ra ngoài để Controller xử lý.
 

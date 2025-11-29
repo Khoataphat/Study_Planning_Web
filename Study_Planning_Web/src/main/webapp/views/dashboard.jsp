@@ -5,210 +5,221 @@
 --%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <!DOCTYPE html>
 <html lang="vi">
 
-<head>
-  <meta charset="utf-8" />
-  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <title>Dashboard</title>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&amp;display=swap" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
-  <script>
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          colors: {
-            primary: "#A5B4FC",
-            "background-light": "#F8FAFC",
-            "background-dark": "#0F172A",
-            // New pastel colors
-            "pastel-purple": "#A5B4FC",
-            "pastel-light-purple": "#C7D2FE",
-            "pastel-pink": "#F9A8D4",
-            "pastel-yellow": "#FDE68A",
-            "text-color": "#1E293B",
-          },
-          fontFamily: {
-            display: ["Quicksand", "sans-serif"],
-          },
-          borderRadius: {
-            DEFAULT: "0.75rem",
-          },
-        },
-      },
-    };
-  </script>
-</head>
+    <head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <title>Dashboard</title>
+        <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+        <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&amp;display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+        <script>
+            tailwind.config = {
+                darkMode: "class",
+                theme: {
+                    extend: {
+                        colors: {
+                            primary: "#A5B4FC",
+                            "background-light": "#F8FAFC",
+                            "background-dark": "#0F172A",
+                            // New pastel colors
+                            "pastel-purple": "#A5B4FC",
+                            "pastel-light-purple": "#C7D2FE",
+                            "pastel-pink": "#F9A8D4",
+                            "pastel-yellow": "#FDE68A",
+                            "text-color": "#1E293B",
+                        },
+                        fontFamily: {
+                            display: ["Quicksand", "sans-serif"],
+                        },
+                        borderRadius: {
+                            DEFAULT: "0.75rem",
+                        },
+                    },
+                },
+            };
+        </script>
+    </head>
 
-<body class="font-display bg-background-light dark:bg-background-dark text-text-color dark:text-slate-200">
-  <div class="flex h-screen">
-    <aside
-      class="w-24 bg-white dark:bg-slate-900 flex flex-col items-center py-6 space-y-8 border-r border-slate-200 dark:border-slate-800">
-      <div class="w-14 h-14 bg-primary rounded-full flex items-center justify-center">
-        <span class="material-icons-outlined text-white text-3xl">face</span>
-      </div>
-      <nav class="flex flex-col items-center space-y-4 flex-grow">
-        <a class="w-14 h-14 bg-primary text-white rounded-2xl flex items-center justify-center shadow-md shadow-primary/30"
-          href="#">
-          <span class="material-icons-outlined text-3xl">dashboard</span>
-        </a>
-        <a class="w-14 h-14 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-2xl flex items-center justify-center hover:bg-primary/20 dark:hover:bg-primary/20 transition-colors"
-          href="#">
-          <span class="material-icons-outlined text-3xl">add_task</span>
-        </a>
-        <a class="w-14 h-14 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-2xl flex items-center justify-center hover:bg-primary/20 dark:hover:bg-primary/20 transition-colors"
-          href="#">
-          <span class="material-icons-outlined text-3xl">interests</span>
-        </a>
-        <a class="w-14 h-14 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-2xl flex items-center justify-center hover:bg-primary/20 dark:hover:bg-primary/20 transition-colors"
-          href="#">
-          <span class="material-icons-outlined text-3xl">event</span>
-        </a>
-      </nav>
-      <div
-        class="w-14 h-14 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-2xl flex items-center justify-center hover:bg-primary/20 dark:hover:bg-primary/20 transition-colors">
-        <span class="material-icons-outlined text-3xl">logout</span>
-      </div>
-    </aside>
-    <main class="flex-1 flex flex-col p-6 lg:p-8 overflow-y-auto">
-      <header class="flex justify-between items-center mb-6">
-        <div>
-          <h1 class="text-2xl font-bold text-text-color dark:text-white">Chào buổi sáng, User!</h1>
-          <p class="text-slate-500 dark:text-slate-400">Đây là tổng quan các hoạt động của bạn.</p>
-        </div>
-        <div class="flex items-center space-x-4">
-          <button class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
-            <span class="material-icons-outlined text-slate-600 dark:text-slate-300">settings</span>
-          </button>
-          <button
-            class="flex items-center justify-center bg-primary text-white px-4 py-2 rounded-lg shadow-md hover:opacity-90 transition-opacity">
-            <span>Next Step</span>
-            <span class="material-icons-outlined ml-2">arrow_forward</span>
-          </button>
-        </div>
-      </header>
-      <div class="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2 flex flex-col gap-6">
-          <div class="bg-white dark:bg-slate-900 p-6 rounded-lg shadow-sm">
-            <h3 class="font-bold text-lg mb-4 text-text-color dark:text-white">Thống kê hoạt động</h3>
-            <div class="relative">
-              <img alt="Line chart showing user activity over time" class="w-full h-auto rounded-md"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsEsE8KzCjslRu3ahaPJ_OKJ9zizLsGdcZ8QG4HsapqDrIDz2Xdi5SB0asMoaysnegCcFzP0g1UoA6Mi8U-Jy02AzgzSC7S-WlBhOFxtwg51SgCDXeM1AOtCRQKjWEnQ-E65rZcx1CLKN0Qeh-E6Ij3UxwCrpVsVZc0SaD0UM14nefaDk8g2aGfY9sywfo-cfWvZTYsn8fG_IQgB8scgMrwxqVlQI2cyxXoYbp9rBe3dksXWscO3XIXc9cAvhNRbP9WULrQISMUWk" />
-              <div class="absolute inset-0 flex flex-col justify-between p-4 pointer-events-none">
-                <div>
-                  <div class="flex items-center space-x-4">
+    <body class="font-display bg-background-light dark:bg-background-dark text-text-color dark:text-slate-200">
+        <div class="flex h-screen">
+            <aside
+                class="w-24 bg-white dark:bg-slate-900 flex flex-col items-center py-6 space-y-8 border-r border-slate-200 dark:border-slate-800">
+                <div class="w-14 h-14 bg-primary rounded-full flex items-center justify-center">
+                    <span class="material-icons-outlined text-white text-3xl">face</span>
+                </div>
+                <nav class="flex flex-col items-center space-y-4 flex-grow">
+                    <a class="w-14 h-14 bg-primary text-white rounded-2xl flex items-center justify-center shadow-md shadow-primary/30"
+                       href="#">
+                        <span class="material-icons-outlined text-3xl">dashboard</span>
+                    </a>
+                    <a class="w-14 h-14 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-2xl flex items-center justify-center hover:bg-primary/20 dark:hover:bg-primary/20 transition-colors"
+                       href="#">
+                        <span class="material-icons-outlined text-3xl">add_task</span>
+                    </a>
+                    <a class="w-14 h-14 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-2xl flex items-center justify-center hover:bg-primary/20 dark:hover:bg-primary/20 transition-colors"
+                       href="#">
+                        <span class="material-icons-outlined text-3xl">interests</span>
+                    </a>
+                    <a class="w-14 h-14 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-2xl flex items-center justify-center hover:bg-primary/20 dark:hover:bg-primary/20 transition-colors"
+                       href="#">
+                        <span class="material-icons-outlined text-3xl">event</span>
+                    </a>
+                </nav>
+                <div
+                    class="w-14 h-14 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 rounded-2xl flex items-center justify-center hover:bg-primary/20 dark:hover:bg-primary/20 transition-colors">
+                    <span class="material-icons-outlined text-3xl">logout</span>
+                </div>
+            </aside>
+            <main class="flex-1 flex flex-col p-6 lg:p-8 overflow-y-auto">
+                <header class="flex justify-between items-center mb-6">
+                    <div>
+                        <h1 class="text-2xl font-bold text-text-color dark:text-white">Chào buổi sáng, ${user.username}!</h1>
+                        <p class="text-slate-500 dark:text-slate-400">Đây là tổng quan các hoạt động của bạn.</p>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                            <span class="material-icons-outlined text-slate-600 dark:text-slate-300">settings</span>
+                        </button>
+                        <button
+                            class="flex items-center justify-center bg-primary text-white px-4 py-2 rounded-lg shadow-md hover:opacity-90 transition-opacity">
+                            <span>Next Step</span>
+                            <span class="material-icons-outlined ml-2">arrow_forward</span>
+                        </button>
+                    </div>
+                </header>
+                <div class="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 flex flex-col gap-6">
+<div class="bg-white dark:bg-slate-900 p-4 rounded-lg shadow-sm">
+    <h3 class="font-bold text-base mb-2 text-text-color dark:text-white">Thống kê hoạt động</h3>
+    <div class="relative">
+        <img alt="Line chart showing user activity over time" class="w-full h-auto rounded-md"
+             src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsEsE8KzCjslRu3ahaPJ_OKJ9zizLsGdcZ8QG4HsapqDrIDz2Xdi5SB0asMoaysnegCcFzP0g1UoA6Mi8U-Jy02AzgzSC7S-WlBhOFxtwg51SgCDXeM1AOtCRQKjWEnQ-E65rZcx1CLKN0Qeh-E6Ij3UxwCrpVsVZc0SaD0UM14nefaDk8g2aGfY9sywfo-cfWvZTYsn8fG_IQgB8scgMrwxqVlQI2cyxXoYbp9rBe3dksXWscO3XIXc9cAvhNRbP9WULrQISMUWk" />
+        <div class="absolute inset-0 flex flex-col justify-between p-4 pointer-events-none">
+            <div>
+                <div class="flex items-center space-x-2">
                     <div class="flex items-center space-x-2">
-                      <div class="w-3 h-3 rounded-full bg-pastel-purple"></div>
-                      <span class="text-xs font-medium text-text-color dark:text-slate-300">Học tập</span>
+                        <div class="w-3 h-3 rounded-full bg-pastel-purple"></div>
+                        <span class="text-xs font-medium text-text-color dark:text-slate-300">Học tập</span>
                     </div>
                     <div class="flex items-center space-x-2">
-                      <div class="w-3 h-3 rounded-full bg-pastel-pink"></div>
-                      <span class="text-xs font-medium text-text-color dark:text-slate-300">Giải trí</span>
+                        <div class="w-3 h-3 rounded-full bg-pastel-pink"></div>
+                        <span class="text-xs font-medium text-text-color dark:text-slate-300">Giải trí</span>
                     </div>
-                  </div>
                 </div>
-              </div>
             </div>
-          </div>
-          <div class="bg-white dark:bg-slate-900 p-6 rounded-lg shadow-sm flex-grow">
-            <h3 class="font-bold text-lg mb-4 text-text-color dark:text-white">Thời khóa biểu</h3>
-            <div class="grid grid-cols-5 gap-px bg-slate-200 dark:bg-slate-700 rounded-lg overflow-hidden">
-              <div
-                class="bg-slate-100 dark:bg-slate-800 text-center font-semibold py-3 text-sm text-slate-600 dark:text-slate-300">
-                Thứ 2</div>
-              <div
-                class="bg-slate-100 dark:bg-slate-800 text-center font-semibold py-3 text-sm text-slate-600 dark:text-slate-300">
-                Thứ 3</div>
-              <div
-                class="bg-slate-100 dark:bg-slate-800 text-center font-semibold py-3 text-sm text-slate-600 dark:text-slate-300">
-                Thứ 4</div>
-              <div
-                class="bg-slate-100 dark:bg-slate-800 text-center font-semibold py-3 text-sm text-slate-600 dark:text-slate-300">
-                Thứ 5</div>
-              <div
-                class="bg-slate-100 dark:bg-slate-800 text-center font-semibold py-3 text-sm text-slate-600 dark:text-slate-300">
-                Thứ 6</div>
-              <div class="bg-background-light dark:bg-background-dark p-2 min-h-[80px]"></div>
-              <div class="bg-background-light dark:bg-background-dark p-2 min-h-[80px]"></div>
-              <div class="bg-background-light dark:bg-background-dark p-2 min-h-[80px]"></div>
-              <div class="bg-background-light dark:bg-background-dark p-2 min-h-[80px]"></div>
-              <div class="bg-background-light dark:bg-background-dark p-2 min-h-[80px]"></div>
-              <div class="bg-background-light dark:bg-background-dark p-2 min-h-[80px]"></div>
-              <div class="bg-background-light dark:bg-background-dark p-2 min-h-[80px]"></div>
-              <div class="bg-background-light dark:bg-background-dark p-2 min-h-[80px]"></div>
-              <div class="bg-background-light dark:bg-background-dark p-2 min-h-[80px]"></div>
-              <div class="bg-background-light dark:bg-background-dark p-2 min-h-[80px]"></div>
-              <div class="bg-background-light dark:bg-background-dark p-2 min-h-[80px]"></div>
-              <div class="bg-background-light dark:bg-background-dark p-2 min-h-[80px]"></div>
-              <div class="bg-background-light dark:bg-background-dark p-2 min-h-[80px]"></div>
-              <div class="bg-background-light dark:bg-background-dark p-2 min-h-[80px]"></div>
-              <div class="bg-background-light dark:bg-background-dark p-2 min-h-[80px]"></div>
-            </div>
-          </div>
         </div>
-        <div class="lg:col-span-1 flex flex-col gap-6">
-          <div class="bg-white dark:bg-slate-900 p-6 rounded-lg shadow-sm">
-            <h3 class="font-bold text-lg mb-4 text-text-color dark:text-white">Tiến độ công việc</h3>
-            <div class="relative">
-              <img alt="Bar chart showing work progress" class="w-full h-auto rounded-md"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXgQO44PzmDv7see5KfLaJCYObKWg6bKOwpBSVLUAsqE8g5ANfeMGGtat7aIuYTYXaPewzYHig9fMxtb1aEOLz85eH6sGIwTHHy0H-WQkfyT2M7G7APKqHF4wbIXRVoZZxgnu4ptG3SfoyWMoh6ni9iB0d6mHv_OMbpdwrBq9_5OticB5HAj4_ZL_M9YmL5JuIpH4xXqg3BKT8J0Zcng0IVqVhDvmWd6m8Oe3Auhxts64zJq6gWnlzfaG1zb9K_LfH46uPAAS5UnU" />
-              <div class="absolute inset-0 flex flex-col justify-end p-4 pb-12 pointer-events-none">
-                <div class="flex justify-around items-end h-full">
-                  <div class="w-1/4 h-[60%] bg-pastel-light-purple rounded-t-md"></div>
-                  <div class="w-1/4 h-[80%] bg-pastel-pink rounded-t-md"></div>
-                  <div class="w-1/4 h-[40%] bg-pastel-light-purple rounded-t-md"></div>
-                  <div class="w-1/4 h-[70%] bg-pastel-pink rounded-t-md"></div>
-                </div>
-              </div>
-              <div class="flex justify-around mt-2 text-xs text-text-color dark:text-slate-300">
-                <span>T2</span>
-                <span>T3</span>
-                <span>T4</span>
-                <span>T5</span>
-              </div>
-            </div>
-          </div>
-          <div class="bg-white dark:bg-slate-900 p-6 rounded-lg shadow-sm">
-            <h3 class="font-bold text-lg mb-4 text-text-color dark:text-white">Phân bổ thời gian</h3>
-            <div class="flex items-center gap-6">
-              <div class="relative w-36 h-36 flex-shrink-0">
-                <img alt="Pie chart showing time allocation" class="w-full h-auto rounded-md"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-O50FCsfBxWFExzCwLwJamVy7d6SXz3cybJlDZOWnRHm1Y5wWe1wUYNVTIolW3NcuYvx56_ndeUr0oIcBjirThikI4Q7K-Nqm9BPArl9VmK46FbWCELKUq92-XiAl8QxdG_mjaOCC6SVSPSzoU2AU5mEnP4y2PI_pOY4j2dxgJ0nh4AdujBkhIknC7iXZ9gQ-Hl4ai5hwJZu006Z__VMdSCv4kZVa4iCNbgwC-67yyGJBMCRZgtMpZckHkrvZrTanoOKFPNlSAuY" />
-                <div class="absolute inset-0 flex items-center justify-center">
-                  <div
-                    class="w-20 h-20 bg-white dark:bg-slate-900 rounded-full flex flex-col items-center justify-center">
-                    <span class="text-2xl font-bold text-text-color dark:text-white">45%</span>
-                    <span class="text-xs text-slate-500 dark:text-slate-400">Học tập</span>
-                  </div>
-                </div>
-              </div>
-              <div class="space-y-3">
-                <div class="flex items-center">
-                  <div class="w-3 h-3 rounded-full bg-pastel-purple mr-3"></div>
-                  <span class="text-sm font-medium text-text-color dark:text-slate-300">Học tập</span>
-                </div>
-                <div class="flex items-center">
-                  <div class="w-3 h-3 rounded-full bg-pastel-pink mr-3"></div>
-                  <span class="text-sm font-medium text-text-color dark:text-slate-300">Giải trí</span>
-                </div>
-                <div class="flex items-center">
-                  <div class="w-3 h-3 rounded-full bg-pastel-yellow mr-3"></div>
-                  <span class="text-sm font-medium text-text-color dark:text-slate-300">Công việc</span>
-                </div>
-                <div class="flex items-center">
-                  <div class="w-3 h-3 rounded-full bg-pastel-light-purple mr-3"></div>
-                  <span class="text-sm font-medium text-text-color dark:text-slate-300">Khác</span>
-                </div>
-              </div>
-            </div>
-          </div>
+    </div>
+</div>
+                        <div class="bg-white dark:bg-slate-900 p-6 rounded-lg shadow-sm flex-grow">
+                            <h3 class="font-bold text-lg mb-4 text-text-color dark:text-white">Thời khóa biểu</h3>
+                            <div class="grid grid-cols-5 gap-px bg-slate-200 dark:bg-slate-700 rounded-lg overflow-hidden">
+
+                                <c:set var="lastDay" value="" />
+
+                                <c:forEach var="slot" items="${dash.timetableList}">
+
+                                    <c:if test="${lastDay != '' && slot.dayOfWeek.name() != lastDay}">
+                                        <c:set var="currentDayIndex" value="${slot.dayOfWeek.ordinal() + 1}" />
+                                        <c:set var="lastDayIndex" value="${lastDay.ordinal() + 1}" />
+
+                                        <c:if test="${currentDayIndex > lastDayIndex && lastDayIndex <= 5}">
+                                            <c:set var="emptyCells" value="${currentDayIndex - lastDayIndex - 1}" />
+                                            <c:forEach begin="1" end="${emptyCells}">
+                                                <div class="bg-background-light dark:bg-background-dark p-2 min-h-[80px]"></div>
+                                            </c:forEach>
+                                        </c:if>
+                                    </c:if>
+
+                                    <div 
+                                        class="p-3 m-1 rounded-md text-white shadow-md cursor-pointer transition-transform hover:scale-[1.02]"
+                                        style="background-color: ${slot.type eq 'HỌC_TẬP' ? '#A5B4FC' : (slot.type eq 'GIẢI_TRÍ' ? '#F9A8D4' : '#FDE68A')}; min-height: 80px;">
+                                        <p class="font-bold text-sm">${slot.subject}</p>
+                                        <p class="text-xs opacity-90">${slot.startTime} - ${slot.endTime}</p>
+                                    </div>
+
+                                    <c:set var="lastDay" value="${slot.dayOfWeek.name()}" />
+                                </c:forEach>
+
+                                <c:if test="${lastDay != ''}">
+                                    <c:set var="lastDayIndex" value="${lastDay.ordinal() + 1}" />
+                                    <c:set var="emptyCellsEnd" value="${5 - lastDayIndex}" />
+                                    <c:forEach begin="1" end="${emptyCellsEnd}">
+                                        <div class="bg-background-light dark:bg-background-dark p-2 min-h-[80px]"></div>
+                                    </c:forEach>
+                                </c:if>
+
+                                <c:if test="${empty dash.timetableList}">
+                                    <div class="col-span-5 text-center p-8 text-slate-500 dark:text-slate-400">
+                                        Chưa có thời khóa biểu nào. Hãy tạo slot đầu tiên của bạn!
+                                    </div>
+                                </c:if>
+                            </div>
+                        </div>
+                        <div class="lg:col-span-1 flex flex-col gap-6">
+                            <div class="bg-white dark:bg-slate-900 p-6 rounded-lg shadow-sm">
+                                <h3 class="font-bold text-lg mb-4 text-text-color dark:text-white">Tiến độ công việc</h3>
+                                <div class="relative">
+                                    <img alt="Bar chart showing work progress" class="w-full h-auto rounded-md"
+                                         src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXgQO44PzmDv7see5KfLaJCYObKWg6bKOwpBSVLUAsqE8g5ANfeMGGtat7aIuYTYXaPewzYHig9fMxtb1aEOLz85eH6sGIwTHHy0H-WQkfyT2M7G7APKqHF4wbIXRVoZZxgnu4ptG3SfoyWMoh6ni9iB0d6mHv_OMbpdwrBq9_5OticB5HAj4_ZL_M9YmL5JuIpH4xXqg3BKT8J0Zcng0IVqVhDvmWd6m8Oe3Auhxts64zJq6gWnlzfaG1zb9K_LfH46uPAAS5UnU" />
+                                    <div class="absolute inset-0 flex flex-col justify-end p-4 pb-12 pointer-events-none">
+                                        <div class="flex justify-around items-end h-full">
+                                            <div class="w-1/4 h-[60%] bg-pastel-light-purple rounded-t-md"></div>
+                                            <div class="w-1/4 h-[80%] bg-pastel-pink rounded-t-md"></div>
+                                            <div class="w-1/4 h-[40%] bg-pastel-light-purple rounded-t-md"></div>
+                                            <div class="w-1/4 h-[70%] bg-pastel-pink rounded-t-md"></div>
+                                        </div>
+                                    </div>
+                                    <div class="flex justify-around mt-2 text-xs text-text-color dark:text-slate-300">
+                                        <span>T2</span>
+                                        <span>T3</span>
+                                        <span>T4</span>
+                                        <span>T5</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white dark:bg-slate-900 p-6 rounded-lg shadow-sm">
+                                <h3 class="font-bold text-lg mb-4 text-text-color dark:text-white">Phân bổ thời gian</h3>
+                                <div class="flex items-center gap-6">
+                                    <div class="relative w-36 h-36 flex-shrink-0">
+                                        <img alt="Pie chart showing time allocation" class="w-full h-auto rounded-md"
+                                             src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-O50FCsfBxWFExzCwLwJamVy7d6SXz3cybJlDZOWnRHm1Y5wWe1wUYNVTIolW3NcuYvx56_ndeUr0oIcBjirThikI4Q7K-Nqm9BPArl9VmK46FbWCELKUq92-XiAl8QxdG_mjaOCC6SVSPSzoU2AU5mEnP4y2PI_pOY4j2dxgJ0nh4AdujBkhIknC7iXZ9gQ-Hl4ai5hwJZu006Z__VMdSCv4kZVa4iCNbgwC-67yyGJBMCRZgtMpZckHkrvZrTanoOKFPNlSAuY" />
+                                        <div class="absolute inset-0 flex items-center justify-center">
+                                            <div
+                                                class="w-20 h-20 bg-white dark:bg-slate-900 rounded-full flex flex-col items-center justify-center">
+                                                <span class="text-2xl font-bold text-text-color dark:text-white">45%</span>
+                                                <span class="text-xs text-slate-500 dark:text-slate-400">Học tập</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <div class="flex items-center">
+                                            <div class="w-3 h-3 rounded-full bg-pastel-purple mr-3"></div>
+                                            <span class="text-sm font-medium text-text-color dark:text-slate-300">Học tập</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <div class="w-3 h-3 rounded-full bg-pastel-pink mr-3"></div>
+                                            <span class="text-sm font-medium text-text-color dark:text-slate-300">Giải trí</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <div class="w-3 h-3 rounded-full bg-pastel-yellow mr-3"></div>
+                                            <span class="text-sm font-medium text-text-color dark:text-slate-300">Công việc</span>
+                                        </div>
+                                        <div class="flex items-center">
+                                            <div class="w-3 h-3 rounded-full bg-pastel-light-purple mr-3"></div>
+                                            <span class="text-sm font-medium text-text-color dark:text-slate-300">Khác</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </main>
         </div>
-      </div>
-    </main>
-  </div>
-</body>
+    </body>
 
 </html>

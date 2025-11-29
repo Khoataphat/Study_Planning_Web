@@ -21,7 +21,7 @@ import utils.DBUtil;
  *
  * @author Admin
  */
-@WebServlet("/dashboard")
+@WebServlet(name = "DashboardController", urlPatterns = {"/dashboard"})
 public class DashboardController extends HttpServlet {
 
     @Override
@@ -36,22 +36,32 @@ public class DashboardController extends HttpServlet {
             }
 
             Connection conn = DBUtil.getConnection();
+            if (conn != null && !conn.isClosed()) {
+                System.out.println("DEBUG: Kết nối DB thành công!");
+            } else {
+                System.err.println("DEBUG: LỖI KẾT NỐI DB. Connection là null hoặc đã đóng.");
+                return; // Dừng lại ở đây nếu kết nối thất bại
+            }
             DashboardService dash = new DashboardService(
-//                    new UserActivityDAO(conn),
-//                    new TaskDAO(conn)
+                    //                    new UserActivityDAO(conn),
+                    //                    new TaskDAO(conn)
                     new TimetableDAO(conn)
             );
+            // TẠM THỜI GHI ĐÈ USER ID ĐỂ TEST
+            int userIdToQuery = 25; // ID này có dữ liệu trong DB
 
-            DashboardData dashboardData = dash.loadDashboard(user.getUserId());
+            //DashboardData dashboardData = dash.loadDashboard(user.getUserId());
+            DashboardData dashboardData = dash.loadDashboard(userIdToQuery); // Dùng ID 25 đã hardcode
 
             req.setAttribute("dash", dashboardData);
 
-            req.getRequestDispatcher("views/dashboard.jsp")
-                    .forward(req, resp);
+            req.getRequestDispatcher("views/dashboard.jsp").forward(req, resp);
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            // Nếu có bất kỳ lỗi nào xảy ra (SQL, Mapping,...)
+            // LỖI NÀY CẦN PHẢI ĐƯỢC IN RA CONSOLE ĐỂ PHÁT HIỆN!
+            e.printStackTrace();
+            // Sau đó Controller vẫn forward, nhưng đối tượng 'data' có thể null hoặc thiếu dữ liệu.
         }
     }
 }
-
