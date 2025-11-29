@@ -94,27 +94,27 @@
                 </header>
                 <div class="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="lg:col-span-2 flex flex-col gap-6">
-<div class="bg-white dark:bg-slate-900 p-4 rounded-lg shadow-sm">
-    <h3 class="font-bold text-base mb-2 text-text-color dark:text-white">Thống kê hoạt động</h3>
-    <div class="relative">
-        <img alt="Line chart showing user activity over time" class="w-full h-auto rounded-md"
-             src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsEsE8KzCjslRu3ahaPJ_OKJ9zizLsGdcZ8QG4HsapqDrIDz2Xdi5SB0asMoaysnegCcFzP0g1UoA6Mi8U-Jy02AzgzSC7S-WlBhOFxtwg51SgCDXeM1AOtCRQKjWEnQ-E65rZcx1CLKN0Qeh-E6Ij3UxwCrpVsVZc0SaD0UM14nefaDk8g2aGfY9sywfo-cfWvZTYsn8fG_IQgB8scgMrwxqVlQI2cyxXoYbp9rBe3dksXWscO3XIXc9cAvhNRbP9WULrQISMUWk" />
-        <div class="absolute inset-0 flex flex-col justify-between p-4 pointer-events-none">
-            <div>
-                <div class="flex items-center space-x-2">
-                    <div class="flex items-center space-x-2">
-                        <div class="w-3 h-3 rounded-full bg-pastel-purple"></div>
-                        <span class="text-xs font-medium text-text-color dark:text-slate-300">Học tập</span>
-                    </div>
-                    <div class="flex items-center space-x-2">
-                        <div class="w-3 h-3 rounded-full bg-pastel-pink"></div>
-                        <span class="text-xs font-medium text-text-color dark:text-slate-300">Giải trí</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                        <div class="bg-white dark:bg-slate-900 p-4 rounded-lg shadow-sm">
+                            <h3 class="font-bold text-base mb-2 text-text-color dark:text-white">Thống kê hoạt động</h3>
+                            <div class="relative">
+                                <img alt="Line chart showing user activity over time" class="w-full h-auto rounded-md"
+                                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuBsEsE8KzCjslRu3ahaPJ_OKJ9zizLsGdcZ8QG4HsapqDrIDz2Xdi5SB0asMoaysnegCcFzP0g1UoA6Mi8U-Jy02AzgzSC7S-WlBhOFxtwg51SgCDXeM1AOtCRQKjWEnQ-E65rZcx1CLKN0Qeh-E6Ij3UxwCrpVsVZc0SaD0UM14nefaDk8g2aGfY9sywfo-cfWvZTYsn8fG_IQgB8scgMrwxqVlQI2cyxXoYbp9rBe3dksXWscO3XIXc9cAvhNRbP9WULrQISMUWk" />
+                                <div class="absolute inset-0 flex flex-col justify-between p-4 pointer-events-none">
+                                    <div>
+                                        <div class="flex items-center space-x-2">
+                                            <div class="flex items-center space-x-2">
+                                                <div class="w-3 h-3 rounded-full bg-pastel-purple"></div>
+                                                <span class="text-xs font-medium text-text-color dark:text-slate-300">Học tập</span>
+                                            </div>
+                                            <div class="flex items-center space-x-2">
+                                                <div class="w-3 h-3 rounded-full bg-pastel-pink"></div>
+                                                <span class="text-xs font-medium text-text-color dark:text-slate-300">Giải trí</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <div class="bg-white dark:bg-slate-900 p-6 rounded-lg shadow-sm flex-grow">
                             <h3 class="font-bold text-lg mb-4 text-text-color dark:text-white">Thời khóa biểu</h3>
                             <div class="grid grid-cols-5 gap-px bg-slate-200 dark:bg-slate-700 rounded-lg overflow-hidden">
