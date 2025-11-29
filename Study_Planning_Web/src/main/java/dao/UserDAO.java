@@ -43,7 +43,7 @@ public class UserDAO {
 
     //Setup = 0 để ko gọi lại file basic-setup nữa
     public void markSetupDone(int userId) throws Exception {
-        String sql = "UPDATE users SET is_first_login = 0 WHERE id = ?";
+        String sql = "UPDATE users SET is_first_login = 0 WHERE user_id = ?";
         try (Connection con = DBUtil.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
             
