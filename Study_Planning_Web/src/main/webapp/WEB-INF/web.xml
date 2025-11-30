@@ -13,6 +13,18 @@
         <welcome-file>index.html</welcome-file>
         <welcome-file>home.html</welcome-file>
     </welcome-file-list>
+    
+    <!-- Task Controller Servlet -->
+    <servlet>
+        <servlet-name>TaskController</servlet-name>
+        <servlet-class>com.studyplanning.controller.TaskController</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>TaskController</servlet-name>
+        <url-pattern>/user/tasks</url-pattern>
+    </servlet-mapping>
+    
     <mime-mapping>
     <extension>css</extension>
     <mime-type>text/css</mime-type>
