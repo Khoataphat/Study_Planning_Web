@@ -223,9 +223,9 @@
                     <a href="/oauth/google" class="flex h-12 w-12 items-center justify-center rounded-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 transition hover:bg-gray-50 dark:hover:bg-gray-700">
                         <img alt="Google logo" class="h-6 w-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB030qILtK0iJs_cEfIHxVLcduDzfy8-vWoEhw5L6LekoVbJq9E5fApTQvZQG0zEF34sBvfJbugdw_CYwr9lRxQsZoqg0jfDUrliX29RVdV6BICqvZHIcMVKZw8Jkata5qdi4aUrzwqL4Gn82j5YdqEKIEGkUK52kVzRv9PT7h1ZwPZbOSPPMYLxPFfbOKCuk2fOyMBkp0VR7wGTVNBdceDhACh_jfuPvbTLs1KlbzScpSOEqlgNSAFVuiyEWItiRtuTGBhsa1Nqxg"/>
                     </a>
-                    <button class="flex h-12 w-12 items-center justify-center rounded-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 transition hover:bg-gray-50 dark:hover:bg-gray-700">
+                    <a href="/auth/facebook" class="flex h-12 w-12 items-center justify-center rounded-full border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 transition hover:bg-gray-50 dark:hover:bg-gray-700">
                         <img alt="Facebook logo" class="h-6 w-6" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD-sRZ3m-vgrmCoKwAatk50b4O6rvShI-WH4Gpy9u-ITGtwVp_OqORK5xEhovqIH4UvyKXGBmWJIpGIbcVhShRlsicSRySXuu4Htvw4Jf-PE8KbZVcxWOtpLtIQEhS9_dXVps1BGzP5MspuSKvUUXJGIEp-cAAJu0a2WCCjut_-los-4Ot01Jbx0KuQaTG2VzESp4xFksGrTvAWAdFih72ZyoyMK2NpdYlbIVqQWTJzRSFXpKXfh_y3M_mwRCAPV0IsFB4vLVCNHTY"/>
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>

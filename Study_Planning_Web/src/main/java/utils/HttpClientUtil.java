@@ -40,7 +40,26 @@ public class HttpClientUtil {
                 new InputStreamReader(con.getInputStream()));
         String line;
         StringBuilder sb = new StringBuilder();
-        while ((line = br.readLine()) != null) sb.append(line);
+        while ((line = br.readLine()) != null) {
+            sb.append(line);
+        }
         return sb.toString();
+    }
+
+    //facenook
+    public static String sendGET(String urlStr) throws IOException {
+        URL url = new URL(urlStr);
+        HttpURLConnection con = (HttpURLConnection) url.openConnection();
+
+        con.setRequestMethod("GET");
+        BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+
+        StringBuilder result = new StringBuilder();
+        String line;
+        while ((line = br.readLine()) != null) {
+            result.append(line);
+        }
+        br.close();
+        return result.toString();
     }
 }
