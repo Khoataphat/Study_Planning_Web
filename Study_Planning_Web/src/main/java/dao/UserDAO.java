@@ -43,7 +43,7 @@ public class UserDAO {
 
     //Setup = 0 để ko gọi lại file basic-setup nữa
     public void markSetupDone(int userId) throws Exception {
-        String sql = "UPDATE users SET is_first_login = 0 WHERE id = ?";
+        String sql = "UPDATE users SET is_first_login = 0 WHERE user_id = ?";
         try (Connection con = DBUtil.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
             ps.setInt(1, userId);
 
@@ -168,22 +168,39 @@ public class UserDAO {
 //        // Không cần đóng con.close() ở đây nữa
 //    }
     public void createOAuthUser(User u) throws Exception {
-    // ⚠️ THÊM 'username' vào câu lệnh SQL
-    String sql = "INSERT INTO users(username, email, oauth_provider, oauth_id) VALUES (?,?,?,?)"; 
-    // Bây giờ có 4 tham số (?)
+        // ⚠️ SỬA LỖI: Thêm các cột bắt buộc: password, role, is_first_login
+        String sql = "INSERT INTO users(username, password, email, oauth_provider, oauth_id, role, is_first_login) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-    try (Connection con = DBUtil.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+        final String EMPTY_PASSWORD_PLACEHOLDER = ""; // Dùng placeholder cho mật khẩu
+        final String DEFAULT_ROLE = "student";
+        final int IS_FIRST_LOGIN_DEFAULT = 1;
 
-        // ⚠️ Gán giá trị cho cột username (Sử dụng email làm username)
-        ps.setString(1, u.getEmail()); 
-        
-        ps.setString(2, u.getEmail()); // Tham số thứ 2 là email
-        ps.setString(3, u.getOauthProvider()); // Tham số thứ 3 là provider
-        ps.setString(4, u.getOauthId());      // Tham số thứ 4 là oauth_id
+        try (Connection con = DBUtil.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
 
-        ps.executeUpdate();
+            // 1. username (Dùng email làm username)
+            ps.setString(1, u.getEmail());
+
+            // 2. password (BẮT BUỘC): Chèn placeholder để tránh lỗi NOT NULL
+            ps.setString(2, EMPTY_PASSWORD_PLACEHOLDER);
+
+            // 3. email
+            ps.setString(3, u.getEmail());
+
+            // 4. oauth_provider
+            ps.setString(4, u.getOauthProvider());
+
+            // 5. oauth_id
+            ps.setString(5, u.getOauthId());
+
+            // 6. role (DEFAULT)
+            ps.setString(6, DEFAULT_ROLE);
+
+            // 7. is_first_login (DEFAULT)
+            ps.setInt(7, IS_FIRST_LOGIN_DEFAULT);
+
+            ps.executeUpdate();
+        }
     }
-}
 
     private User map(ResultSet rs) throws Exception {
         User u = new User();
@@ -198,4 +215,17 @@ public class UserDAO {
         u.setOauthId(rs.getString("oauth_id"));
         return u;
     }
+    
+    public void updateOAuthInfo(int userId, String provider, String oauthId) throws Exception {
+    String sql = "UPDATE users SET oauth_provider = ?, oauth_id = ? WHERE user_id = ?";
+    try (Connection con = DBUtil.getConnection(); 
+         PreparedStatement ps = con.prepareStatement(sql)) {
+        
+        ps.setString(1, provider);
+        ps.setString(2, oauthId);
+        ps.setInt(3, userId);
+        
+        ps.executeUpdate();
+    }
+}
 }
