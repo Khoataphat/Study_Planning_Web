@@ -26,6 +26,11 @@ public class User {
     
     private int isFirstLogin; // 0 or 1
     
+    //dùng cho google và facebook
+    
+    private String oauthProvider; // GOOGLE / FACEBOOK / LOCAL
+    private String oauthId;       // ID từ Google/Facebook
+    
     // getter setter
     public int getUserId() { return userId; }
     public void setUserId(int userId) { this.userId = userId; }
@@ -56,4 +61,10 @@ public class User {
     public int getisFirstLogin() { return isFirstLogin; }
     public void setisFirstLogin(int isFirstLogin) { this.isFirstLogin = isFirstLogin; }
     
+    //google
+    public String getOauthProvider() { return oauthProvider; }
+    public void setOauthProvider(String oauthProvider) { this.oauthProvider = oauthProvider; }
+
+    public String getOauthId() { return oauthId; }
+    public void setOauthId(String oauthId) { this.oauthId = oauthId; }
 }
