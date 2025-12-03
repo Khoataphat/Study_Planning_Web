@@ -40,10 +40,10 @@ public class LoginController extends HttpServlet {
 
             if (user.getisFirstLogin() == 1) {
                 // Redirect đến trang chọn thông tin
-                resp.sendRedirect(req.getContextPath() + "/views/basic-setup.jsp"); 
+                resp.sendRedirect(req.getContextPath() + "/basic-setup-save"); 
             } else {
                 // Redirect đến trang dashboard
-                resp.sendRedirect(req.getContextPath() + "/views/home.html");
+                resp.sendRedirect(req.getContextPath() + "/dashboard");
             }
 
         } catch (Exception e) {
