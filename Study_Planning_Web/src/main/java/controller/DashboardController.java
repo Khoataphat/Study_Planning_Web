@@ -31,7 +31,7 @@ public class DashboardController extends HttpServlet {
         try {
             User user = (User) req.getSession().getAttribute("user");
             if (user == null) {
-                resp.sendRedirect("login.jsp");
+                resp.sendRedirect("/login");
                 return;
             }
 

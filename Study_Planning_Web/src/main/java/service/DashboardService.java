@@ -5,7 +5,11 @@
 package service;
 
 import dao.TimetableDAO;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import model.DashboardData;
+import model.TimetableSlot;
 
 /**
  *
@@ -44,7 +48,17 @@ public class DashboardService {
 //        data.setProgressTasks(
 //                taskDAO.getTasksByUser(userId)
 //        );
-        data.setTimetableList(timetableDAO.getUserTimetable(userId));  // thêm nè
+
+// 1. Lấy dữ liệu chưa sắp xếp (hoặc sắp xếp theo chuỗi)
+        List<TimetableSlot> timetableList = timetableDAO.getUserTimetable(userId);
+
+        // 2. SẮP XẾP LẠI THEO THỨ TỰ NGÀY TRONG TUẦN (DayOfWeek.ordinal)
+        Collections.sort(timetableList, Comparator
+            .comparing(TimetableSlot::getDayOfWeek, Comparator.nullsLast(Comparator.naturalOrder()))
+            .thenComparing(TimetableSlot::getStartTime)
+        );
+
+        data.setTimetableList(timetableList);
 
         return data;
     }

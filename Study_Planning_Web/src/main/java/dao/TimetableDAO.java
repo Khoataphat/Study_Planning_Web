@@ -76,7 +76,7 @@ public class TimetableDAO {
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
 // ********** SỬA Ở ĐÂY **********
             // Thay vì ps.setInt(1, userId);
-            ps.setString(1, String.valueOf(userId)); // Ép kiểu số thành chuỗi "25"
+            ps.setInt(1, userId); // Ép kiểu số thành chuỗi "25"
             // ********************************
 
             int rowCount = 0; // Thêm biến đếm
@@ -98,7 +98,7 @@ public class TimetableDAO {
                     int slotUserId = rs.getInt("user_id");
                     // 3. day_of_week
                     String dayString = rs.getString("day_of_week");
-                    DayOfWeek dayOfWeek = null;//mapDayOfWeek(dayString);
+                    DayOfWeek dayOfWeek = mapDayOfWeek(dayString);
                     // 4. schedule_date
                     LocalDate scheduleDate = null;//rs.getDate("schedule_date") != null ? rs.getDate("schedule_date").toLocalDate() : null;
                     // 5. start_time
