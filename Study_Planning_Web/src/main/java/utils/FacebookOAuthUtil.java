@@ -4,6 +4,7 @@
  */
 package utils;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -12,9 +13,11 @@ import java.net.URLEncoder;
  * @author Admin
  */
 public class FacebookOAuthUtil {
+    
+    private static final Dotenv dotenv = Dotenv.load();
 
-    public static final String CLIENT_ID = "825311667144555";
-    public static final String CLIENT_SECRET = "e55c9520d0554bacea54f174e9b9fd59";
+    public static final String CLIENT_ID = dotenv.get("FACEBOOK_APP_ID");
+    public static final String CLIENT_SECRET = dotenv.get("FACEBOOK_APP_SECRET");
     public static final String REDIRECT_URI = "http://localhost:8080/auth/facebook/callback";
 
     public static String getLoginURL() throws UnsupportedEncodingException {
