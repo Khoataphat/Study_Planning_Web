@@ -22,7 +22,18 @@ public class SettingService {
         return dao.getByUserId(userId);
     }
 
-    public void save(UserSetting setting) throws Exception {
+public void save(UserSetting setting) throws Exception {
+    // 1. Kiểm tra xem cài đặt đã tồn tại hay chưa
+    UserSetting existingSetting = dao.getByUserId(setting.getUserId());
+    
+    if (existingSetting != null) {
+        // 2. Nếu đã tồn tại, gọi UPDATE
+        System.out.println("DEBUG SERVICE: Cài dat dã ton tai. Thuc hien UPDATE.");
         dao.update(setting);
+    } else {
+        // 3. Nếu chưa tồn tại, gọi INSERT (cần thêm phương thức insert vào DAO)
+        System.out.println("DEBUG SERVICE: Cài dat chua ton tai. Thuc hien INSERT.");
+        dao.insert(setting); 
     }
+}
 }

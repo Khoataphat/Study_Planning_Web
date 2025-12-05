@@ -101,7 +101,7 @@
                         <p class="text-slate-500 dark:text-slate-400">Đây là trang thêm task</p>
                     </div>
                     <div class="flex items-center space-x-4">
-                        <button class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" aria-label="Settings">
+                        <button class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" aria-label="Settings" onclick="loadSettingsAndOpen()">
                             <span class="material-icons-outlined text-slate-600 dark:text-slate-300">settings</span>
                         </button>
                         <a href="/logout" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" aria-label="Logout">
@@ -258,5 +258,6 @@
 <!-- khoa -->
     <script src="/resources/js/sidebar.js"></script>
 <!-- khoa -->
+    <script src="/resources/js/setting.js"></script>
 </body>
 </html>

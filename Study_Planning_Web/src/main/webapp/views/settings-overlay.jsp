@@ -15,16 +15,16 @@
             </span>
             <h1 class="text-3xl font-bold text-text-light dark:text-text-dark">Cài đặt</h1>
         </div>
-        <form class="space-y-6">
+        <form class="space-y-6" id="settingForm">
             <div>
                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2"
                        for="theme-select">Theme:</label>
                 <div class="relative">
                     <select
                         class="w-full appearance-none rounded border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark py-2 pl-3 pr-10 text-base focus:border-primary focus:outline-none focus:ring-primary dark:focus:border-primary"
-                        id="theme-select">
-                        <option>Light</option>
-                        <option>Dark</option>
+                        id="theme-select" name="theme">
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
                     </select>
                     <!---
                     <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
@@ -44,9 +44,9 @@
                 <div class="relative">
                     <select
                         class="w-full appearance-none rounded border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark py-2 pl-3 pr-10 text-base focus:border-primary focus:outline-none focus:ring-primary dark:focus:border-primary"
-                        id="language-select">
-                        <option>Tiếng Việt</option>
-                        <option>English</option>
+                        id="language-select" name="language">
+                        <option value="vi">Tiếng Việt</option>
+                        <option value="en">English</option>
                     </select>
                     <!---
                     <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
@@ -124,4 +124,5 @@
             </div>
         </form>
     </div>
+            <script src="/resources/js/setting.js"></script>
 </div>
