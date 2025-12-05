@@ -12,9 +12,9 @@ import java.sql.DriverManager;
  * @author Admin
  */
 public class DBUtil {
-    private static final String URL = "jdbc:mysql://localhost:3306/spd";
+    private static final String URL = "jdbc:mysql://localhost:3306/study_planning_db";
     private static final String USER = "root";
-    private static final String PASS = "Anhang@204";
+    private static final String PASS = "123456";
 
     public static Connection getConnection() {
         try {
