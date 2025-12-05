@@ -9,7 +9,7 @@ function loadSchedules() {
     const container = document.getElementById('scheduleListContainer');
 
     // Fetch all collections from server
-    fetch('/Schedule_Student/user/collections?action=list')
+    fetch('/user/collections?action=list')
         .then(response => response.json())
         .then(collections => {
             if (collections && collections.length > 0) {
@@ -34,7 +34,7 @@ function renderScheduleCard(container, collection) {
     card.classList.add('schedule-card', 'bg-white/60', 'backdrop-blur-xl', 'rounded-3xl', 'p-6', 'shadow-sm', 'border', 'border-white/50', 'flex', 'flex-col', 'min-h-[250px]', 'relative', 'group');
 
     // Get schedule count for this collection
-    fetch(`/Schedule_Student/user/schedule?action=count&collectionId=${collection.collectionId}`)
+    fetch(`/user/schedule?action=count&collectionId=${collection.collectionId}`)
         .then(response => response.json())
         .then(data => {
             const scheduleCount = data.count || 0;
@@ -80,7 +80,7 @@ function renderScheduleCard(container, collection) {
  * Open designer for a specific collection
  */
 function openDesigner(collectionId) {
-    window.location.href = 'designer.jsp?collectionId=' + collectionId;
+    window.location.href = '/designer?collectionId=' + collectionId;
 }
 
 /**
@@ -128,7 +128,7 @@ function confirmRename() {
     }
 
     // Send update request
-    fetch('/Schedule_Student/user/collections?id=' + currentRenameId, {
+    fetch('/user/collections?id=' + currentRenameId, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -175,7 +175,7 @@ document.addEventListener('keydown', function (event) {
  */
 function deleteCollection(collectionId) {
     if (confirm('Bạn có chắc muốn xóa lịch này? Tất cả các sự kiện sẽ bị xóa.')) {
-        fetch('/Schedule_Student/user/collections?id=' + collectionId, {
+        fetch('/user/collections?id=' + collectionId, {
             method: 'DELETE'
         })
             .then(response => response.json())
@@ -242,7 +242,7 @@ function createNewSchedule() {
     if (collectionName && collectionName.trim() !== '') {
         console.log('Sending POST request to create collection...'); // DEBUG
 
-        fetch('/Schedule_Student/user/collections', {
+        fetch('/user/collections', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -259,7 +259,7 @@ function createNewSchedule() {
                 if (data.success && data.collectionId) {
                     console.log('Success! Redirecting to designer...'); // DEBUG
                     // Redirect to designer with new collection ID
-                    window.location.href = 'designer.jsp?collectionId=' + data.collectionId;
+                    window.location.href = '/designer?collectionId=' + data.collectionId;
                 } else {
                     console.error('Failed to create collection:', data); // DEBUG
                     alert('Lỗi khi tạo lịch: ' + (data.message || data.error));

@@ -3,6 +3,7 @@ package controller;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import model.Task;
+import model.User;
 import service.TaskService;
 import utils.JsonUtil;
 
@@ -45,12 +46,14 @@ public class TaskController extends HttpServlet {
         try {
             // Get user ID from session
             HttpSession session = request.getSession(false);
-            if (session == null || session.getAttribute("userId") == null) {
+            User user = (session != null) ? (User) session.getAttribute("user") : null;
+
+            if (user == null) {
                 sendErrorResponse(response, "User not logged in", 401);
                 return;
             }
 
-            int userId = (int) session.getAttribute("userId");
+            int userId = user.getUserId();
             String action = request.getParameter("action");
 
             if (action == null) {
@@ -90,12 +93,14 @@ public class TaskController extends HttpServlet {
         try {
             // Get user ID from session
             HttpSession session = request.getSession(false);
-            if (session == null || session.getAttribute("userId") == null) {
+            User user = (session != null) ? (User) session.getAttribute("user") : null;
+
+            if (user == null) {
                 sendErrorResponse(response, "User not logged in", 401);
                 return;
             }
 
-            int userId = (int) session.getAttribute("userId");
+            int userId = user.getUserId();
 
             // Read JSON body
             StringBuilder sb = new StringBuilder();
@@ -109,7 +114,7 @@ public class TaskController extends HttpServlet {
 
             // Parse JSON to Task with Timestamp deserializer
             Gson gson = new GsonBuilder()
-                    .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                    .setDateFormat("yyyy-MM-dd HH:mm:ss")
                     .create();
 
             Task task = gson.fromJson(jsonData, Task.class);
@@ -154,7 +159,9 @@ public class TaskController extends HttpServlet {
         try {
             // Get user ID from session
             HttpSession session = request.getSession(false);
-            if (session == null || session.getAttribute("userId") == null) {
+            User user = (session != null) ? (User) session.getAttribute("user") : null;
+
+            if (user == null) {
                 sendErrorResponse(response, "User not logged in", 401);
                 return;
             }
@@ -179,7 +186,7 @@ public class TaskController extends HttpServlet {
 
             // Parse JSON to Task
             Gson gson = new GsonBuilder()
-                    .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                    .setDateFormat("yyyy-MM-dd HH:mm:ss")
                     .create();
 
             Task task = gson.fromJson(jsonData, Task.class);
@@ -218,7 +225,9 @@ public class TaskController extends HttpServlet {
         try {
             // Get user ID from session
             HttpSession session = request.getSession(false);
-            if (session == null || session.getAttribute("userId") == null) {
+            User user = (session != null) ? (User) session.getAttribute("user") : null;
+
+            if (user == null) {
                 sendErrorResponse(response, "User not logged in", 401);
                 return;
             }

@@ -32,7 +32,7 @@ public class ScheduleCollectionService {
     /**
      * Create a new collection
      */
-    public int createCollection(int userId, String collectionName) {
+    public int createCollection(int userId, String collectionName) throws Exception {
         // Validate collection name
         if (collectionName == null || collectionName.trim().isEmpty()) {
             return -1;

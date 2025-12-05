@@ -4,11 +4,13 @@ let allTasks = [];
 let currentFilter = 'all';
 let currentWeekOffset = 0;
 let editingTaskId = null;
+let currentCollectionId = null;
+let weeklySchedule = {};
 
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function () {
     loadTasks();
-    renderCalendar();
+    loadScheduleCollections();
     setupFormHandler();
 });
 
@@ -16,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
  * Load all tasks from server
  */
 function loadTasks() {
-    fetch('/Schedule_Student/user/tasks?action=list')
+    fetch('/user/tasks?action=list')
         .then(response => response.json())
         .then(tasks => {
             allTasks = tasks;
@@ -27,6 +29,61 @@ function loadTasks() {
             console.error('Error loading tasks:', error);
             showEmptyState('Error loading tasks');
         });
+}
+
+/**
+ * Load schedule collections for dropdown
+ */
+function loadScheduleCollections() {
+    fetch('/user/collections?action=list')
+        .then(response => response.json())
+        .then(collections => {
+            const select = document.getElementById('scheduleSelect');
+            select.innerHTML = '<option value="">Select a schedule...</option>';
+
+            if (collections && collections.length > 0) {
+                collections.forEach(collection => {
+                    const option = document.createElement('option');
+                    option.value = collection.collectionId;
+                    option.textContent = collection.collectionName;
+                    select.appendChild(option);
+                });
+
+                // Select first one by default
+                select.value = collections[0].collectionId;
+                currentCollectionId = collections[0].collectionId;
+                loadSchedule(currentCollectionId);
+            }
+        })
+        .catch(error => console.error('Error loading collections:', error));
+}
+
+/**
+ * Handle schedule change
+ */
+function changeSchedule() {
+    const select = document.getElementById('scheduleSelect');
+    currentCollectionId = select.value;
+    if (currentCollectionId) {
+        loadSchedule(currentCollectionId);
+    } else {
+        renderCalendar(); // Clear calendar
+    }
+}
+
+/**
+ * Load weekly schedule
+ */
+function loadSchedule(collectionId) {
+    if (!collectionId) return;
+
+    fetch(`/user/schedule?action=weekly&collectionId=${collectionId}`)
+        .then(response => response.json())
+        .then(data => {
+            weeklySchedule = data;
+            renderCalendar();
+        })
+        .catch(error => console.error('Error loading schedule:', error));
 }
 
 /**
@@ -70,6 +127,22 @@ function renderTaskList() {
 function createTaskCard(task) {
     const card = document.createElement('div');
     card.className = `task-card priority-${task.priority}`;
+    card.draggable = true; // Enable dragging
+    card.dataset.taskId = task.taskId;
+    card.dataset.duration = task.duration;
+
+    // Drag start handler
+    card.ondragstart = (e) => {
+        e.dataTransfer.setData('taskId', task.taskId);
+        e.dataTransfer.setData('duration', task.duration);
+        e.dataTransfer.effectAllowed = 'copy';
+        card.classList.add('opacity-50');
+    };
+
+    card.ondragend = () => {
+        card.classList.remove('opacity-50');
+    };
+
     if (editingTaskId === task.taskId) {
         card.classList.add('selected');
     }
@@ -123,7 +196,7 @@ function setupFormHandler() {
             description: document.getElementById('taskDescription').value,
             priority: document.getElementById('taskPriority').value,
             status: document.getElementById('taskStatus').value,
-            deadline: new Date(document.getElementById('taskDeadline').value).toISOString(),
+            deadline: formatDateForApi(new Date(document.getElementById('taskDeadline').value)),
             duration: parseInt(document.getElementById('taskDuration').value)
         };
 
@@ -150,7 +223,7 @@ function setupFormHandler() {
  * Create new task
  */
 async function createTask(taskData) {
-    const response = await fetch('/Schedule_Student/user/tasks', {
+    const response = await fetch('/user/tasks', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -171,7 +244,7 @@ async function createTask(taskData) {
  * Update existing task
  */
 async function updateTask(taskId, taskData) {
-    const response = await fetch(`/Schedule_Student/user/tasks?id=${taskId}`, {
+    const response = await fetch(`/user/tasks?id=${taskId}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json'
@@ -260,7 +333,7 @@ function editTask(taskId) {
 
     // Format deadline for datetime-local input
     const deadline = new Date(task.deadline);
-    const formattedDeadline = deadline.toISOString().slice(0, 16);
+    const formattedDeadline = formatForInput(deadline);
     document.getElementById('taskDeadline').value = formattedDeadline;
 
     // Update button text
@@ -284,7 +357,7 @@ async function deleteTask(taskId) {
     }
 
     try {
-        const response = await fetch(`/Schedule_Student/user/tasks?id=${taskId}`, {
+        const response = await fetch(`/user/tasks?id=${taskId}`, {
             method: 'DELETE'
         });
 
@@ -326,7 +399,7 @@ function filterByStatus(status) {
 }
 
 /**
- * Render calendar
+ * Render calendar grid
  */
 function renderCalendar() {
     const calendarGrid = document.getElementById('calendarGrid');
@@ -337,7 +410,13 @@ function renderCalendar() {
     const startOfWeek = new Date(today);
     startOfWeek.setDate(today.getDate() - today.getDay() + (currentWeekOffset * 7));
 
-    const weekDays = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+    // Adjust to Monday start if needed, but keeping Sunday start for consistency with backend
+    // Backend uses Mon, Tue... so we need to map correctly
+
+    const endOfWeek = new Date(startOfWeek);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    document.getElementById('weekRangeDisplay').textContent =
+        `${formatDate(startOfWeek)} - ${formatDate(endOfWeek)}`;
 
     // Update week label
     if (currentWeekOffset === 0) {
@@ -350,73 +429,218 @@ function renderCalendar() {
         document.getElementById('weekLabel').textContent = `${currentWeekOffset} weeks ${currentWeekOffset > 0 ? 'ahead' : 'ago'}`;
     }
 
-    // Update week range display
-    const endOfWeek = new Date(startOfWeek);
-    endOfWeek.setDate(startOfWeek.getDate() + 6);
-    document.getElementById('weekRangeDisplay').textContent =
-        `${formatDate(startOfWeek)} - ${formatDate(endOfWeek)}`;
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    // Note: startOfWeek is Sunday. If we want Mon-Sun columns, we need to adjust logic.
+    // The table header is Time, Mon, Tue... Sun.
+    // So we need to map columns 1-7 to Mon-Sun.
 
-    // Render each day
-    for (let i = 0; i < 7; i++) {
-        const currentDay = new Date(startOfWeek);
-        currentDay.setDate(startOfWeek.getDate() + i);
+    // Generate time slots (7 AM to 10 PM)
+    for (let hour = 7; hour <= 22; hour++) {
+        const row = document.createElement('tr');
+        row.className = 'border-b border-slate-100 hover:bg-slate-50/50 transition-colors h-20';
 
-        const dayCard = createDayCard(currentDay, weekDays[i]);
-        calendarGrid.appendChild(dayCard);
+        // Time column
+        const timeCell = document.createElement('td');
+        timeCell.className = 'p-2 text-xs text-slate-400 font-medium border-r border-slate-200 align-top text-center';
+        timeCell.textContent = `${hour}:00`;
+        row.appendChild(timeCell);
+
+        // Day columns
+        days.forEach((day, index) => {
+            const cell = document.createElement('td');
+            // Add border-r to all except the last column
+            const borderClass = index < days.length - 1 ? 'border-r border-slate-100' : '';
+            cell.className = `p-1 ${borderClass} relative align-top transition-all`;
+            cell.dataset.day = day;
+            cell.dataset.hour = hour;
+
+            // Drag over handler
+            cell.ondragover = (e) => {
+                e.preventDefault();
+                cell.classList.add('bg-blue-50');
+            };
+
+            cell.ondragleave = () => {
+                cell.classList.remove('bg-blue-50');
+            };
+
+            // Drop handler
+            cell.ondrop = (e) => {
+                e.preventDefault();
+                cell.classList.remove('bg-blue-50');
+                const taskId = e.dataTransfer.getData('taskId');
+                const duration = e.dataTransfer.getData('duration');
+                if (taskId) {
+                    addTaskToSchedule(taskId, day, hour, duration);
+                }
+            };
+
+            // Render events if any
+            if (weeklySchedule[day]) {
+                const events = weeklySchedule[day].filter(e => {
+                    const startHour = parseInt(e.startTime.split(':')[0]);
+                    return startHour === hour;
+                });
+
+                events.forEach(event => {
+                    const eventDiv = document.createElement('div');
+                    eventDiv.className = 'bg-indigo-50 text-indigo-700 border border-indigo-200 p-1.5 rounded-md text-xs mb-1 font-medium cursor-pointer hover:bg-indigo-100 transition-colors truncate shadow-sm';
+                    eventDiv.textContent = event.subject;
+                    eventDiv.title = `${event.subject} (${event.startTime} - ${event.endTime})`;
+                    cell.appendChild(eventDiv);
+                });
+            }
+
+            row.appendChild(cell);
+        });
+
+        calendarGrid.appendChild(row);
     }
 }
 
 /**
- * Create day card for calendar
+ * Add task to schedule
  */
-function createDayCard(date, dayName) {
-    const card = document.createElement('div');
-    card.className = 'calendar-day';
+function addTaskToSchedule(taskId, day, startHour, duration) {
+    if (!currentCollectionId) {
+        alert('Please select a schedule first!');
+        return;
+    }
 
-    // Check if today
+    const task = allTasks.find(t => t.taskId == taskId);
+    if (!task) return;
+
+    // Calculate new deadline based on schedule slot
+    const newDeadline = getDateFromDayAndHour(day, startHour);
+
+    // Update task deadline first
+    const updatedTask = { ...task };
+    // Format for API: yyyy-MM-dd HH:mm:ss
+    updatedTask.deadline = formatDateForApi(newDeadline);
+
+    // Call update task API
+    fetch(`/user/tasks?id=${taskId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updatedTask)
+    })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                // Update local task list
+                task.deadline = updatedTask.deadline;
+                renderTaskList(); // Re-sort and render
+
+                // Now add to schedule
+                addToScheduleBackend(task, day, startHour, duration);
+            } else {
+                alert('Failed to update task time: ' + (result.message || result.error));
+            }
+        })
+        .catch(error => {
+            console.error('Error updating task:', error);
+            alert('Error updating task time');
+        });
+}
+
+/**
+ * Helper to add to schedule backend
+ */
+function addToScheduleBackend(task, day, startHour, duration) {
+    // Calculate times
+    const start = `${startHour.toString().padStart(2, '0')}:00:00`;
+
+    // Calculate end time based on duration (default 60 mins if not set)
+    const durationMins = parseInt(duration) || 60;
+    const endDate = new Date();
+    endDate.setHours(startHour);
+    endDate.setMinutes(durationMins);
+    const endHour = endDate.getHours().toString().padStart(2, '0');
+    const endMin = endDate.getMinutes().toString().padStart(2, '0');
+    const end = `${endHour}:${endMin}:00`;
+
+    const scheduleData = {
+        collectionId: parseInt(currentCollectionId),
+        dayOfWeek: day,
+        startTime: start,
+        endTime: end,
+        subject: task.title,
+        type: 'self-study' // Default type
+    };
+
+    fetch('/user/schedule?action=add', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(scheduleData)
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Reload schedule to show new event
+                loadSchedule(currentCollectionId);
+            } else {
+                alert('Failed to add to schedule: ' + (data.message || 'Time conflict'));
+            }
+        })
+        .catch(error => {
+            console.error('Error adding to schedule:', error);
+            alert('Error adding to schedule');
+        });
+}
+
+/**
+ * Get Date object from Day Name and Hour
+ */
+function getDateFromDayAndHour(dayName, hour) {
     const today = new Date();
-    const isToday = date.toDateString() === today.toDateString();
-    if (isToday) {
-        card.classList.add('today');
-    }
+    const currentDayIndex = today.getDay(); // 0 (Sun) - 6 (Sat)
 
-    // Get tasks for this day
-    const dayTasks = allTasks.filter(task => {
-        const taskDate = new Date(task.deadline);
-        return taskDate.toDateString() === date.toDateString();
-    });
+    // Map day name to index (Mon=1, ... Sun=0/7)
+    const dayMap = { 'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6, 'Sun': 0 };
+    let targetDayIndex = dayMap[dayName];
 
-    // Sort by priority (high first) then by time
-    dayTasks.sort((a, b) => {
-        const priorityOrder = { high: 0, medium: 1, low: 2 };
-        const priorityDiff = priorityOrder[a.priority] - priorityOrder[b.priority];
-        if (priorityDiff !== 0) return priorityDiff;
-        return new Date(a.deadline) - new Date(b.deadline);
-    });
+    // Fix logic for Mon-Sun week:
+    // Treat Sun as 7.
+    let currentDayIso = currentDayIndex === 0 ? 7 : currentDayIndex;
+    let targetDayIso = targetDayIndex === 0 ? 7 : targetDayIndex;
 
-    card.innerHTML = `
-        <div class="calendar-day-header">${dayName}</div>
-        <div class="calendar-day-date">${date.getDate()}</div>
-        <div class="calendar-tasks">
-            ${dayTasks.length > 0
-            ? dayTasks.map(task => createCalendarTaskDot(task)).join('')
-            : '<div class="empty-state"><i class="fa-solid fa-calendar-day"></i><p>No tasks</p></div>'}
-        </div>
-    `;
+    let diff = targetDayIso - currentDayIso;
+    diff += (currentWeekOffset * 7);
 
-    return card;
+    const targetDate = new Date(today);
+    targetDate.setDate(today.getDate() + diff);
+    targetDate.setHours(hour, 0, 0, 0);
+
+    return targetDate;
 }
 
 /**
- * Create calendar task dot
+ * Format date for API (yyyy-MM-dd HH:mm:ss)
  */
-function createCalendarTaskDot(task) {
-    return `
-        <div class="calendar-task-dot priority-${task.priority}" onclick="editTask(${task.taskId})" title="${escapeHtml(task.title)}">
-            <div class="dot-icon"></div>
-            <div class="flex-1 truncate">${escapeHtml(task.title)}</div>
-        </div>
-    `;
+function formatDateForApi(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
+
+/**
+ * Format date for input (yyyy-MM-ddTHH:mm)
+ */
+function formatForInput(date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
 }
 
 /**
