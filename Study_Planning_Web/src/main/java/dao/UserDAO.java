@@ -7,7 +7,8 @@ package dao;
 import utils.DBUtil;
 import model.User;
 import java.sql.*;
-
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 /**
  *
  * @author Admin
@@ -51,6 +52,43 @@ public class UserDAO {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    public boolean markSetupAfterDone(int userId) {
+        String sql = "UPDATE users SET has_setup = true, updated_at = ? WHERE user_id = ?";
+        
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
+            stmt.setInt(2, userId);
+            
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+            
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi đánh dấu setup: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+    public boolean hasUserSetup(int userId) {
+        String sql = "SELECT has_setup FROM users WHERE user_id = ?"; // ✅ Đã sửa
+        
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            
+            if (rs.next()) { // ✅ Đã sửa
+                return rs.getBoolean("has_setup"); // ✅ Đã sửa
+            }
+            
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi kiểm tra setup: " + e.getMessage());
+            e.printStackTrace();
+        }
+        return false; // ✅ Thêm return mặc định
     }
 
     //dùng cho đăng kí
