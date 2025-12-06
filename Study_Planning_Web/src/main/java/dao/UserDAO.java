@@ -228,4 +228,29 @@ public class UserDAO {
         ps.executeUpdate();
     }
 }
+
+    /**
+     * Check if a user exists in the database by user_id
+     * 
+     * @param userId The user ID to check
+     * @return true if user exists, false otherwise
+     */
+    public boolean userExists(int userId) {
+        String sql = "SELECT COUNT(*) FROM users WHERE user_id = ?";
+
+        try (Connection con = DBUtil.getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
 }
