@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
         loadScheduleFromServer(currentCollectionId);
     } else {
         alert('Collection ID not specified!');
-        window.location.href = 'schedule.jsp';
+        window.location.href = '/schedule';
     }
 
     generateTimeSlots();
@@ -28,7 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
  * Load collection info from server
  */
 function loadCollectionInfo(collectionId) {
-    fetch('/Schedule_Student/user/collections?action=get&id=' + collectionId)
+    fetch('/user/collections?action=get&id=' + collectionId)
         .then(response => response.json())
         .then(collection => {
             if (collection) {
@@ -66,7 +66,7 @@ function saveCollectionName() {
 
     const newName = editElement.textContent.trim();
     if (newName && newName !== currentCollectionName) {
-        fetch('/Schedule_Student/user/collections?id=' + currentCollectionId, {
+        fetch('/user/collections?id=' + currentCollectionId, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -95,7 +95,7 @@ function saveCollectionName() {
  * Load schedule from server via AJAX
  */
 function loadScheduleFromServer(collectionId) {
-    fetch('/Schedule_Student/user/schedule?action=weekly&collectionId=' + collectionId)
+    fetch('/user/schedule?action=weekly&collectionId=' + collectionId)
         .then(response => response.json())
         .then(data => {
             if (data) {
@@ -495,7 +495,7 @@ function saveSchedule() {
     });
 
     // Send to server
-    fetch('/Schedule_Student/user/schedule?collectionId=' + currentCollectionId, {
+    fetch('/user/schedule?collectionId=' + currentCollectionId, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -506,7 +506,7 @@ function saveSchedule() {
         .then(data => {
             if (data.success) {
                 alert('Đã lưu lịch thành công!');
-                window.location.href = 'schedule.jsp';
+                window.location.href = '/schedule';
             } else {
                 // Handle both message and error fields
                 const msg = data.message || data.error || 'Lỗi không xác định';

@@ -75,19 +75,19 @@
                     </a>
 
                     <a class="nav-link w-full rounded-lg transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
-                       href="${pageContext.request.contextPath}/views/schedule.jsp">
+                       href="${pageContext.request.contextPath}/schedule">
                         <span class="material-icons-outlined text-3xl shrink-0">event</span>
                         <span class="ml-4 whitespace-nowrap sidebar-text">Lịch của tôi</span>
                     </a>
 
                     <a class="nav-link w-full rounded-lg transition-colors bg-primary shadow-md shadow-primary/30 text-white"
-                       href="${pageContext.request.contextPath}/views/tasks.jsp">
+                       href="${pageContext.request.contextPath}/tasks">
                         <span class="material-icons-outlined text-3xl shrink-0">add_task</span>
                         <span class="ml-4 whitespace-nowrap sidebar-text">Nhiệm vụ</span>
                     </a>
 
                     <a class="nav-link w-full rounded-lg transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
-                       href="${pageContext.request.contextPath}/views/statistics.jsp">
+                       href="${pageContext.request.contextPath}/statistics">
                         <span class="material-icons-outlined text-3xl shrink-0">interests</span>
                         <span class="ml-4 whitespace-nowrap sidebar-text">Thống kê</span>
                     </a>
@@ -228,7 +228,13 @@
                 <div class="px-8 py-5 bg-white/60 backdrop-blur-md border-b border-slate-200 flex items-center justify-between">
                     <div>
                         <h2 class="text-xl font-bold text-slate-dark mb-1">Generated Timetable</h2>
-                        <p class="text-sm text-slate-500" id="weekRangeDisplay">Loading...</p>
+                        <div class="flex items-center gap-2">
+                            <p class="text-sm text-slate-500" id="weekRangeDisplay">Loading...</p>
+                            <span class="text-slate-300">|</span>
+                            <select id="scheduleSelect" onchange="changeSchedule()" class="text-sm border-none bg-transparent text-primary font-semibold focus:ring-0 cursor-pointer p-0 pr-6">
+                                <option value="">Loading schedules...</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="flex items-center gap-3">
                         <button onclick="navigateWeek(-1)" class="week-nav-btn">
@@ -245,9 +251,26 @@
                 </div>
 
                 <!-- Calendar Grid -->
-                <div class="flex-1 overflow-auto p-8">
-                    <div class="calendar-grid" id="calendarGrid">
-                        <!-- Calendar will be dynamically generated -->
+                <!-- Calendar Grid -->
+                <div class="flex-1 overflow-auto p-4"> <!-- Reduced padding for better fit -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                        <table class="w-full border-collapse table-fixed"> <!-- Added table-fixed -->
+                            <thead>
+                                <tr class="bg-slate-50 border-b border-slate-200">
+                                    <th class="p-3 text-left text-xs font-semibold text-slate-500 border-r border-slate-200 w-20">Time</th>
+                                    <th class="p-3 text-center text-xs font-semibold text-slate-700 border-r border-slate-200">Mon</th>
+                                    <th class="p-3 text-center text-xs font-semibold text-slate-700 border-r border-slate-200">Tue</th>
+                                    <th class="p-3 text-center text-xs font-semibold text-slate-700 border-r border-slate-200">Wed</th>
+                                    <th class="p-3 text-center text-xs font-semibold text-slate-700 border-r border-slate-200">Thu</th>
+                                    <th class="p-3 text-center text-xs font-semibold text-slate-700 border-r border-slate-200">Fri</th>
+                                    <th class="p-3 text-center text-xs font-semibold text-slate-700 border-r border-slate-200">Sat</th>
+                                    <th class="p-3 text-center text-xs font-semibold text-slate-700">Sun</th>
+                                </tr>
+                            </thead>
+                            <tbody id="calendarGrid">
+                                <!-- Calendar rows will be dynamically generated here -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

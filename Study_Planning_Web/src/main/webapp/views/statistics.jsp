@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Schedules - PlanZ</title>
+    <title>Statistics - PlanZ</title>
     
     <!-- Tailwind CSS & Plugins -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -19,7 +19,6 @@
     <!-- Custom Config & Styles -->
     <script src="../resources/js/tailwind-config.js"></script>
     <link rel="stylesheet" href="../resources/css/pastel-overrides.css">
-    <link rel="stylesheet" href="../resources/css/schedule.css">
     
     <!-- khoa -->
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet" />
@@ -30,17 +29,10 @@
                 theme: {
                     extend: {
                         colors: {
-                            // Đã thay đổi primary về một màu nổi hơn cho dễ nhìn
-                            primary: "#4F46E5", // Thay #A5B4FC bằng Indigo 600
+                            primary: "#4F46E5",
                             "background-light": "#F8FAFC",
                             "background-dark": "#0F172A",
-                            // New pastel colors
-                            "pastel-purple": "#A5B4FC",
-                            "pastel-light-purple": "#C7D2FE",
-                            "pastel-pink": "#F9A8D4",
-                            "pastel-yellow": "#FDE68A",
                             "text-color": "#1E293B",
-                            "pinky": "#F9A8D4",
                         },
                         fontFamily: {
                             display: ["Quicksand", "sans-serif"],
@@ -55,7 +47,6 @@
         <link rel="stylesheet" href="/resources/css/sidebar.css">
         <!-- khoa -->
 </head>
-<!-- khoa -->
 <body class="font-display bg-background-light dark:bg-background-dark text-text-color dark:text-slate-200">
         <div class="flex h-screen">
             <aside 
@@ -71,12 +62,12 @@
                 <nav class="flex flex-col space-y-2 flex-grow w-full">
 
                     <a class="nav-link w-full rounded-lg transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
-                       href="/dashboard">
+                       href="${pageContext.request.contextPath}/dashboard">
                         <span class="material-icons-outlined text-3xl shrink-0">dashboard</span>
                         <span class="ml-4 whitespace-nowrap sidebar-text">Bảng điều khiển</span>
                     </a>
 
-                    <a class="nav-link w-full rounded-lg transition-colors bg-primary shadow-md shadow-primary/30 text-white"
+                    <a class="nav-link w-full rounded-lg transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
                        href="${pageContext.request.contextPath}/schedule">
                         <span class="material-icons-outlined text-3xl shrink-0">event</span>
                         <span class="ml-4 whitespace-nowrap sidebar-text">Lịch của tôi</span>
@@ -88,7 +79,7 @@
                         <span class="ml-4 whitespace-nowrap sidebar-text">Nhiệm vụ</span>
                     </a>
 
-                    <a class="nav-link w-full rounded-lg transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
+                    <a class="nav-link w-full rounded-lg transition-colors bg-primary shadow-md shadow-primary/30 text-white"
                        href="${pageContext.request.contextPath}/statistics">
                         <span class="material-icons-outlined text-3xl shrink-0">interests</span>
                         <span class="ml-4 whitespace-nowrap sidebar-text">Thống kê</span>
@@ -99,8 +90,8 @@
             <main id="mainContent" class="flex-1 flex flex-col p-6 lg:p-8 overflow-y-auto">
                 <header class="flex justify-between items-center mb-6">
                     <div>
-                        <h1 class="text-2xl font-bold text-text-color dark:text-white">Chào buổi sáng, ${user.username}!</h1>
-                        <p class="text-slate-500 dark:text-slate-400">Đây là trang tạo thời khóa biểu</p>
+                        <h1 class="text-2xl font-bold text-text-color dark:text-white">Thống Kê</h1>
+                        <p class="text-slate-500 dark:text-slate-400">Xem thống kê học tập của bạn</p>
                     </div>
                     <div class="flex items-center space-x-4">
                         <button class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" aria-label="Settings">
@@ -111,48 +102,17 @@
                         </a>
                     </div>
                 </header>
-<!-- khoa -->
-            <!-- Schedule Grid -->
-            <div class="flex-1 overflow-y-auto p-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto" id="scheduleListContainer">
-                    
-                    <!-- Create New Schedule Card -->
-                    <a href="javascript:createNewSchedule()" class="schedule-card card-add-new bg-white/40 backdrop-blur-xl rounded-3xl p-8 shadow-sm flex flex-col items-center justify-center min-h-[250px] text-center group cursor-pointer">
-                        <i class="fa-solid fa-plus-circle text-6xl text-primary/60 group-hover:text-primary transition-colors mb-4"></i>
-                        <span class="text-lg font-bold text-slate-600 group-hover:text-primary transition-colors">Create New Schedule</span>
-                        <p class="text-sm text-slate-400 mt-2">Start planning your semester</p>
-                    </a>
 
-                    <!-- Schedule cards will be dynamically added here -->
-
+                <div class="flex-1 flex items-center justify-center">
+                    <div class="text-center">
+                        <span class="material-icons-outlined text-6xl text-slate-300 mb-4">analytics</span>
+                        <h2 class="text-xl font-semibold text-slate-600">Tính năng đang phát triển</h2>
+                        <p class="text-slate-400">Vui lòng quay lại sau!</p>
+                    </div>
                 </div>
-            </div>
-        </main>
-    </div>
-
-    <!-- Rename Modal -->
-    <div id="renameModal" class="modal-overlay hidden">
-        <div class="modal-container">
-            <div class="modal-header">
-                <h3 class="modal-title">Đổi tên lịch học</h3>
-                <button onclick="closeRenameModal()" class="modal-close">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <label for="renameInput" class="modal-label">Tên lịch học</label>
-                <input type="text" id="renameInput" class="modal-input" placeholder="Nhập tên mới...">
-            </div>
-            <div class="modal-footer">
-                <button onclick="closeRenameModal()" class="modal-btn modal-btn-cancel">Hủy</button>
-                <button onclick="confirmRename()" class="modal-btn modal-btn-primary">Lưu</button>
-            </div>
+            </main>
         </div>
-    </div>
 
-    <script src="../resources/js/schedule.js"></script>
-<!-- khoa -->
     <script src="/resources/js/sidebar.js"></script>
-<!-- khoa -->
 </body>
 </html>

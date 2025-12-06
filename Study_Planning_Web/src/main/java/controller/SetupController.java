@@ -84,6 +84,7 @@ public class SetupController extends HttpServlet {
 
             // 5. Chuyển hướng người dùng đến Dashboard
             resp.sendRedirect(req.getContextPath() + "/views/home.html");
+            // --AnNX-- nên đổi sang thành dashboard.jsp nha
 
         } catch (Exception e) {
             System.err.println("Lỗi khi xử lý setup cơ bản: " + e.getMessage());

@@ -62,8 +62,30 @@ public class ScheduleCollectionDAO {
      * Insert new collection
      * Returns the generated collection_id
      */
-    public int insert(ScheduleCollection collection) {
-        String sql = "INSERT INTO schedule_collection (user_id, collection_name) VALUES (?, ?)";
+    public int insert(ScheduleCollection collection) throws SQLException {
+        System.out.println("DEBUG: Inserting collection: " + collection);
+        System.out.println("DEBUG: Collection user_id = " + collection.getUserId());
+        System.out.println("DEBUG: Collection name = " + collection.getCollectionName());
+
+        // VERIFICATION: Check if user_id exists RIGHT BEFORE insert
+        String checkSql = "SELECT user_id, username, email FROM users WHERE user_id = ?";
+        try (Connection checkConn = DBUtil.getConnection();
+                PreparedStatement checkStmt = checkConn.prepareStatement(checkSql)) {
+            checkStmt.setInt(1, collection.getUserId());
+            ResultSet rs = checkStmt.executeQuery();
+            if (rs.next()) {
+                System.out.println("DEBUG: ✅ User EXISTS in database:");
+                System.out.println("  - user_id: " + rs.getInt("user_id"));
+                System.out.println("  - username: " + rs.getString("username"));
+                System.out.println("  - email: " + rs.getString("email"));
+            } else {
+                System.out.println("DEBUG: ❌ User DOES NOT EXIST in database for user_id = " + collection.getUserId());
+            }
+        } catch (SQLException e) {
+            System.out.println("DEBUG: Error checking user existence: " + e.getMessage());
+        }
+
+        String sql = "INSERT INTO schedule_collection (user_id, collection_name, created_at) VALUES (?, ?, NOW())";
 
         try (Connection conn = DBUtil.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -71,18 +93,25 @@ public class ScheduleCollectionDAO {
             stmt.setInt(1, collection.getUserId());
             stmt.setString(2, collection.getCollectionName());
 
+            System.out.println("DEBUG: About to execute INSERT with user_id = " + collection.getUserId());
+
             int affectedRows = stmt.executeUpdate();
 
             if (affectedRows > 0) {
                 ResultSet rs = stmt.getGeneratedKeys();
                 if (rs.next()) {
-                    return rs.getInt(1);
+                    int generatedId = rs.getInt(1);
+                    System.out.println("DEBUG: ✅ INSERT SUCCESSFUL! Generated collection_id = " + generatedId);
+                    return generatedId;
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.out.println("DEBUG: ❌ INSERT FAILED!");
+            System.out.println("DEBUG: SQLException: " + e.getMessage());
+            System.out.println("DEBUG: SQLState: " + e.getSQLState());
+            System.out.println("DEBUG: ErrorCode: " + e.getErrorCode());
+            throw e; // Re-throw to be caught by controller
         }
-
         return -1;
     }
 
