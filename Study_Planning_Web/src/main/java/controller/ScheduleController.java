@@ -2,6 +2,7 @@ package controller;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import model.User;
 import model.UserSchedule;
 import service.ScheduleService;
 import utils.JsonUtil;
@@ -25,7 +26,7 @@ import java.util.Map;
 /**
  * Controller for handling schedule-related HTTP requests
  */
-@WebServlet(name = "ScheduleController", urlPatterns = {"/user/schedule"})
+@WebServlet(name = "ScheduleController", urlPatterns = { "/user/schedule" })
 public class ScheduleController extends HttpServlet {
     private final ScheduleService scheduleService = new ScheduleService();
 
@@ -45,13 +46,16 @@ public class ScheduleController extends HttpServlet {
 
         try {
             // Get user ID from session
+            // Get user ID from session
             HttpSession session = request.getSession(false);
-            if (session == null || session.getAttribute("userId") == null) {
+            User user = (session != null) ? (User) session.getAttribute("user") : null;
+
+            if (user == null) {
                 sendErrorResponse(response, "User not logged in", 401);
                 return;
             }
 
-            int userId = (int) session.getAttribute("userId");
+            int userId = user.getUserId();
             String action = request.getParameter("action");
 
             if (action == null) {
@@ -106,20 +110,22 @@ public class ScheduleController extends HttpServlet {
         try {
             // Get user ID from session
             // Get user ID from session
+            // Get user ID from session
             HttpSession session = request.getSession(false);
-            // TEMPORARY: Bypass login check for testing
-            int userId = 1;
-            if (session != null && session.getAttribute("userId") != null) {
-                userId = (int) session.getAttribute("userId");
-            }
+            User user = (session != null) ? (User) session.getAttribute("user") : null;
 
-            // Get collection ID from parameter
-            String collectionIdParam = request.getParameter("collectionId");
-            if (collectionIdParam == null) {
-                sendErrorResponse(response, "Collection ID is required", 400);
+            if (user == null) {
+                sendErrorResponse(response, "User not logged in", 401);
                 return;
             }
-            int collectionId = Integer.parseInt(collectionIdParam);
+
+            int userId = user.getUserId();
+            String action = request.getParameter("action");
+
+            // Define Gson for all operations
+            Gson gson = new com.google.gson.GsonBuilder()
+                    .registerTypeAdapter(java.sql.Time.class, new utils.SqlTimeDeserializer())
+                    .create();
 
             // Read JSON body
             StringBuilder sb = new StringBuilder();
@@ -128,17 +134,43 @@ public class ScheduleController extends HttpServlet {
             while ((line = reader.readLine()) != null) {
                 sb.append(line);
             }
-
             String jsonData = sb.toString();
-            
-            // Parse JSON to List<UserSchedule> with custom Time deserializer
-            Gson gson = new com.google.gson.GsonBuilder()
-                .registerTypeAdapter(java.sql.Time.class, new utils.SqlTimeDeserializer())
-                .create();
-            
-            java.lang.reflect.Type listType = new com.google.gson.reflect.TypeToken<List<UserSchedule>>(){}.getType();
+
+            if ("add".equals(action)) {
+                // Handle single schedule creation
+                UserSchedule schedule = gson.fromJson(jsonData, UserSchedule.class);
+                schedule.setUserId(userId); // Set the logged-in user ID
+                // Use createSchedule which returns int (last inserted ID)
+                int newId = scheduleService.createSchedule(schedule);
+                boolean success = newId > 0;
+
+                Map<String, Object> result = new HashMap<>();
+                result.put("success", success);
+                result.put("message",
+                        success ? "Schedule added successfully" : "Failed to add schedule (Time conflict or DB error)");
+                if (success) {
+                    result.put("scheduleId", newId);
+                }
+
+                PrintWriter out = response.getWriter();
+                out.print(JsonUtil.toJson(result));
+                out.flush();
+                return;
+            }
+
+            // Default behavior: Batch save (expecting collectionId param)
+            String collectionIdParam = request.getParameter("collectionId");
+            if (collectionIdParam == null) {
+                sendErrorResponse(response, "Collection ID is required", 400);
+                return;
+            }
+            int collectionId = Integer.parseInt(collectionIdParam);
+
+            // Parse JSON to List<UserSchedule>
+            java.lang.reflect.Type listType = new com.google.gson.reflect.TypeToken<List<UserSchedule>>() {
+            }.getType();
             List<UserSchedule> schedules = gson.fromJson(jsonData, listType);
-            
+
             boolean success = scheduleService.saveSchedules(userId, collectionId, schedules);
 
             Map<String, Object> result = new HashMap<>();
@@ -235,6 +267,7 @@ public class ScheduleController extends HttpServlet {
         out.print(JsonUtil.toJson(result));
         out.flush();
     }
+
     /**
      * Send error response
      */

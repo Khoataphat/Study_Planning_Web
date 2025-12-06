@@ -89,19 +89,19 @@
 
                     <%-- [ĐÃ SỬA ĐỔI] Lịch của tôi không còn active --%>
                     <a class="nav-link w-full rounded-lg transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
-                       href="${pageContext.request.contextPath}/views/schedule.jsp">
+                       href="${pageContext.request.contextPath}/schedule">
                         <span class="material-icons-outlined text-3xl shrink-0">event</span>
                         <span class="ml-4 whitespace-nowrap sidebar-text">Lịch của tôi</span>
                     </a>
 
                     <a class="nav-link w-full rounded-lg transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
-                       href="${pageContext.request.contextPath}/views/tasks.jsp">
+                       href="${pageContext.request.contextPath}/tasks">
                         <span class="material-icons-outlined text-3xl shrink-0">add_task</span>
                         <span class="ml-4 whitespace-nowrap sidebar-text">Nhiệm vụ</span>
                     </a>
 
                     <a class="nav-link w-full rounded-lg transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
-                       href="${pageContext.request.contextPath}/views/statistics.jsp">
+                       href="${pageContext.request.contextPath}/statistics">
                         <span class="material-icons-outlined text-3xl shrink-0">interests</span>
                         <span class="ml-4 whitespace-nowrap sidebar-text">Thống kê</span>
                     </a>

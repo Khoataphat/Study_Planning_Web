@@ -90,12 +90,20 @@ public class AuthService {
         newUser.setOauthProvider(provider);
         newUser.setOauthId(oauthId);
 
-        // Đảm bảo bạn đặt Username (ví dụ: là email) và các trường bắt buộc khác trong đối tượng User 
-        // trước khi gọi createOAuthUser, tùy thuộc vào cấu trúc model của bạn.
-        // Gọi hàm tạo mới (dòng 66 trong AuthService)
-        userDAO.createOAuthUser(newUser);
+        // Populate other fields to match what UserDAO inserts
+        newUser.setUsername(email);
+        newUser.setPassword("");
+        newUser.setisFirstLogin(1);
 
-        // Sau khi tạo, tìm lại User để trả về đối tượng đầy đủ
+        // Gọi hàm tạo mới và lấy ID trả về
+        int newId = userDAO.createOAuthUser(newUser);
+
+        if (newId > 0) {
+            newUser.setUserId(newId);
+            return newUser;
+        }
+
+        // Sau khi tạo, tìm lại User để trả về đối tượng đầy đủ (fallback)
         return userDAO.findByOAuth(provider, oauthId);
     }
 }

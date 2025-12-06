@@ -21,4 +21,3 @@ public class GoogleLoginController extends HttpServlet {
         resp.sendRedirect(GoogleOAuthUtils.AUTH_URL);
     }
 }
-
