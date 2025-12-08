@@ -48,10 +48,10 @@ public class DashboardController extends HttpServlet {
                     new TimetableDAO(conn)
             );
             // TẠM THỜI GHI ĐÈ USER ID ĐỂ TEST
-            int userIdToQuery = 25; // ID này có dữ liệu trong DB
+            //int userIdToQuery = 25; // ID này có dữ liệu trong DB
 
-            //DashboardData dashboardData = dash.loadDashboard(user.getUserId());
-            DashboardData dashboardData = dash.loadDashboard(userIdToQuery); // Dùng ID 25 đã hardcode
+            DashboardData dashboardData = dash.loadDashboard(user.getUserId());
+            //DashboardData dashboardData = dash.loadDashboard(userIdToQuery); // Dùng ID 25 đã hardcode
 
             req.setAttribute("dash", dashboardData);
 

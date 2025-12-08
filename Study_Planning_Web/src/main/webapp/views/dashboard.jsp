@@ -17,7 +17,13 @@
         <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
         <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+        <!-- new -->
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+        <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&amp;display=swap"
+              rel="stylesheet" />
+        <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
         <script>
+            
             tailwind.config = {
                 darkMode: "class",
                 theme: {
@@ -33,9 +39,20 @@
                             "pastel-pink": "#F9A8D4",
                             "pastel-yellow": "#FDE68A",
                             "text-color": "#1E293B",
+
+                            //new
+                            "surface-light": "#FFFFFF",
+                            "surface-dark": "#293548",
+                            "text-light": "#1E293B",
+                            "text-dark": "#E2E8F0",
+                            "border-light": "#E5E7EB",
+                            "border-dark": "#475569",
+                            "secondary-pink": "#F9A8D4",
+                            "secondary-indigo-light": "#C7D2FE",
+                            "secondary-yellow": "#FDE68A",
                         },
                         fontFamily: {
-                            display: ["Quicksand", "sans-serif"],
+                            display: ["Be Vietnam Pro", "Quicksand", "sans-serif"],
                         },
                         borderRadius: {
                             DEFAULT: "0.75rem",
@@ -45,6 +62,7 @@
             };
         </script>
         <link rel="stylesheet" href="/resources/css/sidebar.css">
+        <link rel="stylesheet" href="/resources/css/setting.css">
 
     </head>
 
@@ -97,7 +115,7 @@
                         <p class="text-slate-500 dark:text-slate-400">Đây là tổng quan các hoạt động của bạn.</p>
                     </div>
                     <div class="flex items-center space-x-4">
-                        <button class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" aria-label="Settings">
+                        <button class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" aria-label="Settings" onclick="loadSettingsAndOpen()">
                             <span class="material-icons-outlined text-slate-600 dark:text-slate-300">settings</span>
                         </button>
                         <a href="/logout" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" aria-label="Logout">
@@ -248,8 +266,13 @@
                 </div>
             </main>
         </div>
-                        
+
+        <%-- 1. THÊM LỚP PHỦ CÀI ĐẶT TẠI ĐÂY --%>
+        <%-- Đảm bảo toàn bộ HTML của lớp phủ được tải vào DOM trước khi JS chạy --%>
+        <%@ include file="settings-overlay.jsp" %>
+
         <script src="/resources/js/sidebar.js"></script>
+        <script src="/resources/js/setting.js"></script>
 
     </body>
 
