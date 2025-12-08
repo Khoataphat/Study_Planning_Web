@@ -15,6 +15,7 @@ public class UserSchedule {
     private Time endTime;
     private String subject;
     private String type; // class, break, self-study, activity
+    private String description; // Added for Smart Schedule details
     private Timestamp createdAt;
 
     // Constructors
@@ -108,6 +109,14 @@ public class UserSchedule {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Timestamp getCreatedAt() {
