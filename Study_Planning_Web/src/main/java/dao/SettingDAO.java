@@ -34,7 +34,14 @@ public class SettingDAO {
 
             UserSetting s = new UserSetting();
             s.setUserId(userId);
-            // ... (các set khác) ...
+            // ⭐ SỬA LỖI: ĐỌC DỮ LIỆU TỪ RESULTSET VÀ GÁN VÀO ĐỐI TƯỢNG ⭐
+            s.setTheme(rs.getString("theme"));
+            s.setLanguage(rs.getString("language"));
+            s.setNotificationLevel(rs.getString("notification_level"));
+            s.setPreferredStudyTime(rs.getString("preferred_study_time"));
+            s.setFocusLevel(rs.getString("focus_level"));
+            s.setAiEnabled(rs.getBoolean("ai_enabled"));
+            // -------------------------------------------------------------
             return s;
         }
 

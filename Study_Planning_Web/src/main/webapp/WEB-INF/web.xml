@@ -30,6 +30,9 @@
         <url-pattern>/user/schedule</url-pattern>
         <url-pattern>/setting</url-pattern>
         <url-pattern>/update-settings</url-pattern>
+        <url-pattern>/schedule</url-pattern>
+        <url-pattern>/tasks</url-pattern>
+        <url-pattern>/statistics</url-pattern>
     </filter-mapping>
 
 </web-app>

@@ -33,6 +33,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 })
                 .then(settings => {
 
+
+                    if (!settings || typeof settings !== 'object') {
+                        console.warn("D? li?u c?i ??t nh?n ???c là null ho?c không h?p l?. S? d?ng giá tr? m?c ??nh.");
+                        // Gán giá trị mặc định nếu cần
+                        settings = {theme: 'light', language: 'vi'};
+                    }
+
                     // 2. Cập nhật các trường SELECT/INPUT với dữ liệu nhận được
 
                     // Cập nhật Select Fields
@@ -51,6 +58,8 @@ document.addEventListener("DOMContentLoaded", () => {
 //                     // Chuyển giá trị từ server (ví dụ: "true" hoặc true) thành boolean
 //                    eventReminderToggle.checked = (settings.eventReminder === true || settings.eventReminder === "true");
 //                }
+
+                    applySettings(settings);
 
                     // 3. Hiển thị Overlay sau khi dữ liệu đã sẵn sàng
                     if (settingsOverlay) {
@@ -133,18 +142,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // HÀM ÁP DỤNG CÀI ĐẶT (Giữ nguyên)
     function applySettings(settings) {
+        // PHẦN TỬ CẦN ÁP DỤNG CLASS (Thường là <html>)
         const htmlEl = document.documentElement;
+        // Hoặc nếu bạn dùng <body>: const htmlEl = document.body; 
+
         if (settings.theme === 'dark') {
             htmlEl.classList.add('dark');
+            // Thường là cần đặt thuộc tính data-theme nếu dùng thư viện CSS khác
+            // htmlEl.setAttribute('data-theme', 'dark'); 
         } else {
             htmlEl.classList.remove('dark');
+            // htmlEl.setAttribute('data-theme', 'light');
         }
 
         if (settings.language) {
             htmlEl.lang = settings.language;
         }
 
-        console.log("Cài đặt đã được áp dụng thành công.");
+        console.log(`Cài đặt theme: ${settings.theme} đã đuoc áp dung.`);
     }
+
+
+// BỔ SUNG: Hàm khởi tạo theme khi trang tải xong
+    function initSettingsOnLoad() {
+        // Chỉ cần logic tải, không cần mở modal
+        fetch('setting')
+                .then(res => res.ok ? res.json() : Promise.reject(res.status))
+                .then(settings => {
+                    // Áp dụng theme ngay khi tải trang
+                    applySettings(settings);
+                    console.log("Theme ban ??u ?ã ???c áp d?ng.");
+
+                    // Bạn cũng có thể lưu cài đặt này vào biến toàn cục nếu cần
+                    window.userSettings = settings;
+                })
+                .catch(error => {
+                    // Đây có thể là người dùng mới chưa có cài đặt, không cần báo lỗi
+                    console.warn("Không tìm th?y cài ??t ban ??u ho?c l?i k?t n?i t?i /setting.");
+                });
+    }
+
+// ⭐⭐ LỆNH GỌI QUAN TRỌNG NHẤT ⭐⭐
+    initSettingsOnLoad();
 
 });
