@@ -8,10 +8,14 @@ package utils;
  *
  * @author Admin
  */
+import io.github.cdimascio.dotenv.Dotenv;
+
 public class GoogleOAuthUtils {
 
-    public static final String CLIENT_ID = "43978001996-2odnhc8r6m66viqp6j6p87248kfgl47i.apps.googleusercontent.com";
-    public static final String CLIENT_SECRET = "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";
+    private static final Dotenv dotenv = Dotenv.load();
+    
+    public static final String CLIENT_ID = dotenv.get("GOOGLE_CLIENT_ID");
+    public static final String CLIENT_SECRET = dotenv.get("GOOGLE_CLIENT_SECRET");
     public static final String REDIRECT_URI = "http://localhost:8080/oauth/google/callback";
 
     public static final String AUTH_URL =

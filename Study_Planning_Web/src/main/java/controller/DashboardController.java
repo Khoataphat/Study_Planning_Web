@@ -50,11 +50,24 @@ public class DashboardController extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/learning-style-setup");
                 return;
             }
+<<<<<<< HEAD
 
             // Lấy dashboard từ database
             Connection conn = DBUtil.getConnection();
             DashboardService dash = new DashboardService(new TimetableDAO(conn));
             DashboardData dashboardData = dash.loadDashboard(userId);
+=======
+            DashboardService dash = new DashboardService(
+                    //                    new UserActivityDAO(conn),
+                    //                    new TaskDAO(conn)
+                    new TimetableDAO(conn)
+            );
+            // TẠM THỜI GHI ĐÈ USER ID ĐỂ TEST
+            //int userIdToQuery = 25; // ID này có dữ liệu trong DB
+
+            DashboardData dashboardData = dash.loadDashboard(user.getUserId());
+            //DashboardData dashboardData = dash.loadDashboard(userIdToQuery); // Dùng ID 25 đã hardcode
+>>>>>>> 087cb0900ff15358cd9896d5d912d12c6de39ddf
 
             request.setAttribute("dash", dashboardData);
 

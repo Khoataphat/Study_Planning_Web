@@ -23,6 +23,16 @@
         <url-pattern>/views/schedules.html</url-pattern>
         <url-pattern>/views/survey.html</url-pattern>
         <url-pattern>/views/tasks.html</url-pattern>
+
+        <url-pattern>/dashboard</url-pattern>
+        <url-pattern>/basic-setup-save</url-pattern>
+        <url-pattern>/user/collections</url-pattern>
+        <url-pattern>/user/schedule</url-pattern>
+        <url-pattern>/setting</url-pattern>
+        <url-pattern>/update-settings</url-pattern>
+        <url-pattern>/schedule</url-pattern>
+        <url-pattern>/tasks</url-pattern>
+        <url-pattern>/statistics</url-pattern>
     </filter-mapping>
 
 </web-app>

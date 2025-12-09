@@ -18,6 +18,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import model.User;
 
 /**
  * Controller for handling schedule collection HTTP requests
@@ -42,10 +43,14 @@ public class ScheduleCollectionController extends HttpServlet {
         try {
             // Get user ID from session
             HttpSession session = request.getSession(false);
-            int userId = 1; // Default for testing
-            if (session != null && session.getAttribute("userId") != null) {
-                userId = (int) session.getAttribute("userId");
+            User user = (session != null) ? (User) session.getAttribute("user") : null;
+
+            if (user == null) {
+                sendErrorResponse(response, "User not logged in", 401);
+                return;
             }
+
+            int userId = user.getUserId();
 
             String action = request.getParameter("action");
             if (action == null) {
@@ -81,9 +86,26 @@ public class ScheduleCollectionController extends HttpServlet {
         try {
             // Get user ID from session
             HttpSession session = request.getSession(false);
-            int userId = 1; // Default for testing
-            if (session != null && session.getAttribute("userId") != null) {
-                userId = (int) session.getAttribute("userId");
+            User user = (session != null) ? (User) session.getAttribute("user") : null;
+
+            if (user == null) {
+                sendErrorResponse(response, "Bạn chưa đăng nhập. Vui lòng đăng nhập lại.", 401);
+                return;
+            }
+
+            int userId = user.getUserId();
+            System.out.println("DEBUG: User from session: " + user);
+            System.out.println("DEBUG: User ID from session: " + userId);
+
+            // VALIDATION: Check if user still exists in database
+            dao.UserDAO userDAO = new dao.UserDAO();
+            if (!userDAO.userExists(userId)) {
+                System.out.println("ERROR: User ID " + userId + " does not exist in database!");
+                // Invalidate session since user doesn't exist
+                session.invalidate();
+                sendErrorResponse(response, "Tài khoản của bạn không tồn tại trong hệ thống. Vui lòng đăng nhập lại.",
+                        401);
+                return;
             }
 
             // Read JSON body
@@ -100,29 +122,37 @@ public class ScheduleCollectionController extends HttpServlet {
 
             String collectionName = (String) data.get("name");
             if (collectionName == null || collectionName.trim().isEmpty()) {
-                sendErrorResponse(response, "Collection name is required", 400);
+                sendErrorResponse(response, "Tên bộ sưu tập không được để trống", 400);
                 return;
             }
 
+            System.out.println("============ IMPORTANT DEBUG ============");
+            System.out.println(
+                    "About to call createCollection with userId=" + userId + ", collectionName=" + collectionName);
+            System.out.println("=========================================");
             int collectionId = collectionService.createCollection(userId, collectionName);
 
             Map<String, Object> result = new HashMap<>();
             if (collectionId > 0) {
                 result.put("success", true);
                 result.put("collectionId", collectionId);
-                result.put("message", "Collection created successfully");
+                result.put("message", "Tạo bộ sưu tập thành công");
             } else {
                 result.put("success", false);
-                result.put("message", "Failed to create collection");
+                result.put("message", "Không thể tạo bộ sưu tập");
             }
 
             PrintWriter out = response.getWriter();
             out.print(JsonUtil.toJson(result));
             out.flush();
 
+        } catch (java.sql.SQLIntegrityConstraintViolationException e) {
+            e.printStackTrace();
+            sendErrorResponse(response, "Lỗi database: Tài khoản không hợp lệ. Vui lòng đăng xuất và đăng nhập lại.",
+                    400);
         } catch (Exception e) {
             e.printStackTrace();
-            sendErrorResponse(response, "Server error: " + e.getMessage(), 500);
+            sendErrorResponse(response, "Lỗi server: " + e.getMessage(), 500);
         }
     }
 
@@ -194,10 +224,14 @@ public class ScheduleCollectionController extends HttpServlet {
         try {
             // Get user ID from session
             HttpSession session = request.getSession(false);
-            int userId = 1; // Default for testing
-            if (session != null && session.getAttribute("userId") != null) {
-                userId = (int) session.getAttribute("userId");
+            User user = (session != null) ? (User) session.getAttribute("user") : null;
+
+            if (user == null) {
+                sendErrorResponse(response, "User not logged in", 401);
+                return;
             }
+
+            int userId = user.getUserId();
 
             String idParam = request.getParameter("id");
             if (idParam == null) {

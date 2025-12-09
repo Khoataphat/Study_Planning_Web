@@ -205,40 +205,54 @@ public class UserDAO {
 //        }
 //        // Không cần đóng con.close() ở đây nữa
 //    }
-    public void createOAuthUser(User u) throws Exception {
-        // ⚠️ SỬA LỖI: Thêm các cột bắt buộc: password, role, is_first_login
-        String sql = "INSERT INTO users(username, password, email, oauth_provider, oauth_id, role, is_first_login) VALUES (?, ?, ?, ?, ?, ?, ?)";
+public int createOAuthUser(User u) throws Exception {
+    // Thêm cờ để yêu cầu trả về khóa chính (ID)
+    String sql = "INSERT INTO users(username, password, email, oauth_provider, oauth_id, role, is_first_login) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-        final String EMPTY_PASSWORD_PLACEHOLDER = ""; // Dùng placeholder cho mật khẩu
-        final String DEFAULT_ROLE = "student";
-        final int IS_FIRST_LOGIN_DEFAULT = 1;
+    final String EMPTY_PASSWORD_PLACEHOLDER = "";
+    final String DEFAULT_ROLE = "student";
+    final int IS_FIRST_LOGIN_DEFAULT = 1;
+    int newUserId = -1; // Khởi tạo ID
 
-        try (Connection con = DBUtil.getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+    try (Connection con = DBUtil.getConnection(); 
+         // SỬA ĐỔI QUAN TRỌNG: Yêu cầu trả về khóa chính tự động tạo (ID)
+         PreparedStatement ps = con.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) { 
 
-            // 1. username (Dùng email làm username)
-            ps.setString(1, u.getEmail());
+        // 1. username (Dùng email làm username)
+        ps.setString(1, u.getEmail());
+        // 2. password
+        ps.setString(2, EMPTY_PASSWORD_PLACEHOLDER);
+        // 3. email
+        ps.setString(3, u.getEmail());
+        // 4. oauth_provider
+        ps.setString(4, u.getOauthProvider());
+        // 5. oauth_id
+        ps.setString(5, u.getOauthId());
+        // 6. role
+        ps.setString(6, DEFAULT_ROLE);
+        // 7. is_first_login
+        ps.setInt(7, IS_FIRST_LOGIN_DEFAULT);
 
-            // 2. password (BẮT BUỘC): Chèn placeholder để tránh lỗi NOT NULL
-            ps.setString(2, EMPTY_PASSWORD_PLACEHOLDER);
+        int affectedRows = ps.executeUpdate();
 
-            // 3. email
-            ps.setString(3, u.getEmail());
-
-            // 4. oauth_provider
-            ps.setString(4, u.getOauthProvider());
-
-            // 5. oauth_id
-            ps.setString(5, u.getOauthId());
-
-            // 6. role (DEFAULT)
-            ps.setString(6, DEFAULT_ROLE);
-
-            // 7. is_first_login (DEFAULT)
-            ps.setInt(7, IS_FIRST_LOGIN_DEFAULT);
-
-            ps.executeUpdate();
+        if (affectedRows > 0) {
+            // Lấy ID tự động tạo (khóa chính)
+            try (ResultSet rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    newUserId = rs.getInt(1); // ID thường là cột đầu tiên
+                }
+            }
         }
+        
+        System.out.println("DEBUG DAO: ID ng??i dng OAuth m?i: " + newUserId); 
+        return newUserId;
+
+    } catch (Exception e) {
+        System.err.println("L?I t?o ng??i dng OAuth:");
+        e.printStackTrace();
+        throw e; // Ném lại ngoại lệ để Controller xử lý
     }
+}
 
     private User map(ResultSet rs) throws Exception {
         User u = new User();
@@ -266,4 +280,29 @@ public class UserDAO {
         ps.executeUpdate();
     }
 }
+
+    /**
+     * Check if a user exists in the database by user_id
+     * 
+     * @param userId The user ID to check
+     * @return true if user exists, false otherwise
+     */
+    public boolean userExists(int userId) {
+        String sql = "SELECT COUNT(*) FROM users WHERE user_id = ?";
+
+        try (Connection con = DBUtil.getConnection();
+                PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
 }

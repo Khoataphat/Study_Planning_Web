@@ -1,5 +1,19 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%
+    // Kiểm tra session user
+    if (session.getAttribute("user") == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
+    
+    // Kiểm tra xem đã hoàn thành profile cơ bản chưa
+    Boolean basicCompleted = (Boolean) session.getAttribute("basicProfileCompleted");
+    if (basicCompleted == null || !basicCompleted) {
+        response.sendRedirect("profile.jsp?error=complete_profile_first");
+        return;
+    }
+%>
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -84,7 +98,12 @@
                 <p class="text-slate-500 dark:text-slate-400">Hãy trả lời các câu hỏi sau để chúng tôi hiểu rõ hơn về bạn nhé!</p>
             </div>
             <div class="flex items-center space-x-4">
-                <span class="text-slate-600 dark:text-slate-300">Xin chào, ${user.username}!</span>
+                <span class="text-slate-600 dark:text-slate-300">
+                    Xin chào, ${user.username}!
+                    <c:if test="${not empty sessionScope.userFullName}">
+                        (${sessionScope.userFullName})
+                    </c:if>
+                </span>
                 <a href="${pageContext.request.contextPath}/logout" class="p-2 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-full">
                     <span class="material-icons-outlined">logout</span>
                 </a>
@@ -112,7 +131,9 @@
                     </div>
                 </div>
 
-                <form id="learningStyleForm" action="${pageContext.request.contextPath}/learning-style-setup" method="post">
+                <!-- THÊM HIDDEN FIELD ĐỂ XÁC ĐỊNH FORM TYPE -->
+                <form id="learningStyleForm" action="processProfile.jsp" method="post">
+                    <input type="hidden" name="form_type" value="learning_style_quiz">
                     
                     <!-- Question 1 -->
                     <div class="question-section active" id="question1">
@@ -123,29 +144,28 @@
                             </div>
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <label class="cursor-pointer">
-                                    <input type="checkbox" name="study_visual" value="true" class="hidden">
-                                    
+                                    <input type="checkbox" name="study_method_visual" value="true" class="hidden">
                                     <div class="text-left p-4 rounded-lg bg-pastel-1 text-text-dark font-semibold hover:opacity-90 transition-all duration-200 option-btn">
                                         <span class="text-2xl">🎨</span> 
                                         <span class="ml-2">Xem hình ảnh, sơ đồ và video.</span>
                                     </div>
                                 </label>
                                 <label class="cursor-pointer">
-                                    <input type="checkbox" name="study_auditory" value="true" class="hidden">
+                                    <input type="checkbox" name="study_method_auditory" value="true" class="hidden">
                                     <div class="text-left p-4 rounded-lg bg-pastel-2 text-text-dark font-semibold hover:opacity-90 transition-all duration-200 option-btn">
                                         <span class="text-2xl">🎧</span> 
                                         <span class="ml-2">Nghe giảng, podcast hoặc thảo luận.</span>
                                     </div>
                                 </label>
                                 <label class="cursor-pointer">
-                                    <input type="checkbox" name="study_reading" value="true" class="hidden">
+                                    <input type="checkbox" name="study_method_reading" value="true" class="hidden">
                                     <div class="text-left p-4 rounded-lg bg-pastel-3 text-text-dark font-semibold hover:opacity-90 transition-all duration-200 option-btn">
                                         <span class="text-2xl">📖</span> 
                                         <span class="ml-2">Đọc sách, tài liệu và ghi chú.</span>
                                     </div>
                                 </label>
                                 <label class="cursor-pointer">
-                                    <input type="checkbox" name="study_practice" value="true" class="hidden">
+                                    <input type="checkbox" name="study_method_practice" value="true" class="hidden">
                                     <div class="text-left p-4 rounded-lg bg-pastel-4 text-text-dark font-semibold hover:opacity-90 transition-all duration-200 option-btn">
                                         <span class="text-2xl">🖐️</span> 
                                         <span class="ml-2">Tự mình thực hành, làm thử.</span>
@@ -345,12 +365,45 @@
                 return false;
             }
 
+            // Đặc biệt kiểm tra câu hỏi 2 (productive_time) bắt buộc
+            if (question.id === 'question2') {
+                const productiveTimeSelected = question.querySelector('input[name="productive_time"]:checked');
+                if (!productiveTimeSelected) {
+                    alert('Vui lòng chọn thời gian năng suất của bạn!');
+                    return false;
+                }
+            }
+
             return true;
         }
 
-        // Auto-select first option for testing (có thể xóa trong production)
-        // document.querySelectorAll('input[type="radio"]')[0].checked = true;
-        // document.querySelectorAll('.option-btn')[0].classList.add('selected');
+        // Validate toàn bộ form trước khi submit
+        document.getElementById('learningStyleForm').addEventListener('submit', function(e) {
+            // Kiểm tra câu hỏi 3 (group_study_preference) bắt buộc
+            const groupPrefSelected = document.querySelector('input[name="group_study_preference"]:checked');
+            if (!groupPrefSelected) {
+                e.preventDefault();
+                alert('Vui lòng đánh giá mức độ yêu thích học nhóm của bạn!');
+                return false;
+            }
+
+            // Kiểm tra ít nhất 1 checkbox được chọn ở câu hỏi 1
+            const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+            let atLeastOneChecked = false;
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    atLeastOneChecked = true;
+                }
+            });
+
+            if (!atLeastOneChecked) {
+                e.preventDefault();
+                alert('Vui lòng chọn ít nhất một phương pháp học ở câu hỏi 1!');
+                return false;
+            }
+
+            return true;
+        });
     });
 </script>
 </body>

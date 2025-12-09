@@ -325,4 +325,174 @@ public class UserProfilesDAO {
         }
         return null;
     }
+    
+    public boolean createUserProfileNew(UserProfiles profile) throws SQLException {
+        String sql = "INSERT INTO user_profiles (user_id, full_name, description, " +
+                     "learning_style, work_style, interests, productive_time, created_at) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, profile.getUserId());
+            pstmt.setString(2, profile.getFullName());
+            pstmt.setString(3, profile.getDescription());
+            pstmt.setString(4, profile.getLearningStyle());
+            pstmt.setString(5, profile.getWorkStyle());
+            pstmt.setString(6, profile.getInterests());
+            pstmt.setString(7, profile.getProductiveTime());
+            pstmt.setTimestamp(8, Timestamp.valueOf(profile.getCreatedAt()));
+            
+            return pstmt.executeUpdate() > 0;
+        }
+    }
+    
+    /**
+     * Cập nhật từ form trắc nghiệm (Khám phá phương pháp học) - phiên bản mới
+     */
+    public boolean updateLearningQuizNew(int userId, String studyMethodVisual,
+                                        String studyMethodAuditory, String studyMethodReading,
+                                        String studyMethodPractice, String productiveTime,
+                                        int groupStudyPreference) throws SQLException {
+        String sql = "UPDATE user_profiles SET " +
+                     "study_method_visual = ?, study_method_auditory = ?, " +
+                     "study_method_reading = ?, study_method_practice = ?, " +
+                     "productive_time = ?, group_study_preference = ?, " +
+                     "updated_at = NOW() WHERE user_id = ?";
+        
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, studyMethodVisual != null ? studyMethodVisual : "");
+            pstmt.setString(2, studyMethodAuditory != null ? studyMethodAuditory : "");
+            pstmt.setString(3, studyMethodReading != null ? studyMethodReading : "");
+            pstmt.setString(4, studyMethodPractice != null ? studyMethodPractice : "");
+            pstmt.setString(5, productiveTime);
+            pstmt.setInt(6, groupStudyPreference);
+            pstmt.setInt(7, userId);
+            
+            return pstmt.executeUpdate() > 0;
+        }
+    }
+    
+    /**
+     * Lấy thông tin hồ sơ (phiên bản đầy đủ từ cả 2 form) - phiên bản mới
+     */
+    public UserProfiles getProfileByUserIdNew(int userId) throws SQLException {
+        String sql = "SELECT * FROM user_profiles WHERE user_id = ? ORDER BY created_at DESC LIMIT 1";
+        
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, userId);
+            
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    UserProfiles profile = new UserProfiles();
+                    
+                    // Các field cơ bản từ form đầu
+                    profile.setProfileId(rs.getInt("profile_id"));
+                    profile.setUserId(rs.getInt("user_id"));
+                    profile.setFullName(rs.getString("full_name"));
+                    profile.setDescription(rs.getString("description"));
+                    profile.setLearningStyle(rs.getString("learning_style"));
+                    profile.setWorkStyle(rs.getString("work_style"));
+                    profile.setInterests(rs.getString("interests"));
+                    profile.setProductiveTime(rs.getString("productive_time"));
+                    
+                    // Các field từ form trắc nghiệm
+                    profile.setStudyMethodVisual(rs.getString("study_method_visual"));
+                    profile.setStudyMethodAuditory(rs.getString("study_method_auditory"));
+                    profile.setStudyMethodReading(rs.getString("study_method_reading"));
+                    profile.setStudyMethodPractice(rs.getString("study_method_practice"));
+                    
+                    int groupPref = rs.getInt("group_study_preference");
+                    profile.setGroupStudyPreference(rs.wasNull() ? null : groupPref);
+                    
+                    // Timestamps
+                    Timestamp c = rs.getTimestamp("created_at");
+                    if (c != null) profile.setCreatedAt(c.toLocalDateTime());
+                    
+                    Timestamp u = rs.getTimestamp("updated_at");
+                    if (u != null) profile.setUpdatedAt(u.toLocalDateTime());
+                    
+                    return profile;
+                }
+            }
+        }
+        return null;
+    }
+    
+    /**
+     * Update profile (phiên bản đầy đủ) - phiên bản mới
+     */
+    public boolean updateNew(UserProfiles profile) throws SQLException {
+        String sql = 
+            "UPDATE user_profiles SET " +
+            "full_name = ?, description = ?, learning_style = ?, work_style = ?, " +
+            "interests = ?, productive_time = ?, " +
+            "study_method_visual = ?, study_method_auditory = ?, study_method_reading = ?, " +
+            "study_method_practice = ?, group_study_preference = ?, " +
+            "updated_at = ? " +
+            "WHERE user_id = ?";
+
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            int index = 1;
+            stmt.setString(index++, profile.getFullName());
+            stmt.setString(index++, profile.getDescription());
+            stmt.setString(index++, profile.getLearningStyle());
+            stmt.setString(index++, profile.getWorkStyle());
+            stmt.setString(index++, profile.getInterests());
+            stmt.setString(index++, profile.getProductiveTime());
+            
+            // Các field từ form trắc nghiệm
+            stmt.setString(index++, profile.getStudyMethodVisual());
+            stmt.setString(index++, profile.getStudyMethodAuditory());
+            stmt.setString(index++, profile.getStudyMethodReading());
+            stmt.setString(index++, profile.getStudyMethodPractice());
+            stmt.setObject(index++, profile.getGroupStudyPreference());
+            
+            stmt.setTimestamp(index++, Timestamp.valueOf(LocalDateTime.now()));
+            stmt.setInt(index, profile.getUserId());
+
+            return stmt.executeUpdate() > 0;
+        }
+    }
+    
+    public boolean createUserProfile(UserProfiles profile) throws SQLException {
+        String sql = "INSERT INTO user_profiles (user_id, full_name, description, " +
+                     "learning_style, work_style, interests, productive_time, created-at) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        try (Connection conn = DBUtil.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setInt(1, profile.getUserId());
+            pstmt.setString(2, profile.getFullName());
+            pstmt.setString(3, profile.getDescription());
+            pstmt.setString(4, profile.getLearningStyle());
+            pstmt.setString(5, profile.getWorkStyle());
+            pstmt.setString(6, profile.getInterests());
+            pstmt.setString(7, profile.getProductiveTime());
+            
+            if (profile.getCreatedAt() != null) {
+                pstmt.setTimestamp(8, Timestamp.valueOf(profile.getCreatedAt()));
+            } else {
+                pstmt.setTimestamp(8, Timestamp.valueOf(LocalDateTime.now()));
+            }
+            
+            return pstmt.executeUpdate() > 0;
+        }
+    }
+
+    public UserProfiles getProfileByUserId(int userId) {
+        try {
+            return getProfileByUserIdNew(userId);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

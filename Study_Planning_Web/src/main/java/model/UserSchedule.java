@@ -21,7 +21,8 @@ public class UserSchedule {
     public UserSchedule() {
     }
 
-    public UserSchedule(int userId, int collectionId, String dayOfWeek, Time startTime, Time endTime, String subject, String type) {
+    public UserSchedule(int userId, int collectionId, String dayOfWeek, Time startTime, Time endTime, String subject,
+            String type) {
         this.userId = userId;
         this.collectionId = collectionId;
         this.dayOfWeek = dayOfWeek;
@@ -31,7 +32,8 @@ public class UserSchedule {
         this.type = type;
     }
 
-    public UserSchedule(int scheduleId, int userId, int collectionId, String dayOfWeek, Time startTime, Time endTime, String subject, String type, Timestamp createdAt) {
+    public UserSchedule(int scheduleId, int userId, int collectionId, String dayOfWeek, Time startTime, Time endTime,
+            String subject, String type, Timestamp createdAt) {
         this.scheduleId = scheduleId;
         this.userId = userId;
         this.collectionId = collectionId;

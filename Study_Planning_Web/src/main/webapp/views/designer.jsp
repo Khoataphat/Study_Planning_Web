@@ -12,50 +12,90 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 
     <!-- Custom Config & Styles -->
     <script src="../resources/js/tailwind-config.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        // Đã thay đổi primary về một màu nổi hơn cho dễ nhìn
+                        primary: "#4F46E5", // Thay #A5B4FC bằng Indigo 600
+                        "background-light": "#F8FAFC",
+                        "background-dark": "#0F172A",
+                        // New pastel colors
+                        "pastel-purple": "#A5B4FC",
+                        "pastel-light-purple": "#C7D2FE",
+                        "pastel-pink": "#F9A8D4",
+                        "pastel-yellow": "#FDE68A",
+                        "text-color": "#1E293B",
+                        "pinky": "#F9A8D4",
+                    },
+                    fontFamily: {
+                        display: ["Quicksand", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.75rem",
+                    },
+                },
+            },
+        };
+    </script>
     <link rel="stylesheet" href="../resources/css/pastel-overrides.css">
     <link rel="stylesheet" href="../resources/css/designer.css">
+    <link rel="stylesheet" href="/resources/css/sidebar.css">
 </head>
-<body class="font-display bg-slate-50 text-slate-dark antialiased overflow-hidden">
+<body class="font-display bg-background-light dark:bg-background-dark text-text-color dark:text-slate-200">
+    <div class="flex h-screen">
+        <aside 
+            id="sidebar"
+            class="bg-white dark:bg-slate-900 flex flex-col py-6 space-y-8 border-r border-slate-200 dark:border-slate-800 
+            h-screen fixed top-0 left-0 transition-all duration-500 z-40 cursor-pointer"
+            >
 
-    <div class="flex h-screen w-full">
-        
-        <!-- Left Sidebar Navigation -->
-        <nav class="w-56 flex flex-col py-6 bg-white border-r border-slate-200">
-            <div class="px-6 mb-8">
-                <h1 class="text-xl font-bold text-primary">Scheduler</h1>
+            <div class="w-14 h-14 bg-primary rounded-full flex items-center justify-center shrink-0 mx-auto">
+                <span class="material-icons-outlined text-white text-3xl">face</span>
             </div>
-            
-            <div class="flex flex-col gap-1 px-3">
-                <a href="../dashboard.jsp" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary text-white font-semibold transition-all">
-                    <span class="material-symbols-outlined text-lg">dashboard</span>
-                    Bảng điều khiển
+
+            <nav class="flex flex-col space-y-2 flex-grow w-full">
+
+                <a class="nav-link w-full rounded-lg transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
+                   href="/dashboard">
+                    <span class="material-icons-outlined text-3xl shrink-0">dashboard</span>
+                    <span class="ml-4 whitespace-nowrap sidebar-text">Bảng điều khiển</span>
                 </a>
-                <a href="schedule.jsp" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-100 transition-all">
-                    <span class="material-symbols-outlined text-lg">calendar_month</span>
-                    Lịch của tôi
+
+                <%-- Active state for Designer (under My Schedule context) --%>
+                <a class="nav-link w-full rounded-lg transition-colors bg-primary shadow-md shadow-primary/30 text-white"
+                   href="${pageContext.request.contextPath}/schedule">
+                    <span class="material-icons-outlined text-3xl shrink-0">event</span>
+                    <span class="ml-4 whitespace-nowrap sidebar-text">Lịch của tôi</span>
                 </a>
-                <a href="tasks.jsp" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-100 transition-all">
-                    <span class="material-symbols-outlined text-lg">task_alt</span>
-                    Nhiệm vụ
+
+                <a class="nav-link w-full rounded-lg transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
+                   href="${pageContext.request.contextPath}/tasks">
+                    <span class="material-icons-outlined text-3xl shrink-0">add_task</span>
+                    <span class="ml-4 whitespace-nowrap sidebar-text">Nhiệm vụ</span>
                 </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600 hover:bg-slate-100 transition-all">
-                    <span class="material-symbols-outlined text-lg">bar_chart</span>
-                    Thống kê
+
+                <a class="nav-link w-full rounded-lg transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
+                   href="${pageContext.request.contextPath}/statistics">
+                    <span class="material-icons-outlined text-3xl shrink-0">interests</span>
+                    <span class="ml-4 whitespace-nowrap sidebar-text">Thống kê</span>
                 </a>
-            </div>
-        </nav>
+            </nav>
+        </aside>
 
         <!-- Main Content Area -->
-        <main class="flex-1 flex flex-col overflow-hidden">
+        <main id="mainContent" class="flex-1 flex flex-col p-6 lg:p-8 overflow-y-auto ml-20 lg:ml-64 transition-all duration-500">
             
-            <!-- Header -->
-            <header class="h-16 px-6 flex items-center justify-between bg-white border-b border-slate-200">
+            <!-- Designer Header -->
+            <header class="flex justify-between items-center mb-6 bg-white rounded-2xl p-4 shadow-sm border border-slate-100">
                 <div>
                     <h2 class="text-lg font-bold text-slate-800">Tạo Thời Khóa Biểu Mới</h2>
                     <p class="text-xs text-slate-500">Kéo thả sự kiện vào lịch để bắt đầu</p>
@@ -75,7 +115,7 @@
             </header>
 
             <!-- Calendar Grid -->
-            <div class="flex-1 overflow-auto p-6">
+            <div class="flex-1 overflow-auto">
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <table class="w-full border-collapse">
                         <thead>
@@ -202,6 +242,7 @@
     </div>
 
     <script src="../resources/js/designer.js"></script>
+    <script src="/resources/js/sidebar.js"></script>
 
 </body>
 </html>
