@@ -7,8 +7,10 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<c:set var="currentTheme" value="${empty theme ? 'light' : theme}" />
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="${currentTheme == 'dark' ? 'dark' : ''}">
 
     <head>
         <meta charset="utf-8" />

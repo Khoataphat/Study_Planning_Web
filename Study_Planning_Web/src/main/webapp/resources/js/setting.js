@@ -185,4 +185,48 @@ document.addEventListener("DOMContentLoaded", () => {
 // ⭐⭐ LỆNH GỌI QUAN TRỌNG NHẤT ⭐⭐
     initSettingsOnLoad();
 
+    /**
+     * Áp dụng theme cho giao diện ngay lập tức.
+     * @param {string} theme - 'light' hoặc 'dark'.
+     */
+    function applyThemeToUI(theme) {
+        // S? d?ng document.documentElement (th? <html>) ho?c document.body tùy vào Tailwind config
+        const htmlEl = document.documentElement;
+
+        if (theme === 'dark') {
+            htmlEl.classList.add('dark');
+        } else {
+            htmlEl.classList.remove('dark');
+        }
+    }
+
+
+    /**
+     * G?i API ?? l?u theme và c?p nh?t giao di?n.
+     * @param {string} theme - Theme m?i.
+     */
+    function changeTheme(theme) {
+        // 1. Áp d?ng ngay l?p t?c (T?o c?m giác ph?n h?i nhanh)
+        applyThemeToUI(theme);
+
+        // 2. G?i API ?? l?u vào Cookie và DB
+        fetch("settings/theme", {
+            method: "POST",
+            headers: {"Content-Type": "application/x-www-form-urlencoded"},
+            body: "theme=" + theme
+        })
+                .then(response => {
+                    if (!response.ok) {
+                        console.error("L?i server khi l?u theme.");
+                        alert("L?i l?u theme. Vui lòng th? l?i.");
+                    } else {
+                        console.log("Theme ?? l?u thành công.");
+                    }
+                })
+                .catch(error => {
+                    console.error("L?i k?t n?i m?ng khi l?u theme:", error);
+                    alert("L?i k?t n?i. Không th? l?u theme.");
+                });
+    }
+
 });

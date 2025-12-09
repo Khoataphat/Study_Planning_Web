@@ -22,7 +22,7 @@
                 <div class="relative">
                     <select
                         class="w-full appearance-none rounded border border-border-light dark:border-border-dark bg-surface-light dark:bg-surface-dark py-2 pl-3 pr-10 text-base focus:border-primary focus:outline-none focus:ring-primary dark:focus:border-primary"
-                        id="theme-select" name="theme">
+                        id="theme-select" name="theme" onchange="changeTheme(this.value)">
                         <option value="light">Light</option>
                         <option value="dark">Dark</option>
                     </select>

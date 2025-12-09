@@ -28,7 +28,7 @@ protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOE
             
             int userId = ((User) req.getSession().getAttribute("user")).getUserId();
 
-            SettingService service = new SettingService(new SettingDAO(DBUtil.getConnection()));
+            SettingService service = new SettingService(new SettingDAO());
             UserSetting settings = service.load(userId);
 
             // BỔ SUNG: Xử lý trường hợp cài đặt chưa tồn tại (trả về giá trị mặc định)
