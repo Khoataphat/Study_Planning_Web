@@ -16,6 +16,7 @@ import dao.SettingDAO;
 import jakarta.servlet.annotation.WebServlet;
 import model.User;
 import model.UserSetting;
+import utils.CookieUtils;
 import utils.DBUtil;
 import utils.DefaultJsonUtil;
 @WebServlet("/update-settings")
@@ -60,8 +61,18 @@ public class UpdateSettingController extends HttpServlet {
             // --- 3. GÁN USER ID VÀ LƯU DỮ LIỆU ---
             data.setUserId(userId);
 
-            SettingService service = new SettingService(new SettingDAO(DBUtil.getConnection()));
+            SettingService service = new SettingService(new SettingDAO());
             service.save(data); // Hàm này có trách nhiệm INSERT/UPDATE vào DB
+            
+            // ⭐⭐ BỔ SUNG: GHI LẠI COOKIE MỚI VÀO HTTP RESPONSE ⭐⭐
+            final int ONE_YEAR = 365; // Đảm bảo bạn có hằng số này hoặc giá trị tương đương
+            
+            // Lấy giá trị theme mới đã lưu thành công
+            String newTheme = data.getTheme(); 
+
+            // Cập nhật cookie để trình duyệt sử dụng ngay lập tức
+            CookieUtils.setCookie(res, "theme", newTheme, ONE_YEAR);
+            // ⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐⭐
             
             // --- 4. PHẢN HỒI THÀNH CÔNG ---
             res.getWriter().write("{\"status\":\"ok\"}");

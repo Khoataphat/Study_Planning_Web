@@ -11,10 +11,24 @@
     <welcome-file-list>
         <welcome-file>views/login.jsp</welcome-file>
     </welcome-file-list>
+
+
+
     <filter>
         <filter-name>AuthFilter</filter-name>
         <filter-class>filters.AuthFilter</filter-class>
     </filter>
+
+
+    <filter>
+        <filter-name>ThemeFilter</filter-name>
+        <filter-class>filters.ThemeFilter</filter-class> 
+    </filter>
+
+    <filter-mapping>
+        <filter-name>ThemeFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
     <filter-mapping>
         <filter-name>AuthFilter</filter-name>
@@ -30,6 +44,7 @@
         <url-pattern>/user/schedule</url-pattern>
         <url-pattern>/setting</url-pattern>
         <url-pattern>/update-settings</url-pattern>
+        <url-pattern>/settings/theme</url-pattern>
         <url-pattern>/schedule</url-pattern>
         <url-pattern>/tasks</url-pattern>
         <url-pattern>/statistics</url-pattern>
