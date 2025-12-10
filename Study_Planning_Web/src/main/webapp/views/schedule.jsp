@@ -4,30 +4,31 @@
 <c:set var="currentTheme" value="${empty theme ? 'light' : theme}" />
 <!DOCTYPE html>
 <html lang="en" class="${currentTheme == 'dark' ? 'dark' : ''}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Schedules - PlanZ</title>
-    
-    <!-- Tailwind CSS & Plugins -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>My Schedules - PlanZ</title>
 
-    <!-- Custom Config & Styles -->
-    <script src="../resources/js/tailwind-config.js"></script>
-    <link rel="stylesheet" href="../resources/css/pastel-overrides.css">
-    <link rel="stylesheet" href="../resources/css/schedule.css">
-    
-    <!-- khoa -->
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
-    <script>
+        <!-- Tailwind CSS & Plugins -->
+        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+        <!-- Google Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+        <!-- Custom Config & Styles -->
+        <script src="../resources/js/tailwind-config.js"></script>
+        <link rel="stylesheet" href="../resources/css/pastel-overrides.css">
+        <link rel="stylesheet" href="../resources/css/schedule.css">
+
+        <!-- khoa -->
+        <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+        <script>
+
             tailwind.config = {
                 darkMode: "class",
                 theme: {
@@ -43,10 +44,20 @@
                             "pastel-pink": "#F9A8D4",
                             "pastel-yellow": "#FDE68A",
                             "text-color": "#1E293B",
-                            "pinky": "#F9A8D4",
+
+                            //new
+                            "surface-light": "#FFFFFF",
+                            "surface-dark": "#293548",
+                            "text-light": "#1E293B",
+                            "text-dark": "#E2E8F0",
+                            "border-light": "#E5E7EB",
+                            "border-dark": "#475569",
+                            "secondary-pink": "#F9A8D4",
+                            "secondary-indigo-light": "#C7D2FE",
+                            "secondary-yellow": "#FDE68A",
                         },
                         fontFamily: {
-                            display: ["Quicksand", "sans-serif"],
+                            display: ["Be Vietnam Pro", "Quicksand", "sans-serif"],
                         },
                         borderRadius: {
                             DEFAULT: "0.75rem",
@@ -57,9 +68,9 @@
         </script>
         <link rel="stylesheet" href="/resources/css/sidebar.css">
         <!-- khoa -->
-</head>
-<!-- khoa -->
-<body class="font-display bg-background-light dark:bg-background-dark text-text-color dark:text-slate-200">
+    </head>
+    <!-- khoa -->
+    <body class="font-display bg-background-light dark:bg-background-dark text-text-color dark:text-slate-200">
         <div class="flex h-screen">
             <aside 
                 id="sidebar"
@@ -120,49 +131,53 @@
                         </a>
                     </div>
                 </header>
-<!-- khoa -->
-            <!-- Schedule Grid -->
-            <div class="flex-1 overflow-y-auto p-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto" id="scheduleListContainer">
-                    
-                    <!-- Create New Schedule Card -->
-                    <a href="javascript:createNewSchedule()" class="schedule-card card-add-new bg-white/40 backdrop-blur-xl rounded-3xl p-8 shadow-sm flex flex-col items-center justify-center min-h-[250px] text-center group cursor-pointer">
-                        <i class="fa-solid fa-plus-circle text-6xl text-primary/60 group-hover:text-primary transition-colors mb-4"></i>
-                        <span class="text-lg font-bold text-slate-600 group-hover:text-primary transition-colors">Create New Schedule</span>
-                        <p class="text-sm text-slate-400 mt-2">Start planning your semester</p>
-                    </a>
+                <!-- khoa -->
+                <!-- Schedule Grid -->
+                <div class="flex-1 overflow-y-auto p-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto" id="scheduleListContainer">
 
-                    <!-- Schedule cards will be dynamically added here -->
+                        <!-- Create New Schedule Card -->
+                        <a href="javascript:createNewSchedule()" class="schedule-card card-add-new bg-white/40 backdrop-blur-xl rounded-3xl p-8 shadow-sm flex flex-col items-center justify-center min-h-[250px] text-center group cursor-pointer">
+                            <i class="fa-solid fa-plus-circle text-6xl text-primary/60 group-hover:text-primary transition-colors mb-4"></i>
+                            <span class="text-lg font-bold text-slate-600 group-hover:text-primary transition-colors">Create New Schedule</span>
+                            <p class="text-sm text-slate-400 mt-2">Start planning your semester</p>
+                        </a>
 
+                        <!-- Schedule cards will be dynamically added here -->
+
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Rename Modal -->
+        <div id="renameModal" class="modal-overlay hidden">
+            <div class="modal-container">
+                <div class="modal-header">
+                    <h3 class="modal-title">Đổi tên lịch học</h3>
+                    <button onclick="closeRenameModal()" class="modal-close">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <label for="renameInput" class="modal-label">Tên lịch học</label>
+                    <input type="text" id="renameInput" class="modal-input" placeholder="Nhập tên mới...">
+                </div>
+                <div class="modal-footer">
+                    <button onclick="closeRenameModal()" class="modal-btn modal-btn-cancel">Hủy</button>
+                    <button onclick="confirmRename()" class="modal-btn modal-btn-primary">Lưu</button>
                 </div>
             </div>
-        </main>
-    </div>
-
-    <!-- Rename Modal -->
-    <div id="renameModal" class="modal-overlay hidden">
-        <div class="modal-container">
-            <div class="modal-header">
-                <h3 class="modal-title">Đổi tên lịch học</h3>
-                <button onclick="closeRenameModal()" class="modal-close">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <label for="renameInput" class="modal-label">Tên lịch học</label>
-                <input type="text" id="renameInput" class="modal-input" placeholder="Nhập tên mới...">
-            </div>
-            <div class="modal-footer">
-                <button onclick="closeRenameModal()" class="modal-btn modal-btn-cancel">Hủy</button>
-                <button onclick="confirmRename()" class="modal-btn modal-btn-primary">Lưu</button>
-            </div>
         </div>
-    </div>
 
-    <script src="../resources/js/schedule.js"></script>
-<!-- khoa -->
-    <script src="/resources/js/sidebar.js"></script>
-<!-- khoa -->
-    <script src="/resources/js/setting.js"></script>
-</body>
+        <%-- 1. THÊM LỚP PHỦ CÀI ĐẶT TẠI ĐÂY --%>
+        <%-- Đảm bảo toàn bộ HTML của lớp phủ được tải vào DOM trước khi JS chạy --%>
+        <%@ include file="settings-overlay.jsp" %>
+
+        <script src="../resources/js/schedule.js"></script>
+        <!-- khoa -->
+        <script src="/resources/js/sidebar.js"></script>
+        <!-- khoa -->
+        <script src="/resources/js/setting.js"></script>
+    </body>
 </html>
