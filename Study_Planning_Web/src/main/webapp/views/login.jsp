@@ -125,20 +125,50 @@
                                     <p class="mt-2 text-base text-gray-600 dark:text-gray-300">Chào mừng bạn quay trở lại!</p>
                                 </header>
 
+                                <!---báo lỗi--->
+                                <%
+                                    // 1. Lấy thông báo lỗi, dữ liệu cũ và trường lỗi (nếu có) từ Controller
+                                    String loginError = (String) request.getAttribute("login_error");
+                                    String loginUsername = (String) request.getAttribute("login_username");
+                                    String loginErrorField = (String) request.getAttribute("login_error_field"); // Ví dụ: "username" hoặc "password"
+
+                                    // 2. Khai báo biến Class CSS để highlight
+                                    String loginUsernameErrorClass = "";
+                                    String loginPasswordErrorClass = "";
+
+                                    // 3. Logic áp dụng Class Highlight
+                                    // Logic áp dụng Class Highlight
+                                    if (loginError != null && "username".equals(loginErrorField)) {
+                                        loginUsernameErrorClass = "border-red-500 ring-2 ring-red-500";
+                                    } else if (loginError != null && "password".equals(loginErrorField)) {
+                                        loginPasswordErrorClass = "border-red-500 ring-2 ring-red-500";
+                                    }
+
+                                    // 4. Hiển thị thông báo lỗi chung
+                                    if (loginError != null) {
+                                %>
+                                <div class="mb-4 md:max-w-[480px] md:mx-auto">
+                                    <p class="text-sm font-semibold text-red-500 dark:text-red-400 p-2 border border-red-500 bg-red-500/10 rounded-lg">
+                                        <%= loginError%>
+                                    </p>
+                                </div>
+                                <%
+                                    }
+                                %><!----báo lỗi ---->
+
                                 <form class="space-y-5" id="signinForm" action="/login" method="post">
                                     <div class="flex max-w-[480px] flex-wrap items-end">
                                         <label class="flex w-full flex-col">
                                             <p class="pb-2 text-sm font-medium text-slate-dark dark:text-gray-200">Tên người dùng</p>
-                                            <div class="form-input-container flex w-full items-center gap-3 overflow-hidden rounded border border-soft-blue dark:border-gray-700 bg-white dark:bg-gray-800 px-3 transition-all duration-300">
-                                                <span class="material-symbols-outlined text-gray-400 dark:text-gray-500">sentiment_satisfied</span>
-                                                <input class="form-input h-12 w-full flex-1 border-0 bg-transparent p-0 text-base font-normal leading-normal text-slate-dark dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-0" placeholder="Tên của bạn nè" type="text" name="username"/>
+                                            <div class="form-input-container flex w-full items-center gap-3 overflow-hidden rounded border border-soft-blue dark:border-gray-700 bg-white dark:bg-gray-800 px-3 transition-all duration-300 <%= loginUsernameErrorClass%>">                                                <span class="material-symbols-outlined text-gray-400 dark:text-gray-500">sentiment_satisfied</span>
+                                                <input class="form-input h-12 w-full flex-1 border-0 bg-transparent p-0 text-base font-normal leading-normal text-slate-dark dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-0" placeholder="Tên của bạn nè" type="text" name="username" value="<%= (loginUsername != null) ? loginUsername : ""%>"/>
                                             </div>
                                         </label>
                                     </div>
                                     <div class="flex max-w-[480px] flex-wrap items-end">
                                         <label class="flex w-full flex-col">
                                             <p class="pb-2 text-sm font-medium text-slate-dark dark:text-gray-200">Mật khẩu</p>
-                                            <div class="form-input-container flex w-full items-center gap-3 overflow-hidden rounded border border-soft-blue dark:border-gray-700 bg-white dark:bg-gray-800 px-3 transition-all duration-300">
+                                            <div class="form-input-container flex w-full items-center gap-3 overflow-hidden rounded border border-soft-blue dark:border-gray-700 bg-white dark:bg-gray-800 px-3 transition-all duration-300 <%= loginPasswordErrorClass%>">
                                                 <span class="material-symbols-outlined text-gray-400 dark:text-gray-500">lock</span>
                                                 <input class="form-input h-12 w-full flex-1 border-0 bg-transparent p-0 text-base font-normal leading-normal text-slate-dark dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-0" placeholder="Nhập mật khẩu" type="password" name="password"/>
                                                 <button class="text-gray-400 dark:text-gray-500" type="button">
@@ -204,7 +234,8 @@
                                 %>      
                                 <!---báo lỗi---->
 
-<form class="space-y-5 md:max-w-[480px] md:mx-auto" id="signupForm" action="/register" method="post">                                    <div class="flex w-full flex-wrap items-end">
+                                <form class="space-y-5 max-w-[480px] mx-auto" id="signupForm" action="/register" method="post">                                    
+                                    <div class="flex w-full flex-wrap items-end">
                                         <label class="flex w-full flex-col">
                                             <p class="pb-2 text-sm font-medium text-slate-dark dark:text-gray-200">Tên người dùng</p>
                                             <div class="form-input-container flex w-full items-center gap-3 overflow-hidden rounded border border-soft-blue dark:border-gray-700 bg-white dark:bg-gray-800 px-3 transition-all duration-300 <%= usernameErrorClass%>">
@@ -222,7 +253,7 @@
                                             </div>
                                         </label>
                                     </div>
-                                    <div class="flex w-full flex-wrap items-end">
+                                    <div class="flex max-w-[480px] flex-wrap items-end">
                                         <label class="flex w-full flex-col">
                                             <p class="pb-2 text-sm font-medium text-slate-dark dark:text-gray-200">Mật khẩu</p>
                                             <div class="form-input-container flex w-full items-center gap-3 overflow-hidden rounded border border-soft-blue dark:border-gray-700 bg-white dark:bg-gray-800 px-3 transition-all duration-300 <%= passwordErrorClass%>">
