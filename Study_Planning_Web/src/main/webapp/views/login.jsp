@@ -110,7 +110,7 @@
                     </div>
                 </div>
 
-                <div class="flex w-full flex-col justify-center bg-background-light dark:bg-background-dark p-8 sm:p-12 lg:p-16">
+                <div class="flex w-full flex-col justify-center bg-background-light dark:bg-background-dark p-5 sm:p-8 lg:p-12">                    
                     <div class="w-full max-w-md overflow-hidden">
 
                         <div id="authWrapper" class="flex w-[200%] transition-transform duration-500 ease-in-out">
@@ -163,29 +163,69 @@
                                     <p class="mt-2 text-base text-gray-600 dark:text-gray-300">Cùng tạo thời khóa biểu chất lừ của riêng bạn nào!</p>
                                 </header>
 
-                                <form class="space-y-5" id="signupForm" action="/register" method="post">
-                                    <div class="flex max-w-[480px] flex-wrap items-end">
+                                <!---báo lỗi---->
+                                <%
+                                    // 1. Lấy thông báo lỗi và dữ liệu cũ từ Controller
+                                    String regError = (String) request.getAttribute("register_error");
+                                    String regUsername = (String) request.getAttribute("reg_username");
+                                    String regEmail = (String) request.getAttribute("reg_email");
+
+                                    // ⭐ BỔ SUNG: LẤY TÊN TRƯỜNG LỖI CỤ THỂ TỪ CONTROLLER ⭐
+                                    String errorField = (String) request.getAttribute("reg_error_field");
+
+                                    // 2. Khai báo biến Class CSS để highlight
+                                    String usernameErrorClass = "";
+                                    String emailErrorClass = "";
+                                    String passwordErrorClass = "";
+
+                                    // ⭐ 3. LOGIC ÁP DỤNG CLASS HIGHLIGHT ⭐
+                                    if (regError != null && errorField != null) {
+                                        String highlightClass = "border-red-500 ring-2 ring-red-500";
+
+                                        if ("username".equals(errorField)) {
+                                            usernameErrorClass = highlightClass;
+                                        } else if ("email".equals(errorField)) {
+                                            emailErrorClass = highlightClass;
+                                        } else if ("password".equals(errorField)) {
+                                            passwordErrorClass = highlightClass;
+                                        }
+                                    }
+
+                                    // 4. Hiển thị thông báo lỗi chung
+                                    if (regError != null) {
+                                %>
+                                <div class="mb-4 max-w-[480px] mx-auto"> 
+                                    <p class="text-sm font-semibold text-red-500 dark:text-red-400 p-2 border border-red-500 bg-red-500/10 rounded-lg">
+                                        <%= regError%>
+                                    </p>
+                                </div>
+                                <%
+                                    }
+                                %>      
+                                <!---báo lỗi---->
+
+<form class="space-y-5 md:max-w-[480px] md:mx-auto" id="signupForm" action="/register" method="post">                                    <div class="flex w-full flex-wrap items-end">
                                         <label class="flex w-full flex-col">
                                             <p class="pb-2 text-sm font-medium text-slate-dark dark:text-gray-200">Tên người dùng</p>
-                                            <div class="form-input-container flex w-full items-center gap-3 overflow-hidden rounded border border-soft-blue dark:border-gray-700 bg-white dark:bg-gray-800 px-3 transition-all duration-300">
+                                            <div class="form-input-container flex w-full items-center gap-3 overflow-hidden rounded border border-soft-blue dark:border-gray-700 bg-white dark:bg-gray-800 px-3 transition-all duration-300 <%= usernameErrorClass%>">
                                                 <span class="material-symbols-outlined text-gray-400 dark:text-gray-500">sentiment_satisfied</span>
-                                                <input class="form-input h-12 w-full flex-1 border-0 bg-transparent p-0 text-base font-normal leading-normal text-slate-dark dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-0" placeholder="Tên của bạn nè" type="text" name="username"/>
+                                                <input class="form-input h-12 w-full flex-1 border-0 bg-transparent p-0 text-base font-normal leading-normal text-slate-dark dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-0" placeholder="Tên của bạn nè" type="text" name="username" value="<%= (regUsername != null) ? regUsername : ""%>"/>
                                             </div>
                                         </label>
                                     </div>
-                                    <div class="flex max-w-[480px] flex-wrap items-end">
+                                    <div class="flex w-full flex-wrap items-end">
                                         <label class="flex w-full flex-col">
                                             <p class="pb-2 text-sm font-medium text-slate-dark dark:text-gray-200">Email</p>
-                                            <div class="form-input-container flex w-full items-center gap-3 overflow-hidden rounded border border-soft-blue dark:border-gray-700 bg-white dark:bg-gray-800 px-3 transition-all duration-300">
+                                            <div class="form-input-container flex w-full items-center gap-3 overflow-hidden rounded border border-soft-blue dark:border-gray-700 bg-white dark:bg-gray-800 px-3 transition-all duration-300 <%= emailErrorClass%>">
                                                 <span class="material-symbols-outlined text-gray-400 dark:text-gray-500">mail</span>
-                                                <input class="form-input h-12 w-full flex-1 border-0 bg-transparent p-0 text-base font-normal leading-normal text-slate-dark dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-0" placeholder="Nhập email của bạn" type="email" name="email"/>
+                                                <input class="form-input h-12 w-full flex-1 border-0 bg-transparent p-0 text-base font-normal leading-normal text-slate-dark dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-0" placeholder="Nhập email của bạn" type="email" name="email" value="<%= (regEmail != null) ? regEmail : ""%>"/>
                                             </div>
                                         </label>
                                     </div>
-                                    <div class="flex max-w-[480px] flex-wrap items-end">
+                                    <div class="flex w-full flex-wrap items-end">
                                         <label class="flex w-full flex-col">
                                             <p class="pb-2 text-sm font-medium text-slate-dark dark:text-gray-200">Mật khẩu</p>
-                                            <div class="form-input-container flex w-full items-center gap-3 overflow-hidden rounded border border-soft-blue dark:border-gray-700 bg-white dark:bg-gray-800 px-3 transition-all duration-300">
+                                            <div class="form-input-container flex w-full items-center gap-3 overflow-hidden rounded border border-soft-blue dark:border-gray-700 bg-white dark:bg-gray-800 px-3 transition-all duration-300 <%= passwordErrorClass%>">
                                                 <span class="material-symbols-outlined text-gray-400 dark:text-gray-500">lock</span>
                                                 <input class="form-input h-12 w-full flex-1 border-0 bg-transparent p-0 text-base font-normal leading-normal text-slate-dark dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-none focus:ring-0" placeholder="Tạo mật khẩu" type="password" name="password"/>
                                                 <button class="text-gray-400 dark:text-gray-500" type="button">
@@ -243,12 +283,36 @@
             const loginPanel = document.getElementById('loginPanel');
             const signupPanel = document.getElementById('signupPanel');
 
+            // Biến trạng thái khởi tạo mặc định là TRUE (Login)
             let isLogin = true;
 
+            // ⭐⭐⭐ LOGIC GHI ĐÈ TRẠNG THÁI MẶC ĐỊNH KHI CÓ LỖI TỪ SERVER (Bổ sung) ⭐⭐⭐
+            <%
+                // Lấy lại biến JSP đã khai báo ở đầu trang:
+                String errorCheck = (String) request.getAttribute("register_error");
+
+                // Kiểm tra nếu Controller gửi lỗi đăng ký về
+                if (errorCheck != null) {
+            %>
+            // Nếu có lỗi, trạng thái mặc định phải là Đăng ký (FALSE)
+            isLogin = false;
+
+            // Áp dụng ngay lập tức hiệu ứng trượt và opacity để hiển thị form Đăng ký
+            authWrapper.style.transform = 'translateX(-50%)';
+            loginPanel.style.opacity = '0.5';
+            signupPanel.style.opacity = '1';
+            switchText.textContent = 'Đã là thành viên?';
+            toggleBtn.textContent = 'Đăng nhập';
+            <% }%>
+            // ⭐⭐⭐ KẾT THÚC LOGIC GHI ĐÈ TRẠNG THÁI ⭐⭐⭐
+
+
+            // Logic chuyển đổi khi nhấn nút (Không thay đổi)
             toggleBtn.addEventListener('click', () => {
                 isLogin = !isLogin;
 
                 // 1. Slide Effect
+                // Điều kiện isLogin đã được cập nhật bởi logic JSP ở trên nếu có lỗi.
                 authWrapper.style.transform = isLogin ? 'translateX(0)' : 'translateX(-50%)';
 
                 // 2. Opacity Effect (Focus vào panel hiện tại)
@@ -264,6 +328,7 @@
                     toggleBtn.textContent = 'Đăng nhập';
                 }
             });
+
         </script>
     </body>
 </html>
