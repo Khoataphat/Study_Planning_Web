@@ -5,7 +5,10 @@
 package service;
 
 import dao.UserDAO;
+import java.sql.SQLIntegrityConstraintViolationException;
 import model.User;
+import model.ValidationError;
+import utils.ValidationUtils;
 
 /**
  *
@@ -22,23 +25,47 @@ public class AuthService {
     //Đăng kí
     public String register(String username, String email, String rawPassword) throws Exception {
 
-        // 1. Check trùng username
-        if (userDAO.findByUsername(username) != null) {
-            return "Username already exists!";
+        // Tạo đối tượng User để truyền vào hàm xác thực và lưu trữ
+        User userToRegister = new User();
+        userToRegister.setUsername(username);
+        userToRegister.setEmail(email);
+        userToRegister.setPassword(rawPassword);
+
+        // 1. GỌI HÀM XÁC THỰC TẬP TRUNG
+        ValidationError validationResult = validateSignup(userToRegister);
+
+        // Nếu xác thực thất bại, trả về thông báo lỗi
+        if (!validationResult.isValid()) {
+            // Trả về thông báo lỗi cụ thể để Controller hiển thị
+            return validationResult.getMessage();
         }
 
-        // 2. Hash password
-        //có hàm hash password thì thay sau
-        //String hashed = PasswordUtils.hash(rawPassword);
+        // 2. Hash password (Chỉ chạy khi xác thực thành công)
+        // có hàm hash password thì thay sau
+        // String hashed = PasswordUtils.hash(rawPassword);
         String hashed = rawPassword;
 
-        // 3. Lưu vào DB
-        User u = new User();
-        u.setUsername(username);
-        u.setPassword(hashed);
-        u.setEmail(email);
-
-        userDAO.insert(u);
+        // 3. Lưu vào DB (Chỉ chạy khi xác thực thành công)
+        userToRegister.setPassword(hashed); // Cập nhật password đã hash
+        // ⭐ BỔ SUNG: BẮT LỖI SQL DUPLICATE ENTRY ⭐
+        try {
+            userDAO.insert(userToRegister);
+        } catch (SQLIntegrityConstraintViolationException ex) {
+            
+            // Xử lý lỗi trùng lặp (duy nhất) nếu xảy ra race condition
+            // Kiểm tra xem lỗi có phải do trùng username hoặc email (UNIQUE KEY) không
+            String errorMessage = ex.getMessage().toLowerCase();
+            
+            if (errorMessage.contains("duplicate entry") && errorMessage.contains("username")) {
+                return "Username already exists.";
+            }
+            if (errorMessage.contains("duplicate entry") && errorMessage.contains("email")) {
+                return "Email address is already in use.";
+            }
+            
+            // Nếu là lỗi SQL khác, ném lại
+            throw ex; 
+        }
 
         return "SUCCESS";
     }
@@ -106,4 +133,42 @@ public class AuthService {
         // Sau khi tạo, tìm lại User để trả về đối tượng đầy đủ (fallback)
         return userDAO.findByOAuth(provider, oauthId);
     }
+
+    // ⭐⭐ 1. THÊM HÀM XÁC THỰC ĐĂNG KÝ (validateSignup) ⭐⭐
+    // Chức năng này thực hiện toàn bộ quá trình Validation và Check trùng
+    public ValidationError validateSignup(User user) throws Exception {
+
+        // 1. Validation cú pháp (syntax validation)
+        ValidationError u = ValidationUtils.validateUsername(user.getUsername());
+        if (!u.isValid()) {
+            return u;
+        }
+
+        ValidationError e = ValidationUtils.validateEmail(user.getEmail());
+        if (!e.isValid()) {
+            return e;
+        }
+
+        // Lưu ý: User.getPassword() phải trả về mật khẩu thô (rawPassword)
+        ValidationError p = ValidationUtils.validatePassword(user.getPassword());
+        if (!p.isValid()) {
+            return p;
+        }
+
+        // 2. Validation nghiệp vụ (business validation)
+        // Check trùng username trong DB
+        if (userDAO.findByUsername(user.getUsername()) != null) {
+            return new ValidationError(false, "Username already exists.");
+        }
+        
+        // ⭐ BỔ SUNG: CHECK TRÙNG EMAIL TRONG DB ⭐
+        // Cần đảm bảo UserDAO có hàm findByEmail(String email)
+        if (userDAO.findByEmail(user.getEmail()) != null) {
+            return new ValidationError(false, "Email address is already in use.");
+        }
+        // ⭐ KẾT THÚC BỔ SUNG ⭐
+
+        return new ValidationError(true, null); // Hợp lệ
+    }
+
 }

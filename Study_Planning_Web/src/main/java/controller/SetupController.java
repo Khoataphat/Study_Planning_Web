@@ -124,7 +124,7 @@ public class SetupController extends HttpServlet {
         // 1. Kiểm tra trạng thái is_first_login
         // Nếu setup đã hoàn thành, chuyển hướng thẳng đến trang chủ (Dashboard)
         if (user.getisFirstLogin() == 0) { // Giả sử getIsFirstLogin() là getter đúng
-            resp.sendRedirect(req.getContextPath() + "/views/home.html");
+            resp.sendRedirect(req.getContextPath() + "/dashboard");
             return;
         }
 

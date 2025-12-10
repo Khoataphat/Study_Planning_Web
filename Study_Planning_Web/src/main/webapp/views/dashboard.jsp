@@ -7,8 +7,10 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="fn" uri="jakarta.tags.functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
+<c:set var="currentTheme" value="${empty theme ? 'light' : theme}" />
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="${currentTheme == 'dark' ? 'dark' : ''}">
 
     <head>
         <meta charset="utf-8" />
@@ -98,6 +100,12 @@
                        href="${pageContext.request.contextPath}/tasks">
                         <span class="material-icons-outlined text-3xl shrink-0">add_task</span>
                         <span class="ml-4 whitespace-nowrap sidebar-text">Nhiệm vụ</span>
+                    </a>
+
+                    <a class="nav-link w-full rounded-lg transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300" 
+                       href="${pageContext.request.contextPath}/smart-schedule">
+                        <span class="material-icons-outlined text-3xl shrink-0">auto_awesome</span>
+                        <span class="ml-4 whitespace-nowrap sidebar-text">Tạo lịch AI</span>
                     </a>
 
                     <a class="nav-link w-full rounded-lg transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
