@@ -31,7 +31,7 @@ public class ScheduleService {
         Map<String, List<UserSchedule>> weeklySchedule = new LinkedHashMap<>();
 
         // Initialize all days
-        String[] days = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
+        String[] days = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
         for (String day : days) {
             weeklySchedule.put(day, new ArrayList<>());
         }
@@ -56,7 +56,7 @@ public class ScheduleService {
 
             // Insert new schedules
             for (UserSchedule schedule : schedules) {
-                schedule.setUserId(userId);
+                // schedule.setUserId(userId); // Removed
                 schedule.setCollectionId(collectionId);
                 int id = scheduleDAO.insert(schedule);
                 if (id == -1) {
@@ -82,11 +82,10 @@ public class ScheduleService {
      * Validate time slot for conflicts
      * Checks if the new schedule overlaps with existing ones
      */
-    public boolean validateTimeSlot(UserSchedule newSchedule) {
+    public boolean validateTimeSlot(int userId, UserSchedule newSchedule) {
         List<UserSchedule> existingSchedules = scheduleDAO.getByUserIdAndDay(
-                newSchedule.getUserId(),
-                newSchedule.getDayOfWeek()
-        );
+                userId,
+                newSchedule.getDayOfWeek());
 
         Time newStart = newSchedule.getStartTime();
         Time newEnd = newSchedule.getEndTime();
@@ -132,9 +131,9 @@ public class ScheduleService {
     /**
      * Update a schedule
      */
-    public boolean updateSchedule(UserSchedule schedule) {
+    public boolean updateSchedule(int userId, UserSchedule schedule) {
         // Validate before updating
-        if (!validateTimeSlot(schedule)) {
+        if (!validateTimeSlot(userId, schedule)) {
             return false;
         }
         return scheduleDAO.update(schedule);
@@ -143,9 +142,9 @@ public class ScheduleService {
     /**
      * Create a new schedule
      */
-    public int createSchedule(UserSchedule schedule) {
+    public int createSchedule(int userId, UserSchedule schedule) {
         // Validate before creating
-        if (!validateTimeSlot(schedule)) {
+        if (!validateTimeSlot(userId, schedule)) {
             return -1;
         }
         return scheduleDAO.insert(schedule);

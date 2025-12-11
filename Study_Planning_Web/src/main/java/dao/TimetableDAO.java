@@ -60,21 +60,23 @@ public class TimetableDAO {
 
     public List<TimetableSlot> getUserTimetable(int userId) throws Exception {
 
-//        String sql = "SELECT * FROM user_schedule /* Đã sửa tên bảng */"
-//                + " WHERE user_id = ?"
-//                + " ORDER BY FIELD(day_of_week, "
-//                + " 'MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY','SUNDAY'),"
-//                + " start_time";
-// LOẠI BỎ CÚ PHÁP ORDER BY FIELD()
-        String sql = "SELECT * FROM user_schedule"
-                + " WHERE user_id = ?"
-                + " ORDER BY day_of_week, start_time"; // Sắp xếp đơn giản
+        // String sql = "SELECT * FROM user_schedule /* Đã sửa tên bảng */"
+        // + " WHERE user_id = ?"
+        // + " ORDER BY FIELD(day_of_week, "
+        // + " 'MONDAY','TUESDAY','WEDNESDAY','THURSDAY','FRIDAY','SATURDAY','SUNDAY'),"
+        // + " start_time";
+        // LOẠI BỎ CÚ PHÁP ORDER BY FIELD()
+        String sql = "SELECT us.*, sc.user_id "
+                + "FROM user_schedule us "
+                + "JOIN schedule_collection sc ON us.collection_id = sc.collection_id "
+                + "WHERE sc.user_id = ? "
+                + "ORDER BY us.day_of_week, us.start_time";
 
         List<TimetableSlot> list = new ArrayList<>();
 
         // Sử dụng try-with-resources để tự động đóng PreparedStatement và ResultSet
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
-// ********** SỬA Ở ĐÂY **********
+            // ********** SỬA Ở ĐÂY **********
             // Thay vì ps.setInt(1, userId);
             ps.setInt(1, userId); // Ép kiểu số thành chuỗi "25"
             // ********************************
@@ -91,7 +93,8 @@ public class TimetableDAO {
                     System.out.println("DEBUG: Đã tìm thấy dữ liệu dòng " + rowCount);
                     // **********************************************
 
-                    // Lấy giá trị theo đúng thứ tự cột trong DB (hoặc thứ tự mong muốn trong constructor)
+                    // Lấy giá trị theo đúng thứ tự cột trong DB (hoặc thứ tự mong muốn trong
+                    // constructor)
                     // 1. schedule_id
                     int scheduleId = rs.getInt("schedule_id");
                     // 2. user_id
@@ -100,7 +103,8 @@ public class TimetableDAO {
                     String dayString = rs.getString("day_of_week");
                     DayOfWeek dayOfWeek = mapDayOfWeek(dayString);
                     // 4. schedule_date
-                    LocalDate scheduleDate = null;//rs.getDate("schedule_date") != null ? rs.getDate("schedule_date").toLocalDate() : null;
+                    LocalDate scheduleDate = null;// rs.getDate("schedule_date") != null ?
+                                                  // rs.getDate("schedule_date").toLocalDate() : null;
                     // 5. start_time
                     LocalTime startTime = rs.getTime("start_time").toLocalTime();
                     // 6. end_time
@@ -115,7 +119,8 @@ public class TimetableDAO {
                     // 9. created_at
                     LocalDateTime createdAt = rs.getTimestamp("created_at").toLocalDateTime();
 
-                    // Tạo đối tượng TimetableSlot. Đảm bảo constructor của bạn có thứ tự khớp với thứ tự này
+                    // Tạo đối tượng TimetableSlot. Đảm bảo constructor của bạn có thứ tự khớp với
+                    // thứ tự này
                     TimetableSlot s = new TimetableSlot(
                             scheduleId,
                             slotUserId, // user_id
@@ -136,10 +141,12 @@ public class TimetableDAO {
                 System.out.println("DEBUG: Vòng lặp kết thúc. Tổng số dòng được xử lý: " + rowCount);
                 // **********************************************
             }
-        } // Không cần khối catch e.printStackTrace() ở đây, ném Exception ra ngoài để Controller xử lý.
+        } // Không cần khối catch e.printStackTrace() ở đây, ném Exception ra ngoài để
+          // Controller xử lý.
 
         return list;
     }
 
-    // Bạn có thể thêm các hàm khác như addTimetableSlot(), deleteTimetableSlot(), updateTimetableSlot()
+    // Bạn có thể thêm các hàm khác như addTimetableSlot(), deleteTimetableSlot(),
+    // updateTimetableSlot()
 }
