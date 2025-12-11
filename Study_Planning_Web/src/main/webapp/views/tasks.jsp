@@ -4,29 +4,30 @@
 <c:set var="currentTheme" value="${empty theme ? 'light' : theme}" />
 <!DOCTYPE html>
 <html lang="en" class="${currentTheme == 'dark' ? 'dark' : ''}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task Management - PlanZ</title>
-    
-    <!-- Tailwind CSS & Plugins -->
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Task Management - PlanZ</title>
 
-    <!-- Custom Config & Styles -->
-    <script src="../resources/js/tailwind-config.js"></script>
-    <link rel="stylesheet" href="../resources/css/pastel-overrides.css">
-    <link rel="stylesheet" href="../resources/css/tasks.css">
-    <!-- khoa -->
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
-    <script>
+        <!-- Tailwind CSS & Plugins -->
+        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+
+        <!-- Google Fonts -->
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+        <!-- Custom Config & Styles -->
+        <script src="../resources/js/tailwind-config.js"></script>
+        <link rel="stylesheet" href="../resources/css/pastel-overrides.css">
+        <link rel="stylesheet" href="../resources/css/tasks.css">
+        <!-- khoa -->
+        <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+        <script>
+
             tailwind.config = {
                 darkMode: "class",
                 theme: {
@@ -42,9 +43,20 @@
                             "pastel-pink": "#F9A8D4",
                             "pastel-yellow": "#FDE68A",
                             "text-color": "#1E293B",
+
+                            //new
+                            "surface-light": "#FFFFFF",
+                            "surface-dark": "#293548",
+                            "text-light": "#1E293B",
+                            "text-dark": "#E2E8F0",
+                            "border-light": "#E5E7EB",
+                            "border-dark": "#475569",
+                            "secondary-pink": "#F9A8D4",
+                            "secondary-indigo-light": "#C7D2FE",
+                            "secondary-yellow": "#FDE68A",
                         },
                         fontFamily: {
-                            display: ["Quicksand", "sans-serif"],
+                            display: ["Be Vietnam Pro", "Quicksand", "sans-serif"],
                         },
                         borderRadius: {
                             DEFAULT: "0.75rem",
@@ -55,9 +67,9 @@
         </script>
         <link rel="stylesheet" href="/resources/css/sidebar.css">
         <!-- khoa -->
-</head>
-<!-- khoa -->
-<body class="font-display bg-background-light dark:bg-background-dark text-text-color dark:text-slate-200">
+    </head>
+    <!-- khoa -->
+    <body class="font-display bg-background-light dark:bg-background-dark text-text-color dark:text-slate-200">
         <div class="flex h-screen">
             <aside 
                 id="sidebar"
@@ -118,182 +130,184 @@
                         </a>
                     </div>
                 </header>
-<!-- khoa -->
+                <!-- khoa -->
 
-        <!-- Main Content Area -->
-        <div class="flex-1 flex min-w-0">
-            
-            <!-- Left Panel: Task List & Form -->
-            <div class="w-[520px] flex flex-col bg-slate-50/50 border-r border-slate-200">
-                
-                <!-- Header -->
-                <div class="px-6 py-5 bg-white/60 backdrop-blur-md border-b border-slate-200">
-                    <h2 class="text-xl font-bold text-slate-dark mb-1">Task Management</h2>
-                    <p class="text-sm text-slate-500">Manage your tasks and deadlines seamlessly</p>
-                </div>
+                <!-- Main Content Area -->
+                <div class="flex-1 flex min-w-0">
 
-                <!-- Status Filter & Add Button -->
-                <div class="px-6 py-4 border-b border-slate-200 space-y-3">
-                    <div class="flex gap-2">
-                        <button onclick="filterByStatus('all')" class="status-filter-btn active" data-status="all">
-                            All
-                        </button>
-                        <button onclick="filterByStatus('pending')" class="status-filter-btn" data-status="pending">
-                            Pending
-                        </button>
-                        <button onclick="filterByStatus('in_progress')" class="status-filter-btn" data-status="in_progress">
-                            In Progress
-                        </button>
-                        <button onclick="filterByStatus('done')" class="status-filter-btn" data-status="done">
-                            Done
-                        </button>
-                    </div>
-                    
-                    <!-- Add New Task Button -->
-                    <button onclick="showTaskForm()" id="addTaskBtn" class="w-full btn-add-task">
-                        <i class="fa-solid fa-plus"></i>
-                        <span>Add New Task</span>
-                    </button>
-                </div>
+                    <!-- Left Panel: Task List & Form -->
+                    <div class="w-[520px] flex flex-col bg-slate-50/50 border-r border-slate-200">
 
-                <!-- Task List - Now with more space! -->
-                <div class="flex-1 overflow-y-auto px-4 py-4" id="taskListContainer">
-                    <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wide px-2 mb-3">YOUR TASKS</h3>
-                    <div id="taskList" class="space-y-2">
-                        <!-- Tasks will be dynamically added here -->
-                    </div>
-                </div>
+                        <!-- Header -->
+                        <div class="px-6 py-5 bg-white/60 backdrop-blur-md border-b border-slate-200">
+                            <h2 class="text-xl font-bold text-slate-dark mb-1">Task Management</h2>
+                            <p class="text-sm text-slate-500">Manage your tasks and deadlines seamlessly</p>
+                        </div>
 
-                <!-- Add/Edit Task Form - Collapsible -->
-                <div id="taskFormContainer" class="hidden bg-white border-t-2 border-slate-200 shadow-2xl">
-                    <div class="px-6 py-5">
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-base font-bold text-slate-700" id="formTitle">Add New Task</h3>
-                            <button onclick="hideTaskForm()" class="text-slate-400 hover:text-slate-600 transition-colors">
-                                <i class="fa-solid fa-times text-xl"></i>
+                        <!-- Status Filter & Add Button -->
+                        <div class="px-6 py-4 border-b border-slate-200 space-y-3">
+                            <div class="flex gap-2">
+                                <button onclick="filterByStatus('all')" class="status-filter-btn active" data-status="all">
+                                    All
+                                </button>
+                                <button onclick="filterByStatus('pending')" class="status-filter-btn" data-status="pending">
+                                    Pending
+                                </button>
+                                <button onclick="filterByStatus('in_progress')" class="status-filter-btn" data-status="in_progress">
+                                    In Progress
+                                </button>
+                                <button onclick="filterByStatus('done')" class="status-filter-btn" data-status="done">
+                                    Done
+                                </button>
+                            </div>
+
+                            <!-- Add New Task Button -->
+                            <button onclick="showTaskForm()" id="addTaskBtn" class="w-full btn-add-task">
+                                <i class="fa-solid fa-plus"></i>
+                                <span>Add New Task</span>
                             </button>
                         </div>
-                        
-                        <form id="taskForm" class="space-y-3">
-                            <input type="hidden" id="taskId" value="">
-                            
-                            <div>
-                                <label class="form-label">Task Name</label>
-                                <input type="text" id="taskTitle" placeholder="e.g., Finalize project report" class="form-input" required>
-                            </div>
 
-                            <div>
-                                <label class="form-label">Description (Optional)</label>
-                                <textarea id="taskDescription" placeholder="Add details..." class="form-input" rows="2"></textarea>
+                        <!-- Task List - Now with more space! -->
+                        <div class="flex-1 overflow-y-auto px-4 py-4" id="taskListContainer">
+                            <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wide px-2 mb-3">YOUR TASKS</h3>
+                            <div id="taskList" class="space-y-2">
+                                <!-- Tasks will be dynamically added here -->
                             </div>
+                        </div>
 
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="form-label">Priority</label>
-                                    <select id="taskPriority" class="form-select">
-                                        <option value="low">Low</option>
-                                        <option value="medium" selected>Medium</option>
-                                        <option value="high">High</option>
-                                    </select>
+                        <!-- Add/Edit Task Form - Collapsible -->
+                        <div id="taskFormContainer" class="hidden bg-white border-t-2 border-slate-200 shadow-2xl">
+                            <div class="px-6 py-5">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h3 class="text-base font-bold text-slate-700" id="formTitle">Add New Task</h3>
+                                    <button onclick="hideTaskForm()" class="text-slate-400 hover:text-slate-600 transition-colors">
+                                        <i class="fa-solid fa-times text-xl"></i>
+                                    </button>
                                 </div>
-                                <div>
-                                    <label class="form-label">Status</label>
-                                    <select id="taskStatus" class="form-select">
-                                        <option value="pending" selected>Pending</option>
-                                        <option value="in_progress">In Progress</option>
-                                        <option value="done">Done</option>
-                                    </select>
-                                </div>
-                            </div>
 
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="form-label">Deadline</label>
-                                    <input type="datetime-local" id="taskDeadline" class="form-input" required>
-                                </div>
-                                <div>
-                                    <label class="form-label">Duration (min)</label>
-                                    <input type="number" id="taskDuration" value="90" min="15" step="15" class="form-input">
-                                </div>
-                            </div>
+                                <form id="taskForm" class="space-y-3">
+                                    <input type="hidden" id="taskId" value="">
 
-                            <div class="flex gap-2 pt-2">
-                                <button type="submit" class="btn-primary flex-1">
-                                    <span id="submitBtnText">Save Task</span>
-                                </button>
-                                <button type="button" onclick="hideTaskForm()" class="btn-cancel">
-                                    Cancel
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+                                    <div>
+                                        <label class="form-label">Task Name</label>
+                                        <input type="text" id="taskTitle" placeholder="e.g., Finalize project report" class="form-input" required>
+                                    </div>
 
-            <!-- Right Panel: Calendar Timeline -->
-            <div class="flex-1 flex flex-col bg-white">
-                
-                <!-- Header with Week Navigation -->
-                <div class="px-8 py-5 bg-white/60 backdrop-blur-md border-b border-slate-200 flex items-center justify-between">
-                    <div>
-                        <h2 class="text-xl font-bold text-slate-dark mb-1">Generated Timetable</h2>
-                        <div class="flex items-center gap-2">
-                            <p class="text-sm text-slate-500" id="weekRangeDisplay">Loading...</p>
-                            <span class="text-slate-300">|</span>
-                            <select id="scheduleSelect" onchange="changeSchedule()" class="text-sm border-none bg-transparent text-primary font-semibold focus:ring-0 cursor-pointer p-0 pr-6">
-                                <option value="">Loading schedules...</option>
-                            </select>
+                                    <div>
+                                        <label class="form-label">Description (Optional)</label>
+                                        <textarea id="taskDescription" placeholder="Add details..." class="form-input" rows="2"></textarea>
+                                    </div>
+
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="form-label">Priority</label>
+                                            <select id="taskPriority" class="form-select">
+                                                <option value="low">Low</option>
+                                                <option value="medium" selected>Medium</option>
+                                                <option value="high">High</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="form-label">Status</label>
+                                            <select id="taskStatus" class="form-select">
+                                                <option value="pending" selected>Pending</option>
+                                                <option value="in_progress">In Progress</option>
+                                                <option value="done">Done</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="form-label">Deadline</label>
+                                            <input type="datetime-local" id="taskDeadline" class="form-input" required>
+                                        </div>
+                                        <div>
+                                            <label class="form-label">Duration (min)</label>
+                                            <input type="number" id="taskDuration" value="90" min="15" step="15" class="form-input">
+                                        </div>
+                                    </div>
+
+                                    <div class="flex gap-2 pt-2">
+                                        <button type="submit" class="btn-primary flex-1">
+                                            <span id="submitBtnText">Save Task</span>
+                                        </button>
+                                        <button type="button" onclick="hideTaskForm()" class="btn-cancel">
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <button onclick="navigateWeek(-1)" class="week-nav-btn">
-                            <i class="fa-solid fa-chevron-left"></i>
-                        </button>
-                        <span class="text-sm font-semibold text-slate-600" id="weekLabel">This Week</span>
-                        <button onclick="navigateWeek(1)" class="week-nav-btn">
-                            <i class="fa-solid fa-chevron-right"></i>
-                        </button>
-                        <button onclick="navigateWeek(0)" class="btn-today">
-                            Today
-                        </button>
 
+                    <!-- Right Panel: Calendar Timeline -->
+                    <div class="flex-1 flex flex-col bg-white">
+
+                        <!-- Header with Week Navigation -->
+                        <div class="px-8 py-5 bg-white/60 backdrop-blur-md border-b border-slate-200 flex items-center justify-between">
+                            <div>
+                                <h2 class="text-xl font-bold text-slate-dark mb-1">Generated Timetable</h2>
+                                <div class="flex items-center gap-2">
+                                    <p class="text-sm text-slate-500" id="weekRangeDisplay">Loading...</p>
+                                    <span class="text-slate-300">|</span>
+                                    <select id="scheduleSelect" onchange="changeSchedule()" class="text-sm border-none bg-transparent text-primary font-semibold focus:ring-0 cursor-pointer p-0 pr-6">
+                                        <option value="">Loading schedules...</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <button onclick="navigateWeek(-1)" class="week-nav-btn">
+                                    <i class="fa-solid fa-chevron-left"></i>
+                                </button>
+                                <span class="text-sm font-semibold text-slate-600" id="weekLabel">This Week</span>
+                                <button onclick="navigateWeek(1)" class="week-nav-btn">
+                                    <i class="fa-solid fa-chevron-right"></i>
+                                </button>
+                                <button onclick="navigateWeek(0)" class="btn-today">
+                                    Today
+                                </button>
+
+                            </div>
+                        </div>
+
+                        <!-- Calendar Grid -->
+                        <!-- Calendar Grid -->
+                        <div class="flex-1 overflow-auto p-4"> <!-- Reduced padding for better fit -->
+                            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                                <table class="w-full border-collapse table-fixed"> <!-- Added table-fixed -->
+                                    <thead>
+                                        <tr class="bg-slate-50 border-b border-slate-200">
+                                            <th class="p-3 text-left text-xs font-semibold text-slate-500 border-r border-slate-200 w-20">Time</th>
+                                            <th class="p-3 text-center text-xs font-semibold text-slate-700 border-r border-slate-200">Mon</th>
+                                            <th class="p-3 text-center text-xs font-semibold text-slate-700 border-r border-slate-200">Tue</th>
+                                            <th class="p-3 text-center text-xs font-semibold text-slate-700 border-r border-slate-200">Wed</th>
+                                            <th class="p-3 text-center text-xs font-semibold text-slate-700 border-r border-slate-200">Thu</th>
+                                            <th class="p-3 text-center text-xs font-semibold text-slate-700 border-r border-slate-200">Fri</th>
+                                            <th class="p-3 text-center text-xs font-semibold text-slate-700 border-r border-slate-200">Sat</th>
+                                            <th class="p-3 text-center text-xs font-semibold text-slate-700">Sun</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="calendarGrid">
+                                        <!-- Calendar rows will be dynamically generated here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Calendar Grid -->
-                <!-- Calendar Grid -->
-                <div class="flex-1 overflow-auto p-4"> <!-- Reduced padding for better fit -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                        <table class="w-full border-collapse table-fixed"> <!-- Added table-fixed -->
-                            <thead>
-                                <tr class="bg-slate-50 border-b border-slate-200">
-                                    <th class="p-3 text-left text-xs font-semibold text-slate-500 border-r border-slate-200 w-20">Time</th>
-                                    <th class="p-3 text-center text-xs font-semibold text-slate-700 border-r border-slate-200">Mon</th>
-                                    <th class="p-3 text-center text-xs font-semibold text-slate-700 border-r border-slate-200">Tue</th>
-                                    <th class="p-3 text-center text-xs font-semibold text-slate-700 border-r border-slate-200">Wed</th>
-                                    <th class="p-3 text-center text-xs font-semibold text-slate-700 border-r border-slate-200">Thu</th>
-                                    <th class="p-3 text-center text-xs font-semibold text-slate-700 border-r border-slate-200">Fri</th>
-                                    <th class="p-3 text-center text-xs font-semibold text-slate-700 border-r border-slate-200">Sat</th>
-                                    <th class="p-3 text-center text-xs font-semibold text-slate-700">Sun</th>
-                                </tr>
-                            </thead>
-                            <tbody id="calendarGrid">
-                                <!-- Calendar rows will be dynamically generated here -->
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
         </div>
-    </div>
 
+        <%-- 1. THÊM LỚP PHỦ CÀI ĐẶT TẠI ĐÂY --%>
+        <%-- Đảm bảo toàn bộ HTML của lớp phủ được tải vào DOM trước khi JS chạy --%>
+        <%@ include file="settings-overlay.jsp" %>
 
-
-    <script src="../resources/js/tasks.js"></script>
-    <script src="../resources/js/smart-schedule.js"></script>
-<!-- khoa -->
-    <script src="/resources/js/sidebar.js"></script>
-<!-- khoa -->
-    <script src="/resources/js/setting.js"></script>
-</body>
+        <script src="../resources/js/tasks.js"></script>
+        <script src="../resources/js/smart-schedule.js"></script>
+        <!-- khoa -->
+        <script src="/resources/js/sidebar.js"></script>
+        <!-- khoa -->
+        <script src="/resources/js/setting.js"></script>
+    </body>
 </html>

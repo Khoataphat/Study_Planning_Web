@@ -156,7 +156,7 @@
                         </div>
 
 
-                        <div class="bg-white dark:bg-slate-900 p-6 rounded-lg shadow-sm flex-grow">
+                        <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm flex-grow">
                             <h3 class="font-bold text-lg mb-4 text-text-color dark:text-white">📅 Thời khóa biểu Tuần</h3>
 
                             <div class="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden">
@@ -220,7 +220,7 @@
 
                     <div class="lg:col-span-1 flex flex-col gap-6">
                         <%-- [THÊM] Thẻ Phân bổ thời gian (Dashboard) --%>
-                        <div class="bg-white dark:bg-slate-900 p-6 rounded-lg shadow-sm">
+                        <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm">
                             <h3 class="font-bold text-lg mb-4 text-text-color dark:text-white">📊 Phân bổ thời gian</h3>
                             <div class="flex flex-col sm:flex-row gap-6 sm:items-center">
                                 <div class="relative w-36 h-36 flex-shrink-0 mx-auto sm:mx-0">
@@ -255,7 +255,7 @@
                         </div>
 
                         <%-- [THÊM] Biểu đồ hoạt động (Dashboard) --%>
-                        <div class="bg-white dark:bg-slate-900 p-6 rounded-lg shadow-sm">
+                        <div class="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-sm">
                             <h3 class="font-bold text-lg mb-4 text-text-color dark:text-white">📈 Thống kê hoạt động</h3>
 
                             <div class="flex flex-wrap gap-4 mt-4">
