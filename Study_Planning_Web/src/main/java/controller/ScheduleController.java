@@ -139,9 +139,9 @@ public class ScheduleController extends HttpServlet {
             if ("add".equals(action)) {
                 // Handle single schedule creation
                 UserSchedule schedule = gson.fromJson(jsonData, UserSchedule.class);
-                schedule.setUserId(userId); // Set the logged-in user ID
+                // schedule.setUserId(userId); // Set the logged-in user ID (Removed)
                 // Use createSchedule which returns int (last inserted ID)
-                int newId = scheduleService.createSchedule(schedule);
+                int newId = scheduleService.createSchedule(userId, schedule);
                 boolean success = newId > 0;
 
                 Map<String, Object> result = new HashMap<>();

@@ -125,7 +125,7 @@ public class SmartScheduleService {
                     } else {
                         // Found a slot
                         UserSchedule s = new UserSchedule();
-                        s.setUserId(userId);
+                        // s.setUserId(userId); // Removed
                         s.setCollectionId(collectionId);
                         s.setDayOfWeek(dayName);
                         s.setStartTime(currentSlotStart);
@@ -165,7 +165,7 @@ public class SmartScheduleService {
                 schedule.setType(fixedType);
 
                 // Ensure IDs are set correctly
-                schedule.setUserId(userId);
+                // schedule.setUserId(userId); // Removed
                 schedule.setCollectionId(collectionId);
                 scheduleDAO.insert(schedule);
             }
