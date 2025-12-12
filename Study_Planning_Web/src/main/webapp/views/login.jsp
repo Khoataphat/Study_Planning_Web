@@ -176,6 +176,12 @@
                             </header>
 
                             <form class="space-y-5" id="signupForm" action="/register" method="post">
+                                <% String error = (String) request.getAttribute("error"); %>
+                                <% if(error != null) { %>
+                                    <div class="p-3 text-red-500 bg-red-100 border border-red-400 rounded">
+                                        <%= error %>
+                                    </div>
+                                <% } %>
                                 <div class="flex max-w-[480px] flex-wrap items-end">
                                     <label class="flex w-full flex-col">
                                         <p class="pb-2 text-sm font-medium text-slate-dark dark:text-gray-200">Tên người dùng</p>
@@ -254,6 +260,15 @@
                 authWrapper.style.transform = 'translateX(0)';
             });
         }
+    </script>
+    <script>
+        // Check for server-side error flag to auto-switch to Signup panel
+        <% if (request.getAttribute("isRegisterError") != null && (boolean) request.getAttribute("isRegisterError")) { %>
+            const wrapper = document.getElementById('authWrapper');
+            if(wrapper) {
+                wrapper.style.transform = 'translateX(-50%)';
+            }
+        <% } %>
     </script>
 </body>
 </html>
