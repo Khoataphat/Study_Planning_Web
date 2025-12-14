@@ -302,7 +302,7 @@ function hideTaskForm() {
     // ⭐️ LOGIC KIỂM TRA VÀ XÓA SỰ KIỆN TẠM THỜI
     if (window.tempScheduledEvent) {
         console.log("2. Biến window.tempScheduledEvent TỒN TẠI.");
-        
+
         if (window.tempScheduledEvent.element) {
             // Kiểm tra xem element có còn nằm trong DOM không
             const element = window.tempScheduledEvent.element;
@@ -310,13 +310,13 @@ function hideTaskForm() {
 
             console.log("3. Element đã được lưu. Type:", element.tagName);
             console.log("4. Element có còn trong DOM không?", isElementInDOM);
-            
+
             // Tiến hành xóa
-            element.remove(); 
+            element.remove();
             console.log("5. Đã gọi element.remove().");
-            
+
             // Đặt lại biến
-            window.tempScheduledEvent = null; 
+            window.tempScheduledEvent = null;
             console.log("6. window.tempScheduledEvent đã được reset thành NULL.");
         } else {
             console.log("3. LỖI: Thuộc tính .element trong tempScheduledEvent là NULL/UNDEFINED.");
@@ -325,7 +325,7 @@ function hideTaskForm() {
     } else {
         console.log("2. window.tempScheduledEvent là NULL. Không có lịch trình tạm thời nào để xóa.");
     }
-    
+
     // --- Logic Ẩn Form ---
     const formContainer = document.getElementById('taskFormContainer');
     const addBtn = document.getElementById('addTaskBtn');
@@ -802,15 +802,21 @@ function getDateFromDayAndHour(dayName, hour) {
 
     // Map day name to index (Mon=1, ... Sun=0/7)
     const dayMap = {'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6, 'Sun': 0};
-    
+
+
+// ⭐️ BỔ SUNG: ĐẢM BẢO dayName là chuỗi trước khi sử dụng
+// ⭐️ SỬA LỖI QUAN TRỌNG: ĐẢM BẢO dayName là chuỗi và hour là số.
+    let dayNameStr = String(dayName);
+    let hourNum = parseInt(hour); // Chắc chắn là số
+
     // Kiểm tra đầu vào
-    if (!dayName || dayMap[dayName] === undefined || isNaN(hour)) {
-        console.error("Lỗi đầu vào getDateFromDayAndHour:", { dayName, hour });
+    if (!dayNameStr || dayMap[dayNameStr] === undefined || isNaN(hourNum)) {
+        console.error("Lỗi đầu vào getDateFromDayAndHour:", {dayName: dayName, hour: hour});
         return new Date('Invalid'); // Trả về Invalid Date
     }
-    
-    let targetDayIndex = dayMap[dayName];
-    
+
+    let targetDayIndex = dayMap[dayNameStr];
+
 
     // Fix logic for Mon-Sun week:
     // Treat Sun as 7.
@@ -1023,6 +1029,18 @@ async function handleScheduleTaskSubmission(taskData) {
                 window.attachResizeHandlers(eventElement);
                 window.attachDragHandlers(eventElement);
 
+
+                // ⭐️ ĐẢM BẢO BƯỚC NÀY ĐƯỢC THỰC HIỆN:
+                if (window.tempScheduledEvent && window.tempScheduledEvent.element) {
+                    const element = window.tempScheduledEvent.element;
+
+                    // 1. Gán ID chính thức
+                    element.dataset.scheduleId = addScheduleResult.scheduleId;
+
+                    // 2. XÓA CLASS TẠM THỜI (để các hàm startResize/startMove nhận diện nó là chính thức)
+                    element.classList.remove('temp-event');
+                }
+
 // ⭐️ SỬA ĐỔI: Phải gọi loadSchedule để tải lại dữ liệu lịch trình từ DB
                 loadSchedule(currentCollectionId);
                 loadTasks(); // Tải lại Task List và Lịch
@@ -1053,7 +1071,7 @@ window.openTaskDetailModalFromSchedule = function (eventElement, dayOfWeek, star
         eventElement.remove();
         return;
     }
-    
+
     // ⭐️ KIỂM TRA ĐÂY: eventElement có phải là element DOM không?
     if (!(eventElement instanceof HTMLElement)) {
         console.error("Lỗi: eventElement không phải là đối tượng HTML Element hợp lệ.");
@@ -1129,7 +1147,7 @@ window.updateScheduleTimeBackend = async function (scheduleId, dayOfWeek, startT
 /**
  * Cập nhật form task với duration và deadline mới
  */
-window.updateTaskFormDuration = function(duration, startTime, dayOfWeek) {
+window.updateTaskFormDuration = function (duration, startTime, dayOfWeek) {
     // 1. Cập nhật Duration (input number)
     const durationInput = document.getElementById('taskDuration');
     if (durationInput) {
@@ -1143,23 +1161,23 @@ window.updateTaskFormDuration = function(duration, startTime, dayOfWeek) {
     const startMinute = parseInt(parts[1]);
 
     if (isNaN(startHour) || isNaN(startMinute)) {
-         console.error("Lỗi phân tích cú pháp thời gian trong updateTaskFormDuration:", startTime);
-         return; 
+        console.error("Lỗi phân tích cú pháp thời gian trong updateTaskFormDuration:", startTime);
+        return;
     }
 
-    const calculatedDate = getDateFromDayAndHour(dayOfWeek, startHour); 
+    const calculatedDate = getDateFromDayAndHour(dayOfWeek, startHour);
     calculatedDate.setMinutes(startMinute); // Đặt phút sau khi tính ngày
 
     // ⭐️ BỔ SUNG KIỂM TRA: Nếu ngày không hợp lệ, KHÔNG gán giá trị
     if (isNaN(calculatedDate.getTime())) {
         console.error("Ngày tính toán không hợp lệ sau khi resize/move.");
-        return; 
+        return;
     }
-    
+
     const deadlineInput = document.getElementById('taskDeadline');
     if (deadlineInput) {
         // formatForInput phải đảm bảo đầu ra là yyyy-MM-ddThh:mm
-        deadlineInput.value = formatForInput(calculatedDate); 
+        deadlineInput.value = formatForInput(calculatedDate);
     }
 }
 

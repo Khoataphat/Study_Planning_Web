@@ -46,6 +46,21 @@ function setupEvents() {
 // =================================================================
 
 function createDefaultEvent(e) {
+    
+    // ⭐️ BỔ SUNG LOGIC CHẶN SỰ KIỆN TẠM THỜI THỨ HAI
+    if (window.tempScheduledEvent !== null) {
+        console.warn("LƯU Ý: Vui lòng hoàn thành (Save) hoặc hủy (Cancel) tác vụ đang tạo trước.");
+        
+        // Bạn có thể thêm logic cuộn đến form đang mở hoặc nháy form để thu hút sự chú ý
+        const formContainer = document.getElementById('taskFormContainer');
+        if (formContainer && formContainer.classList.contains('hidden') === false) {
+             formContainer.classList.add('animate-shake');
+             setTimeout(() => formContainer.classList.remove('animate-shake'), 800);
+        }
+        
+        return; // CHẶN TOÀN BỘ QUÁ TRÌNH TẠO SỰ KIỆN TẠM THỜI MỚI
+    }
+    
     // Ngăn chặn việc tạo sự kiện mới khi click vào một sự kiện đã có hoặc handle resize của nó.
     if (e.target.classList.contains('calendar-event') || e.target.classList.contains('resize-handle')) {
         return;
@@ -117,7 +132,6 @@ function createDefaultEvent(e) {
     // Giao eventElement tạm thời cho modal để modal có thể xóa nó nếu Hủy, 
     // hoặc chuyển đổi nó thành sự kiện chính thức nếu Lưu.
     window.openTaskDetailModalFromSchedule(
-            eventElement, // ⭐️ Truyền đối tượng DOM của sự kiện tạm thời
             eventElement, // Tham số 1
             dayOfWeek, // Tham số 2
             startTime, // Tham số 3
@@ -142,16 +156,22 @@ function startResize(e) {
     e.preventDefault();
     e.stopPropagation();
 
-    isResizing = true;
-    resizeHandle = e.currentTarget;
-    currentEvent = resizeHandle.closest('.calendar-event');
+    // 1. Lấy event element
+    const eventElement = e.target.closest('.calendar-event');
+    if (!eventElement) {
+        return;
+    }
 
-//    // ⭐️ THAY ĐỔI: BỎ QUA SỰ KIỆN TẠM THỜI
-//    if (currentEvent.classList.contains('temp-event')) {
-//        isResizing = false;
-//        currentEvent = null;
-//        return;
-//    }
+    // ⭐️ LOGIC CHẶN CHÍNH THỨC: Chặn nếu KHÔNG phải tạm thời VÀ CÓ Schedule ID
+    if (!eventElement.classList.contains('temp-event') && eventElement.dataset.scheduleId) {
+        console.log("Resize chặn: Sự kiện chính thức.");
+        return;
+    }
+
+    // 2. Tiếp tục thao tác cho sự kiện tạm thời
+    isResizing = true;
+    currentEvent = eventElement; // Gán eventElement chính xác
+    resizeHandle = e.target; // Gán handle chính xác
 
     currentEvent.classList.add('resizing');
 }
@@ -212,9 +232,8 @@ function endResize(e) {
 
     updateEventTimeDisplay(currentEvent); // Hàm này đã cập nhật text nội bộ
 
-// ⭐️ BỔ SUNG: Nếu là sự kiện tạm thời, cập nhật dataset VÀ FORM
+    // ⭐️ BỔ SUNG: Nếu là sự kiện tạm thời, cập nhật dataset VÀ FORM
     if (currentEvent.classList.contains('temp-event')) {
-        // Lấy thời gian từ DOM (đã được updateEventTimeDisplay cập nhật)
         const fullTimeText = currentEvent.querySelector('span').textContent;
         const match = fullTimeText.match(/\((.*?)\)/);
 
@@ -223,20 +242,22 @@ function endResize(e) {
             currentEvent.dataset.startTime = startTimeRaw + ':00';
             currentEvent.dataset.endTime = endTimeRaw + ':00';
 
-            // Tính Duration mới (từ chiều cao đã làm tròn)
             const newDuration = Math.round(roundedHeight / PIXELS_PER_MINUTE);
-            
-            // 🎯 SỬA ĐỔI QUAN TRỌNG: Lấy dayOfWeek từ dayIndex
-            const dayIndex = parseInt(currentEvent.dataset.dayIndex); // Lấy index từ dataset
-            
-            // Cần đảm bảo DAYS_OF_WEEK được định nghĩa trong khoa-tasks.js
-            const dayOfWeek = DAYS_OF_WEEK[dayIndex - 1]; 
 
-            // Kiểm tra tính hợp lệ trước khi gọi
-            if (dayOfWeek && window.updateTaskFormDuration) {
-                window.updateTaskFormDuration(newDuration, startTimeRaw, dayOfWeek);
-            } else {
-                 console.error("Lỗi: Không tìm thấy dayOfWeek hoặc updateTaskFormDuration.");
+            // ⭐️ SỬA LỖI: Lấy dayIndex và tính dayOfWeek
+            const dayIndex = parseInt(currentEvent.dataset.dayIndex);
+            const dayOfWeek = DAYS_OF_WEEK[dayIndex - 1]; // Lấy từ Hằng số DAYS_OF_WEEK
+
+            // TÍNH DATE VÀ CẬP NHẬT FORM
+            const [startHour, startMinute] = startTimeRaw.split(':').map(Number);
+            const calculatedDate = window.getDateFromDayAndHour(dayOfWeek, startHour);
+            calculatedDate.setMinutes(startMinute);
+            const formattedDeadline = window.formatForInput(calculatedDate); // Sử dụng hàm từ tasks.js
+
+            // 🎯 GỌI HÀM CẬP NHẬT FORM TASK
+            if (window.updateTaskFormDuration) {
+                // Truyền durationMinutes, startTimeRaw (HH:MM), và dayOfWeek mới
+                window.updateTaskFormDuration(newDuration, formattedDeadline, dayOfWeek); // Truyền formattedDeadline thay vì startTimeRaw
             }
         }
     }
@@ -279,9 +300,16 @@ function startMove(e) {
         return;
     }
 
-//    if (e.currentTarget.classList.contains('temp-event')) {
-//        return; // ⭐️ THAY ĐỔI: BỎ QUA SỰ KIỆN TẠM THỜI
-//    }
+    const eventElement = e.target.closest('.calendar-event'); // Lấy event element
+    if (!eventElement) {
+        return;
+    }
+
+    // ⭐️ LOGIC CHẶN CHÍNH THỨC: Chặn nếu KHÔNG phải tạm thời VÀ CÓ Schedule ID
+    if (!eventElement.classList.contains('temp-event') && eventElement.dataset.scheduleId) {
+        console.log("Move chặn: Sự kiện chính thức.");
+        return;
+    }
 
     if (e.button !== 0)
         return;
@@ -289,7 +317,7 @@ function startMove(e) {
     e.stopPropagation();
 
     isDragging = true;
-    currentEventToMove = e.currentTarget;
+    currentEventToMove = eventElement; // Gán eventElement chính xác
 
     dragStartY = e.clientY;
     dragStartTop = parseFloat(currentEventToMove.style.top);
@@ -393,29 +421,32 @@ function endMove(e) {
 
     // ⭐️ SỬA ĐỔI CHÍNH: Nếu là sự kiện tạm thời, cập nhật dataset VÀ FORM
     if (currentEventToMove.classList.contains('temp-event')) {
-
         const currentEvent = currentEventToMove;
 
-        // 1. Lấy thời gian từ DOM (đã được updateEventTimeDisplay cập nhật)
         const fullTimeText = currentEvent.querySelector('span').textContent;
         const match = fullTimeText.match(/\((.*?)\)/);
 
         if (match && match[1]) {
             const [startTimeRaw, endTimeRaw] = match[1].split(' – ').map(t => t.trim());
-            
-            // Cập nhật dataset của sự kiện tạm thời
+
             currentEvent.dataset.startTime = startTimeRaw + ':00';
             currentEvent.dataset.endTime = endTimeRaw + ':00';
 
             // Lấy DayOfWeek và Duration
-            const dayOfWeek = DAYS_OF_WEEK[parseInt(newDayIndex) - 1];
-            // Tính duration từ chiều cao (không thay đổi khi di chuyển)
-            const durationMinutes = Math.round(parseFloat(currentEvent.style.height) / PIXELS_PER_MINUTE); 
-            
+            const newDayIndex = parseInt(currentEvent.dataset.dayIndex);
+            const dayOfWeek = DAYS_OF_WEEK[newDayIndex - 1]; // Lấy DayOfWeek mới
+            const durationMinutes = Math.round(parseFloat(currentEvent.style.height) / PIXELS_PER_MINUTE); 
+
+            // TÍNH DATE VÀ CẬP NHẬT FORM
+            const [startHour, startMinute] = startTimeRaw.split(':').map(Number);
+            const calculatedDate = window.getDateFromDayAndHour(dayOfWeek, startHour);
+            calculatedDate.setMinutes(startMinute);
+            const formattedDeadline = window.formatForInput(calculatedDate); // Sử dụng hàm từ tasks.js
+
             // 🎯 BỔ SUNG MỚI: GỌI HÀM CẬP NHẬT FORM TASK
             if (window.updateTaskFormDuration) {
-                // Truyền durationMinutes, startTimeRaw (HH:MM), và dayOfWeek mới
-                window.updateTaskFormDuration(durationMinutes, startTimeRaw, dayOfWeek); 
+                // Truyền durationMinutes, formattedDeadline mới, và dayOfWeek mới
+                window.updateTaskFormDuration(durationMinutes, formattedDeadline, dayOfWeek); 
             }
         }
     }
