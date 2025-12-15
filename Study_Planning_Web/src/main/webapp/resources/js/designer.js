@@ -213,6 +213,28 @@ function allowDrop(ev) {
     ev.preventDefault();
 }
 
+function parseTime(t) {
+    const p = t.split(':');
+    return { h: parseInt(p[0]), m: parseInt(p[1] || 0) };
+}
+
+function dragEvent(ev, data) {
+    ev.stopPropagation();
+    // Store drag data with source 'calendar'
+    currentDragData = {
+        type: data.type,
+        name: data.name,
+        color: data.color,
+        description: data.description,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        source: 'calendar',
+        originalDay: data.day,
+        originalStartTime: data.startTime
+    };
+    currentDragData.element = ev.target;
+}
+
 function dropTask(ev) {
     ev.preventDefault();
     if (!currentDragData) return;
@@ -221,18 +243,37 @@ function dropTask(ev) {
     const time = cell.getAttribute('data-time');
     const day = cell.getAttribute('data-day');
 
-    // Calculate default end time (1 hour later)
-    const hour = parseInt(time.split(':')[0]);
-    const endHour = (hour + 1).toString().padStart(2, '0');
-    const endTime = endHour + ':00';
+    // Calculate duration
+    let durationMinutes = 60; // Default 1 hour
+    if (currentDragData.source === 'calendar') {
+        const start = parseTime(currentDragData.startTime);
+        const end = parseTime(currentDragData.endTime);
+        durationMinutes = (end.h * 60 + end.m) - (start.h * 60 + start.m);
+
+        // Remove old event from Data and DOM *before* creating new one
+        // This ensures if we drop in same slot, we don't lose data
+        if (scheduleData[currentDragData.originalDay] && scheduleData[currentDragData.originalDay][currentDragData.originalStartTime]) {
+            delete scheduleData[currentDragData.originalDay][currentDragData.originalStartTime];
+        }
+        if (currentDragData.element) {
+            currentDragData.element.remove();
+        }
+    }
+
+    // Calculate new EndTime
+    const newStart = parseTime(time);
+    const newEndTotalMinutes = newStart.h * 60 + newStart.m + durationMinutes;
+    const newEndH = Math.floor(newEndTotalMinutes / 60);
+    const newEndM = newEndTotalMinutes % 60;
+    const newEndTime = newEndH + ':' + (newEndM < 10 ? '0' + newEndM : newEndM);
 
     createEventElement(cell, {
         type: currentDragData.type,
         name: currentDragData.name,
         color: currentDragData.color,
         startTime: time,
-        endTime: endTime,
-        description: '',
+        endTime: newEndTime,
+        description: currentDragData.description || '',
         day: day
     });
 
@@ -254,6 +295,10 @@ function createEventElement(cell, data) {
     // Create event block
     const eventBlock = document.createElement('div');
     eventBlock.className = 'event-block p-2 rounded-lg text-white text-xs font-semibold cursor-pointer hover:opacity-90 transition-opacity';
+    eventBlock.setAttribute('draggable', 'true');
+    eventBlock.ondragstart = function (e) {
+        dragEvent(e, data);
+    };
     eventBlock.style.backgroundColor = data.color;
     eventBlock.style.position = 'absolute';
     eventBlock.style.top = '0';

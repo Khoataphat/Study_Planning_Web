@@ -365,6 +365,9 @@ async function deleteTask(taskId) {
 
         if (result.success) {
             loadTasks();
+            if (currentCollectionId) {
+                loadSchedule(currentCollectionId);
+            }
         } else {
             alert('Failed to delete task');
         }
@@ -401,6 +404,9 @@ function filterByStatus(status) {
 /**
  * Render calendar grid
  */
+/**
+ * Render calendar grid
+ */
 function renderCalendar() {
     const calendarGrid = document.getElementById('calendarGrid');
     calendarGrid.innerHTML = '';
@@ -409,9 +415,6 @@ function renderCalendar() {
     const today = new Date();
     const startOfWeek = new Date(today);
     startOfWeek.setDate(today.getDate() - today.getDay() + (currentWeekOffset * 7));
-
-    // Adjust to Monday start if needed, but keeping Sunday start for consistency with backend
-    // Backend uses Mon, Tue... so we need to map correctly
 
     const endOfWeek = new Date(startOfWeek);
     endOfWeek.setDate(startOfWeek.getDate() + 6);
@@ -430,13 +433,11 @@ function renderCalendar() {
     }
 
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    // Note: startOfWeek is Sunday. If we want Mon-Sun columns, we need to adjust logic.
-    // The table header is Time, Mon, Tue... Sun.
-    // So we need to map columns 1-7 to Mon-Sun.
 
     // Generate time slots (7 AM to 10 PM)
     for (let hour = 7; hour <= 22; hour++) {
         const row = document.createElement('tr');
+        // Fixed height 80px (h-20)
         row.className = 'border-b border-slate-100 hover:bg-slate-50/50 transition-colors h-20';
 
         // Time column
@@ -448,9 +449,9 @@ function renderCalendar() {
         // Day columns
         days.forEach((day, index) => {
             const cell = document.createElement('td');
-            // Add border-r to all except the last column
             const borderClass = index < days.length - 1 ? 'border-r border-slate-100' : '';
-            cell.className = `p-1 ${borderClass} relative align-top transition-all`;
+            // Added relative positioning and z-index for stacking context
+            cell.className = `p-0 ${borderClass} relative align-top transition-all`;
             cell.dataset.day = day;
             cell.dataset.hour = hour;
 
@@ -468,9 +469,17 @@ function renderCalendar() {
             cell.ondrop = (e) => {
                 e.preventDefault();
                 cell.classList.remove('bg-blue-50');
+
                 const taskId = e.dataTransfer.getData('taskId');
+                const scheduleId = e.dataTransfer.getData('scheduleId');
                 const duration = e.dataTransfer.getData('duration');
-                if (taskId) {
+                const subject = e.dataTransfer.getData('subject');
+
+                if (scheduleId) {
+                    // Moving existing schedule item
+                    moveScheduleItem(scheduleId, day, hour, duration, subject);
+                } else if (taskId) {
+                    // Adding new task from list
                     addTaskToSchedule(taskId, day, hour, duration);
                 }
             };
@@ -484,9 +493,47 @@ function renderCalendar() {
 
                 events.forEach(event => {
                     const eventDiv = document.createElement('div');
-                    eventDiv.className = 'bg-indigo-50 text-indigo-700 border border-indigo-200 p-1.5 rounded-md text-xs mb-1 font-medium cursor-pointer hover:bg-indigo-100 transition-colors truncate shadow-sm';
+
+                    // Parse start time/end time to calculate position and height
+                    const startParts = event.startTime.split(':');
+                    const endParts = event.endTime.split(':');
+
+                    const startMin = parseInt(startParts[1]); // Minutes past the hour
+                    const startTotalMins = parseInt(startParts[0]) * 60 + startMin;
+                    const endTotalMins = parseInt(endParts[0]) * 60 + parseInt(endParts[1]);
+
+                    const durationMins = endTotalMins - startTotalMins;
+
+                    // 1 hour = 80px (h-20)
+                    const pixelsPerMin = 80 / 60;
+                    const topPos = startMin * pixelsPerMin;
+                    const heightPx = durationMins * pixelsPerMin;
+
+                    // Apply styles for absolute positioning
+                    eventDiv.style.position = 'absolute';
+                    eventDiv.style.top = `${topPos}px`;
+                    eventDiv.style.height = `${heightPx}px`;
+                    eventDiv.style.width = '95%'; // Almost full width
+                    eventDiv.style.left = '2.5%'; // Centered horizontally
+                    eventDiv.style.zIndex = '10'; // Ensure it sits on top
+
+                    eventDiv.className = 'bg-indigo-50 text-indigo-700 border border-indigo-200 p-1.5 rounded-md text-xs font-medium cursor-pointer hover:bg-indigo-100 transition-colors shadow-sm overflow-hidden';
                     eventDiv.textContent = event.subject;
                     eventDiv.title = `${event.subject} (${event.startTime} - ${event.endTime})`;
+
+                    // Enable dragging for existing events
+                    eventDiv.draggable = true;
+                    eventDiv.ondragstart = (e) => {
+                        e.dataTransfer.setData('scheduleId', event.scheduleId);
+                        e.dataTransfer.setData('subject', event.subject);
+                        e.dataTransfer.setData('duration', durationMins);
+                        e.dataTransfer.effectAllowed = 'move';
+                        eventDiv.classList.add('opacity-50');
+                    };
+                    eventDiv.ondragend = () => {
+                        eventDiv.classList.remove('opacity-50');
+                    };
+
                     cell.appendChild(eventDiv);
                 });
             }
@@ -496,6 +543,38 @@ function renderCalendar() {
 
         calendarGrid.appendChild(row);
     }
+}
+
+/**
+ * Move schedule item (Delete old -> Add new)
+ */
+function moveScheduleItem(scheduleId, day, startHour, duration, subject) {
+    if (!confirm('Move this event to ' + day + ' at ' + startHour + ':00?')) {
+        return;
+    }
+
+    // 1. Delete old schedule
+    fetch(`/user/schedule?id=${scheduleId}`, {
+        method: 'DELETE'
+    })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                // 2. Add new schedule at new time
+                // Construct a task-like object to reuse addToScheduleBackend logic
+                // or call it directly. addToScheduleBackend expects a 'task' object with .title, 
+                // but we can just pass a dummy object or better yet, refactor.
+                // Let's create a custom object that mimics what addToScheduleBackend needs.
+                const dummyTask = { title: subject };
+                addToScheduleBackend(dummyTask, day, startHour, duration);
+            } else {
+                alert('Failed to move event: ' + (result.message || 'Unknown error'));
+            }
+        })
+        .catch(error => {
+            console.error('Error moving event:', error);
+            alert('Error moving event');
+        });
 }
 
 /**

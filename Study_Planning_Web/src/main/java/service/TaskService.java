@@ -11,9 +11,11 @@ import java.util.List;
  */
 public class TaskService {
     private final TaskDAO taskDAO;
+    private final dao.UserScheduleDAO scheduleDAO;
 
     public TaskService() {
         this.taskDAO = new TaskDAO();
+        this.scheduleDAO = new dao.UserScheduleDAO();
     }
 
     /**
@@ -80,10 +82,20 @@ public class TaskService {
     }
 
     /**
-     * Delete task by ID
+     * Delete task by ID and remove associated schedule entries
      */
     public boolean deleteTask(int taskId) {
-        return taskDAO.delete(taskId);
+        // Get task details first to know subject and userId
+        Task task = taskDAO.getById(taskId);
+
+        boolean deleted = taskDAO.delete(taskId);
+
+        if (deleted && task != null) {
+            // Also delete from schedule if it exists
+            scheduleDAO.deleteByUserIdAndSubject(task.getUserId(), task.getTitle());
+        }
+
+        return deleted;
     }
 
     /**
