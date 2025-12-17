@@ -46,21 +46,21 @@ function setupEvents() {
 // =================================================================
 
 function createDefaultEvent(e) {
-    
+
     // ⭐️ BỔ SUNG LOGIC CHẶN SỰ KIỆN TẠM THỜI THỨ HAI
     if (window.tempScheduledEvent !== null) {
         console.warn("LƯU Ý: Vui lòng hoàn thành (Save) hoặc hủy (Cancel) tác vụ đang tạo trước.");
-        
+
         // Bạn có thể thêm logic cuộn đến form đang mở hoặc nháy form để thu hút sự chú ý
         const formContainer = document.getElementById('taskFormContainer');
         if (formContainer && formContainer.classList.contains('hidden') === false) {
-             formContainer.classList.add('animate-shake');
-             setTimeout(() => formContainer.classList.remove('animate-shake'), 800);
+            formContainer.classList.add('animate-shake');
+            setTimeout(() => formContainer.classList.remove('animate-shake'), 800);
         }
-        
+
         return; // CHẶN TOÀN BỘ QUÁ TRÌNH TẠO SỰ KIỆN TẠM THỜI MỚI
     }
-    
+
     // Ngăn chặn việc tạo sự kiện mới khi click vào một sự kiện đã có hoặc handle resize của nó.
     if (e.target.classList.contains('calendar-event') || e.target.classList.contains('resize-handle')) {
         return;
@@ -173,6 +173,10 @@ function startResize(e) {
     currentEvent = eventElement; // Gán eventElement chính xác
     resizeHandle = e.target; // Gán handle chính xác
 
+    // Lưu trạng thái ban đầu của sự kiện
+    currentEvent.dataset.originalTop = currentEvent.style.top;
+    currentEvent.dataset.originalHeight = currentEvent.style.height;
+
     currentEvent.classList.add('resizing');
 }
 
@@ -222,65 +226,78 @@ function endResize(e) {
     let finalTop = parseFloat(currentEvent.style.top);
     let finalHeight = parseFloat(currentEvent.style.height);
 
-    // Tính toán làm tròn (giữ nguyên logic của bạn)
+    // Tính toán làm tròn (Duy trì logic làm tròn của bạn)
     const intervalPixels = 15 * PIXELS_PER_MINUTE;
     const roundedTop = Math.round(finalTop / intervalPixels) * intervalPixels;
-    currentEvent.style.top = `${roundedTop}px`;
-
     const roundedHeight = Math.round(finalHeight / intervalPixels) * intervalPixels;
+
+    currentEvent.style.top = `${roundedTop}px`;
     currentEvent.style.height = `${roundedHeight}px`;
 
-    updateEventTimeDisplay(currentEvent); // Hàm này đã cập nhật text nội bộ
+    updateEventTimeDisplay(currentEvent); // Cập nhật HH:MM hiển thị dựa trên rounded Top/Height
 
-    // ⭐️ BỔ SUNG: Nếu là sự kiện tạm thời, cập nhật dataset VÀ FORM
+    // --- CHUẨN BỊ DỮ LIỆU KIỂM TRA VA CHẠM ---
+
+    // Tính toán thời gian mới (HH:MM:SS)
+    const startMinutesOffset = Math.round(roundedTop / PIXELS_PER_MINUTE);
+    const durationMinutes = Math.round(roundedHeight / PIXELS_PER_MINUTE);
+    const actualStartMinutes = (START_HOUR * 60) + startMinutesOffset;
+    const actualEndMinutes = actualStartMinutes + durationMinutes;
+
+    const newDayIndex = currentEvent.dataset.dayIndex;
+    const newDayOfWeek = DAYS_OF_WEEK[parseInt(newDayIndex) - 1];
+
+    // Sử dụng hàm formatMinutesToHHMMSS đã được định nghĩa ở nơi khác
+    const newStartTime = window.formatMinutesToHHMMSS(actualStartMinutes);
+    const newEndTime = window.formatMinutesToHHMMSS(actualEndMinutes);
+    const currentScheduleId = currentEvent.dataset.scheduleId;
+
+// 1. 🛡️ KIỂM TRA VA CHẠM TRƯỚC KHI LƯU
+    const hasCollisionResize = window.checkCollision && window.checkCollision(newDayOfWeek, newStartTime, newEndTime, currentScheduleId);
+
+    if (hasCollisionResize) {
+
+        console.error(">>> KHOA-TASKS: Va chạm khi RESIZE. Bắt đầu hoàn tác!");
+        alert("Lỗi: Không thể thay đổi kích thước sự kiện. Thời gian này đã bị chiếm dụng.");
+
+        // --- HOÀN TÁC (REVERT) VỀ TRẠNG THÁI GỐC ---
+        currentEvent.style.top = currentEvent.dataset.originalTop;
+        currentEvent.style.height = currentEvent.dataset.originalHeight;
+        updateEventTimeDisplay(currentEvent); // Cập nhật lại HH:MM gốc
+
+        // Reset trạng thái và kết thúc
+        resizeHandle = null;
+        currentEvent = null;
+        return; // DỪNG LẠI, KHÔNG CHẠY LOGIC CẬP NHẬT
+    }
+
+    // 2. ✅ NẾU KHÔNG CÓ VA CHẠM (Tiếp tục Logic cập nhật của bạn)
+
+    // Cập nhật dataset (sử dụng newStartTime/newEndTime đã tính toán)
+    currentEvent.dataset.startTime = newStartTime;
+    currentEvent.dataset.endTime = newEndTime;
+
+    // ⭐️ Xử lý Sự kiện TẠM THỜI (Cập nhật Form)
     if (currentEvent.classList.contains('temp-event')) {
-        const fullTimeText = currentEvent.querySelector('span').textContent;
-        const match = fullTimeText.match(/\((.*?)\)/);
+        // ... (Logic tính toán form và gọi window.updateTaskFormDuration của bạn giữ nguyên, 
+        //      chỉ cần thay thế startTimeRaw bằng newStartTime và endTimeRaw bằng newEndTime)
 
-        if (match && match[1]) {
-            const [startTimeRaw, endTimeRaw] = match[1].split(' – ').map(t => t.trim());
-            currentEvent.dataset.startTime = startTimeRaw + ':00';
-            currentEvent.dataset.endTime = endTimeRaw + ':00';
+        // Lấy DayOfWeek và Duration (đã tính ở trên)
+        // TÍNH DATE VÀ CẬP NHẬT FORM
+        const [startHour, startMinute] = newStartTime.split(':').map(Number);
+        const calculatedDate = window.getDateFromDayAndHour(newDayOfWeek, startHour);
+        calculatedDate.setMinutes(startMinute);
+        const formattedDeadline = window.formatForInput(calculatedDate);
 
-            const newDuration = Math.round(roundedHeight / PIXELS_PER_MINUTE);
-
-            // ⭐️ SỬA LỖI: Lấy dayIndex và tính dayOfWeek
-            const dayIndex = parseInt(currentEvent.dataset.dayIndex);
-            const dayOfWeek = DAYS_OF_WEEK[dayIndex - 1]; // Lấy từ Hằng số DAYS_OF_WEEK
-
-            // TÍNH DATE VÀ CẬP NHẬT FORM
-            const [startHour, startMinute] = startTimeRaw.split(':').map(Number);
-            const calculatedDate = window.getDateFromDayAndHour(dayOfWeek, startHour);
-            calculatedDate.setMinutes(startMinute);
-            const formattedDeadline = window.formatForInput(calculatedDate); // Sử dụng hàm từ tasks.js
-
-            // 🎯 GỌI HÀM CẬP NHẬT FORM TASK
-            if (window.updateTaskFormDuration) {
-                // Truyền durationMinutes, startTimeRaw (HH:MM), và dayOfWeek mới
-                window.updateTaskFormDuration(newDuration, formattedDeadline, dayOfWeek); // Truyền formattedDeadline thay vì startTimeRaw
-            }
+        if (window.updateTaskFormDuration) {
+            window.updateTaskFormDuration(durationMinutes, formattedDeadline, newDayOfWeek);
         }
     }
 
-    // ⭐️ SỬA ĐỔI: GỌI HÀM BACKEND NẾU SỰ KIỆN ĐÃ CÓ ID (Giữ nguyên logic của bạn)
+    // ⭐️ Xử lý Sự kiện ĐÃ LƯU (Gọi Backend)
     if (currentEvent.dataset.scheduleId) {
-        // ... (Logic gọi window.updateScheduleTimeBackend giữ nguyên)
         const scheduleId = currentEvent.dataset.scheduleId;
-        const dayIndex = parseInt(currentEvent.dataset.dayIndex);
-        const dayOfWeek = DAYS_OF_WEEK[dayIndex - 1];
-
-        const fullTimeText = currentEvent.querySelector('span').textContent;
-        const match = fullTimeText.match(/\((.*?)\)/);
-
-        if (match && match[1]) {
-            const [startTimeRaw, endTimeRaw] = match[1].split(' – ').map(t => t.trim());
-            const startTime = startTimeRaw + ':00';
-            const endTime = endTimeRaw + ':00';
-
-            window.updateScheduleTimeBackend(scheduleId, dayOfWeek, startTime, endTime);
-        } else {
-            console.error("Lỗi trích xuất thời gian trong endResize.");
-        }
+        window.updateScheduleTimeBackend(scheduleId, newDayOfWeek, newStartTime, newEndTime);
     }
 
     resizeHandle = null;
@@ -304,6 +321,12 @@ function startMove(e) {
     if (!eventElement) {
         return;
     }
+    
+    // ⭐️ CHỈ CHO PHÉP MOVE NẾU DỮ LIỆU ĐÃ TẢI XONG
+    if (!isScheduleLoaded) { 
+        console.warn("Chặn thao tác: Dữ liệu lịch chưa tải xong.");
+        return; 
+    }
 
     // ⭐️ LOGIC CHẶN CHÍNH THỨC: Chặn nếu KHÔNG phải tạm thời VÀ CÓ Schedule ID
     if (!eventElement.classList.contains('temp-event') && eventElement.dataset.scheduleId) {
@@ -322,6 +345,10 @@ function startMove(e) {
     dragStartY = e.clientY;
     dragStartTop = parseFloat(currentEventToMove.style.top);
 
+    // Lưu trạng thái ban đầu của sự kiện
+    currentEventToMove.dataset.originalDayIndex = currentEventToMove.dataset.dayIndex;
+    currentEventToMove.dataset.originalTop = currentEventToMove.style.top;
+
     currentEventToMove.classList.add('dragging');
 }
 
@@ -329,69 +356,73 @@ function startMove(e) {
  * HÀM duringMove ĐÃ CHỈNH SỬA
  */
 function duringMove(e) {
-    if (!isDragging || !currentEventToMove)
-        return;
-    if (isResizing)
-        return;
+    if (!isDragging || !currentEventToMove) return;
+    if (isResizing) return;
 
-    // Tính toán độ lệch Y (deltaY)
     const deltaY = e.clientY - dragStartY;
     let newTop = dragStartTop + deltaY;
 
-    // --- 1. TÌM VỊ TRÍ MỚI VÀ XỬ LÝ CHUYỂN NGÀY ---
+    // 1. TÌM VỊ TRÍ MỚI VÀ XỬ LÝ CHUYỂN NGÀY
     const elementUnderMouse = document.elementFromPoint(e.clientX, e.clientY);
-//    const targetContainer = elementUnderMouse ? elementUnderMouse.closest('.schedule-container') : null;
-
     const targetContainer = elementUnderMouse ? elementUnderMouse.closest('.calendar-day-cell') : null;
 
     if (targetContainer) {
         const targetDayIndex = parseInt(targetContainer.dataset.dayIndex);
+        const newDayOfWeek = DAYS_OF_WEEK[targetDayIndex - 1];
 
-        // Luôn tìm ô ngày GỐC (START_HOUR) của cột đích và cột hiện tại
-//        const firstContainerOfDayTarget = document.querySelector(`.schedule-container[data-day-index="${targetDayIndex}"][data-hour="${START_HOUR}"]`);
+        // Tìm ô gốc của ngày đích
         const firstCellOfDayTarget = document.querySelector(`.calendar-day-cell[data-day-index="${targetDayIndex}"][data-hour="${START_HOUR}"]`);
-        if (!firstCellOfDayTarget)
-            return;
+        if (!firstCellOfDayTarget) return;
 
-//        const firstCellOfDayTarget = firstContainerOfDayTarget.closest('.calendar-day-cell');
-        const currentParentCell = currentEventToMove.parentElement;
+        // --- ⭐️ LOGIC CHẶN VA CHẠM (BLOCKING) ⭐️ ---
+        
+        // A. Giả lập tính toán thời gian tại vị trí chuột mới
+        const eventHeight = parseFloat(currentEventToMove.style.height);
+        const startMinutesOffset = Math.round(newTop / PIXELS_PER_MINUTE);
+        const durationMinutes = Math.round(eventHeight / PIXELS_PER_MINUTE);
+        
+        const testStartMinutes = (START_HOUR * 60) + startMinutesOffset;
+        const testEndMinutes = testStartMinutes + durationMinutes;
+
+        const testStartTime = window.formatMinutesToHHMMSS(testStartMinutes);
+        const testEndTime = window.formatMinutesToHHMMSS(testEndMinutes);
+        const scheduleId = currentEventToMove.dataset.scheduleId; // Loại trừ chính nó nếu đang di chuyển task cũ
+
+        // B. Kiểm tra va chạm với các task đã lưu
+        const isCollision = window.checkCollision && window.checkCollision(newDayOfWeek, testStartTime, testEndTime, scheduleId);
+
+        if (isCollision) {
+            // NẾU VA CHẠM: Dừng hàm tại đây, không cập nhật style.top mới.
+            // Điều này làm task "khựng lại" khi chạm vào vật cản.
+            return; 
+        }
+
+        // --- NẾU KHÔNG VA CHẠM: TIẾP TỤC DI CHUYỂN ---
 
         // XỬ LÝ DI CHUYỂN XUYÊN NGÀY
-        if (firstCellOfDayTarget && firstCellOfDayTarget !== currentParentCell) {
-
+        const currentParentCell = currentEventToMove.parentElement;
+        if (firstCellOfDayTarget !== currentParentCell) {
             const eventRect = currentEventToMove.getBoundingClientRect();
             const currentAbsoluteTop = eventRect.top;
 
-            // Chuyển sự kiện sang ô ngày GỐC của cột mới
             currentEventToMove.remove();
             firstCellOfDayTarget.appendChild(currentEventToMove);
 
-            // Tính toán lại vị trí 'top' tương đối so với ô gốc mới
             const newFirstCellRect = firstCellOfDayTarget.getBoundingClientRect();
             const newRelativeTop = currentAbsoluteTop - newFirstCellRect.top;
 
-            // Cập nhật trạng thái
             currentEventToMove.dataset.dayIndex = targetDayIndex;
             dragStartY = e.clientY;
             dragStartTop = newRelativeTop;
             newTop = newRelativeTop;
         }
 
-        // 2. GIỚI HẠN KÉO DỌC (Áp dụng cho TOÀN BỘ cột ngày)
-
+        // 2. GIỚI HẠN KÉO DỌC (Top/Bottom)
         const totalDayHeight = (END_HOUR - START_HOUR) * PIXELS_PER_HOUR;
-        const eventHeight = parseFloat(currentEventToMove.style.height);
+        if (newTop < 0) newTop = 0;
+        if (newTop + eventHeight > totalDayHeight) newTop = totalDayHeight - eventHeight;
 
-        // Giới hạn trên (Top >= 0)
-        if (newTop < 0) {
-            newTop = 0;
-        }
-
-        // Giới hạn dưới (Top + Height <= Total Day Height)
-        if (newTop + eventHeight > totalDayHeight) {
-            newTop = totalDayHeight - eventHeight;
-        }
-
+        // Cập nhật vị trí và hiển thị thời gian
         currentEventToMove.style.top = `${newTop}px`;
         updateEventTimeDisplay(currentEventToMove);
     }
@@ -403,72 +434,98 @@ function duringMove(e) {
 function endMove(e) {
     if (!isDragging || !currentEventToMove)
         return;
+    
+    // ⭐️ CHỈ CHO PHÉP MOVE NẾU DỮ LIỆU ĐÃ TẢI XONG
+    if (!isScheduleLoaded) { 
+        console.warn("Chặn thao tác: Dữ liệu lịch chưa tải xong.");
+        return; 
+    }
 
     isDragging = false;
     currentEventToMove.classList.remove('dragging');
 
-    // --- LÀM TRÒN VỊ TRÍ CUỐI CÙNG ---
+    // 1. LÀM TRÒN VỊ TRÍ CUỐI CÙNG (roundedTop)
     let finalTop = parseFloat(currentEventToMove.style.top);
     const intervalPixels = 15 * PIXELS_PER_MINUTE;
     const roundedTop = Math.round(finalTop / intervalPixels) * intervalPixels;
     currentEventToMove.style.top = `${roundedTop}px`;
 
-    // --- Cập nhật Day Index Mới ---
+    // Cập nhật HH:MM hiển thị dựa trên roundedTop (cần để tính toán thời gian mới)
+    updateEventTimeDisplay(currentEventToMove);
+
+    // --- CHUẨN BỊ DỮ LIỆU KIỂM TRA VA CHẠM ---
+
+    // Tính toán thời gian mới dựa trên roundedTop
+    const eventHeight = parseFloat(currentEventToMove.style.height);
+    const startMinutesOffset = Math.round(roundedTop / PIXELS_PER_MINUTE);
+    const durationMinutes = Math.round(eventHeight / PIXELS_PER_MINUTE);
+    const actualStartMinutes = (START_HOUR * 60) + startMinutesOffset;
+    const actualEndMinutes = actualStartMinutes + durationMinutes;
+
     const newDayIndex = currentEventToMove.dataset.dayIndex;
+    const newDayOfWeek = DAYS_OF_WEEK[parseInt(newDayIndex) - 1];
 
-    // --- Cập nhật và Xử lý Sau khi Thả ---
-    updateEventTimeDisplay(currentEventToMove); // Cập nhật HH:MM hiển thị
+    // Sử dụng hàm formatMinutesToHHMMSS đã được định nghĩa
+    const newStartTime = window.formatMinutesToHHMMSS(actualStartMinutes);
+    const newEndTime = window.formatMinutesToHHMMSS(actualEndMinutes);
+    const currentScheduleId = currentEventToMove.dataset.scheduleId; // Có thể là undefined/null cho temp-event
 
-    // ⭐️ SỬA ĐỔI CHÍNH: Nếu là sự kiện tạm thời, cập nhật dataset VÀ FORM
+    // 2. 🛡️ KIỂM TRA VA CHẠM TRƯỚC KHI LƯU
+    const hasCollisionMove = window.checkCollision && window.checkCollision(newDayOfWeek, newStartTime, newEndTime, currentScheduleId);
+
+    if (hasCollisionMove) {
+
+        console.error(">>> KHOA-TASKS: Va chạm khi MOVE. Bắt đầu hoàn tác!");
+        alert("Lỗi: Không thể di chuyển sự kiện. Vị trí và thời gian này đã bị chiếm dụng bởi sự kiện khác.");
+
+        // --- HOÀN TÁC (REVERT) VỀ TRẠNG THÁI GỐC ---
+        const originalDayIndex = currentEventToMove.dataset.originalDayIndex;
+        const originalTop = currentEventToMove.dataset.originalTop;
+
+        // A. Xử lý trường hợp chuyển ngày: Chuyển event về ô ngày gốc
+        const originalCell = document.querySelector(`.calendar-day-cell[data-day-index="${originalDayIndex}"][data-hour="${START_HOUR}"]`);
+        if (originalCell && originalCell !== currentEventToMove.parentElement) {
+            currentEventToMove.remove();
+            originalCell.appendChild(currentEventToMove);
+        }
+
+        // B. Đặt lại vị trí top và day index
+        currentEventToMove.style.top = originalTop;
+        currentEventToMove.dataset.dayIndex = originalDayIndex;
+        updateEventTimeDisplay(currentEventToMove); // Cập nhật HH:MM hiển thị gốc
+
+        // Reset trạng thái
+        currentEventToMove = null;
+        return; // DỪNG LẠI, KHÔNG LƯU LẠI VỊ TRÍ VA CHẠM
+    }
+
+    // 3. ✅ NẾU KHÔNG CÓ VA CHẠM (Logic cập nhật cũ của bạn)
+
+    // Cập nhật Day Index và Thời gian Mới chính thức
+    currentEventToMove.dataset.startTime = newStartTime; // Cập nhật dataset với thời gian mới (HH:MM:SS)
+    currentEventToMove.dataset.endTime = newEndTime;
+
+    // ⭐️ Xử lý Sự kiện TẠM THỜI (Cập nhật Form)
     if (currentEventToMove.classList.contains('temp-event')) {
-        const currentEvent = currentEventToMove;
+        // Logic cập nhật form task (Giữ nguyên logic cũ, chỉ thay startTimeRaw bằng newStartTime)
+        const dayOfWeek = DAYS_OF_WEEK[parseInt(newDayIndex) - 1];
+        const durationMinutes = Math.round(eventHeight / PIXELS_PER_MINUTE); 
 
-        const fullTimeText = currentEvent.querySelector('span').textContent;
-        const match = fullTimeText.match(/\((.*?)\)/);
+        // TÍNH DATE VÀ CẬP NHẬT FORM
+        const [startHour, startMinute] = newStartTime.split(':').map(Number);
+        const calculatedDate = window.getDateFromDayAndHour(dayOfWeek, startHour);
+        calculatedDate.setMinutes(startMinute);
+        const formattedDeadline = window.formatForInput(calculatedDate);
 
-        if (match && match[1]) {
-            const [startTimeRaw, endTimeRaw] = match[1].split(' – ').map(t => t.trim());
-
-            currentEvent.dataset.startTime = startTimeRaw + ':00';
-            currentEvent.dataset.endTime = endTimeRaw + ':00';
-
-            // Lấy DayOfWeek và Duration
-            const newDayIndex = parseInt(currentEvent.dataset.dayIndex);
-            const dayOfWeek = DAYS_OF_WEEK[newDayIndex - 1]; // Lấy DayOfWeek mới
-            const durationMinutes = Math.round(parseFloat(currentEvent.style.height) / PIXELS_PER_MINUTE); 
-
-            // TÍNH DATE VÀ CẬP NHẬT FORM
-            const [startHour, startMinute] = startTimeRaw.split(':').map(Number);
-            const calculatedDate = window.getDateFromDayAndHour(dayOfWeek, startHour);
-            calculatedDate.setMinutes(startMinute);
-            const formattedDeadline = window.formatForInput(calculatedDate); // Sử dụng hàm từ tasks.js
-
-            // 🎯 BỔ SUNG MỚI: GỌI HÀM CẬP NHẬT FORM TASK
-            if (window.updateTaskFormDuration) {
-                // Truyền durationMinutes, formattedDeadline mới, và dayOfWeek mới
-                window.updateTaskFormDuration(durationMinutes, formattedDeadline, dayOfWeek); 
-            }
+        if (window.updateTaskFormDuration) {
+            window.updateTaskFormDuration(durationMinutes, formattedDeadline, dayOfWeek); 
         }
     }
 
-    // ⭐️ SỬA ĐỔI: GỌI HÀM BACKEND NẾU SỰ KIỆN ĐÃ CÓ ID (Giữ nguyên logic của bạn)
+    // ⭐️ Xử lý Sự kiện ĐÃ LƯU (Gọi Backend)
     if (currentEventToMove.dataset.scheduleId) {
         const scheduleId = currentEventToMove.dataset.scheduleId;
-        const newDayIndex = currentEventToMove.dataset.dayIndex;
-        const dayOfWeek = DAYS_OF_WEEK[parseInt(newDayIndex) - 1];
-
-        const fullTimeText = currentEventToMove.querySelector('span').textContent;
-        const match = fullTimeText.match(/\((.*?)\)/);
-
-        if (match && match[1]) {
-            const [startTimeRaw, endTimeRaw] = match[1].split(' – ').map(t => t.trim());
-            const startTime = startTimeRaw + ':00';
-            const endTime = endTimeRaw + ':00';
-
-            window.updateScheduleTimeBackend(scheduleId, dayOfWeek, startTime, endTime);
-        } else {
-            console.error("Lỗi trích xuất thời gian trong endMove.");
-        }
+        window.updateScheduleTimeBackend(scheduleId, newDayOfWeek, newStartTime, newEndTime);
     }
 
     currentEventToMove = null;
@@ -511,8 +568,11 @@ function endMove(e) {
 
 // ⭐️ HÀM MỚI: Tạo DOM cho sự kiện ĐÃ LÊN LỊCH (Được gọi bởi tasks.js/renderCalendar)
 function createScheduledEventDiv(eventData) {
+    console.log("🔧 createScheduledEventDiv được gọi với:", eventData);
     const eventDiv = document.createElement('div');
     eventDiv.className = 'calendar-event';
+    
+    console.log("📌 Schedule ID:", eventData.scheduleId, "Task ID:", eventData.taskId);
 
     // 1. Gắn Data ID Vĩnh Viễn
     eventDiv.dataset.scheduleId = eventData.scheduleId;
@@ -531,6 +591,19 @@ function createScheduledEventDiv(eventData) {
     const durationMinutes = endMinutes - startMinutes;
     const finalHeight = durationMinutes * PIXELS_PER_MINUTE;
 
+    // ⭐️ BỔ SUNG: Áp dụng vị trí và chiều rộng từ logic va chạm
+    if (eventData.widthPercentage) {
+        eventDiv.style.width = `${eventData.widthPercentage}%`;
+    } else {
+        eventDiv.style.width = '100%';
+    }
+
+    if (eventData.leftPercentage) {
+        eventDiv.style.left = `${eventData.leftPercentage}%`;
+    } else {
+        eventDiv.style.left = '0%';
+    }
+
     eventDiv.style.top = `${finalTop}px`;
     eventDiv.style.height = `${finalHeight}px`;
 
@@ -540,6 +613,14 @@ function createScheduledEventDiv(eventData) {
         <div class="resize-handle bottom-handle" data-handle="bottom"></div>
     `;
 
+        console.log("🎨 Event sẽ được tạo tại:", {
+        top: eventDiv.style.top,
+        height: eventDiv.style.height,
+        width: eventDiv.style.width,
+        left: eventDiv.style.left
+    });
+    
+    
     return eventDiv;
 }
 

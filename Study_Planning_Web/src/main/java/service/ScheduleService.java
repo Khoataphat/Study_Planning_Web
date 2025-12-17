@@ -10,10 +10,12 @@ import java.util.*;
  * Service layer for schedule business logic
  */
 public class ScheduleService {
+
     private final UserScheduleDAO scheduleDAO;
 
     public ScheduleService() {
         this.scheduleDAO = new UserScheduleDAO();
+        this.scheduleDAO.debugTableStructure();
     }
 
     /**
@@ -31,7 +33,7 @@ public class ScheduleService {
         Map<String, List<UserSchedule>> weeklySchedule = new LinkedHashMap<>();
 
         // Initialize all days
-        String[] days = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+        String[] days = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
         for (String day : days) {
             weeklySchedule.put(day, new ArrayList<>());
         }
@@ -46,8 +48,8 @@ public class ScheduleService {
     }
 
     /**
-     * Save multiple schedules (batch insert)
-     * Deletes existing schedules in the collection and inserts new ones
+     * Save multiple schedules (batch insert) Deletes existing schedules in the
+     * collection and inserts new ones
      */
     public boolean saveSchedules(int userId, int collectionId, List<UserSchedule> schedules) {
         try {
@@ -79,8 +81,8 @@ public class ScheduleService {
     }
 
     /**
-     * Validate time slot for conflicts
-     * Checks if the new schedule overlaps with existing ones
+     * Validate time slot for conflicts Checks if the new schedule overlaps with
+     * existing ones
      */
     public boolean validateTimeSlot(int userId, UserSchedule newSchedule) {
         List<UserSchedule> existingSchedules = scheduleDAO.getByUserIdAndDay(
@@ -147,6 +149,8 @@ public class ScheduleService {
         if (!validateTimeSlot(userId, schedule)) {
             return -1;
         }
+        // Debug: Log taskId
+        System.out.println("[DEBUG] Creating schedule with taskId: " + schedule.getTaskId());
         return scheduleDAO.insert(schedule);
     }
 }

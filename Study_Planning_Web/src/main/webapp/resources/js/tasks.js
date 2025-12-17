@@ -6,11 +6,16 @@ let currentWeekOffset = 0;
 let editingTaskId = null;
 let currentCollectionId = null;
 let weeklySchedule = {};
+let isScheduleLoaded = false;
 
 //khoa
 // ⭐️ BIẾN MỚI: Theo dõi sự kiện lịch tạm thời (được tạo bằng click)
 let tempScheduledEvent = null;
 
+// Khởi tạo cấu trúc rỗng để tránh lỗi 'undefined'
+window.weeklySchedule = window.weeklySchedule || {
+    'Mon': [], 'Tue': [], 'Wed': [], 'Thu': [], 'Fri': [], 'Sat': [], 'Sun': []
+};
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', function () {
     loadTasks();
@@ -78,17 +83,43 @@ function changeSchedule() {
 /**
  * Load weekly schedule
  */
+// Trong tasks.js
+
 function loadSchedule(collectionId) {
-    if (!collectionId)
-        return;
+    if (!collectionId) {
+        // Nếu không có ID, coi như tải xong với dữ liệu rỗng
+        isScheduleLoaded = true;
+        return Promise.resolve();
+    }
+
+    // Đặt lại cờ khi bắt đầu tải (để xử lý nếu hàm này được gọi lại)
+    isScheduleLoaded = false;
+    console.log("🔄 loadSchedule đang tải collectionId:", collectionId);
 
     fetch(`/user/schedule?action=weekly&collectionId=${collectionId}`)
             .then(response => response.json())
             .then(data => {
-                weeklySchedule = data;
+                // Thay vì gán weeklySchedule = data;
+                // Hãy dùng window. để đảm bảo nó ghi đè vào biến toàn cục
+                console.log("📥 Dữ liệu schedule từ server:", data);
+                window.weeklySchedule = data;
+                console.log("Dữ liệu đã nạp vào window:", window.weeklySchedule);
+                // Debug chi tiết
+                debugScheduleData();
+        
                 renderCalendar();
+                console.log("✅ renderCalendar() đã được gọi");
             })
-            .catch(error => console.error('Error loading schedule:', error));
+            .catch(error => {
+                console.error('Error loading schedule:', error);
+                // Gán giá trị an toàn nếu lỗi
+                weeklySchedule = {};
+            })
+            .finally(() => {
+                // ⭐️ ĐIỂM QUAN TRỌNG: Dù thành công hay thất bại, cờ cũng phải được BẬT
+                isScheduleLoaded = true;
+                console.info("✅ Dữ liệu Lịch đã hoàn thành tải. isScheduleLoaded = true.");
+            });
 }
 
 /**
@@ -228,21 +259,34 @@ function setupFormHandler() {
  * Create new task
  */
 async function createTask(taskData) {
-    const response = await fetch('/user/tasks', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(taskData)
-    });
+    console.log("📤 Sending task data to server:", taskData);
+    
+    try {
+        const response = await fetch('/user/tasks', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(taskData)
+        });
 
-    const result = await response.json();
+        console.log("📥 Response status:", response.status);
+        console.log("📥 Response headers:", response.headers);
 
-    if (!result.success) {
-        throw new Error(result.error || 'Failed to create task');
+        const result = await response.json();
+        console.log("📥 Response data:", result);
+
+        if (!result.success) {
+            console.error("❌ Server error:", result.error || result.message);
+            throw new Error(result.error || 'Failed to create task');
+        }
+
+        console.log("✅ Task created successfully, taskId:", result.taskId);
+        return result;
+    } catch (error) {
+        console.error("❌ Network/parsing error:", error);
+        throw error;
     }
-
-    return result;
 }
 
 /**
@@ -342,7 +386,17 @@ function hideTaskForm() {
 
     renderTaskList();
     console.log("8. renderTaskList đã được gọi.");
+    // ⭐️ THÊM: Reload schedule nếu vừa tạo task từ lịch
+    if (wasCreatingFromSchedule && currentCollectionId) {
+        console.log("🔄 Detected schedule task creation - reloading calendar");
+        setTimeout(() => {
+            loadSchedule(currentCollectionId).then(() => {
+                console.log("✅ Calendar reloaded with new task");
+            });
+        }, 500); // Delay 500ms để đảm bảo task đã được lưu trong DB
+    }
     console.log("-----------------------------------------");
+    
 }
 window.hideTaskForm = hideTaskForm;
 
@@ -545,14 +599,19 @@ function filterByStatus(status) {
 //    }
 //}
 function renderCalendar() {
+    console.log("🎨 renderCalendar() bắt đầu");
     const calendarGrid = document.getElementById('calendarGrid');
+    if (!calendarGrid) {
+        console.error("❌ Không tìm thấy calendarGrid");
+        return;
+    }
+    
     calendarGrid.innerHTML = '';
+    console.log("🧹 Đã xóa calendarGrid cũ");
 
     // Cần đảm bảo các hàm từ khoa-tasks.js đã được tải vào window
     if (!window.createScheduledEventDiv || !window.attachResizeHandlers || !window.setupEvents) {
         console.warn("LƯU Ý: Các hàm lịch nâng cao (khoa-tasks.js) chưa được tải. Hiển thị lịch cơ bản.");
-        // Nếu không có hàm nâng cao, bạn có thể chạy logic đơn giản hoặc thoát.
-        // Hiện tại, tôi sẽ tiếp tục với giả định chúng đã được tải để tránh lỗi.
     }
 
     // --- Logic tính toán tuần và hiển thị (Giữ nguyên) ---
@@ -576,18 +635,103 @@ function renderCalendar() {
         document.getElementById('weekLabel').textContent = `${Math.abs(currentWeekOffset)} weeks ${currentWeekOffset > 0 ? 'ahead' : 'ago'}`;
     }
 
+    console.log("📅 Dữ liệu weeklySchedule trong renderCalendar:", window.weeklySchedule);
+
     // Thứ tự ngày trong lịch: Mon, Tue, Wed, Thu, Fri, Sat, Sun
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
-    // --- Logic tạo lưới lịch hàng giờ (7 AM - 10 PM) ---
-    for (let hour = 7; hour <= 22; hour++) {
+    // ⭐️ BƯỚC MỚI: TÍNH TOÁN VỊ TRÍ VA CHẠM CHO TẤT CẢ CÁC NGÀY TRƯỚC
+    const positionedWeeklyEvents = {};
+    const timeToMinutes = (timeStr) => {
+        console.log(`⏱️ Converting time: ${timeStr}`);
+        // Xử lý cả định dạng "HH:MM:SS" và "HH:MM:SS SA/CH"
+        const parts = timeStr.split(' ');
+        let timePart = parts[0];
+        let ampm = parts.length > 1 ? parts[1] : '';
+        
+        const [h, m, s] = timePart.split(':').map(Number);
+        let hours = h;
+        
+        // Xử lý AM/PM nếu có
+        if (ampm === 'CH' && hours < 12) { // CH = PM
+            hours += 12;
+        } else if (ampm === 'SA' && hours === 12) { // SA = AM
+            hours = 0;
+        }
+        
+        const totalMinutes = hours * 60 + m;
+        console.log(`   ${timeStr} -> ${hours}:${m} -> ${totalMinutes} phút`);
+        return totalMinutes;
+    };
+    
+    days.forEach(day => {
+        console.log(`🔍 Xử lý ngày ${day}:`);
+        if (window.weeklySchedule && window.weeklySchedule[day] && window.weeklySchedule[day].length > 0) {
+            console.log(`   Có ${window.weeklySchedule[day].length} sự kiện`);
+
+            // Tiền xử lý để có startMinutes và endMinutes
+            const dayEvents = window.weeklySchedule[day].map(e => {
+                console.log(`   Processing event: ${e.subject} (${e.startTime} - ${e.endTime})`);
+                const startMinutes = timeToMinutes(e.startTime);
+                const endMinutes = timeToMinutes(e.endTime);
+                
+                const processedEvent = {
+                    ...e,
+                    startMinutes: startMinutes,
+                    endMinutes: endMinutes
+                };
+                
+                console.log(`     -> startMinutes: ${startMinutes}, endMinutes: ${endMinutes}`);
+                return processedEvent;
+            }).filter(e => {
+                const isValid = e.endMinutes > e.startMinutes;
+                if (!isValid) {
+                    console.warn(`   ⚠️ Bỏ qua event không hợp lệ: endTime (${e.endMinutes}) <= startTime (${e.startMinutes})`);
+                }
+                return isValid;
+            });
+
+            console.log(`   Sau khi filter: ${dayEvents.length} sự kiện hợp lệ`);
+            
+            if (dayEvents.length > 0) {
+                positionedWeeklyEvents[day] = calculateEventPositions(dayEvents);
+                console.log(`   positionedWeeklyEvents[${day}]:`, positionedWeeklyEvents[day]);
+            } else {
+                console.log(`   Không có sự kiện hợp lệ cho ${day}`);
+            }
+        } else {
+            console.log(`   Không có sự kiện cho ${day}`);
+        }
+    });
+
+    console.log("📊 positionedWeeklyEvents:", positionedWeeklyEvents);
+
+    // --- ⭐️ THAY ĐỔI QUAN TRỌNG: Mở rộng khoảng thời gian hiển thị ---
+    // Thay vì 7-22h, hiển thị từ 0-23h để đảm bảo hiển thị tất cả sự kiện
+    const START_DISPLAY_HOUR = 0; // ⬅️ Thay đổi từ 7 thành 0
+    const END_DISPLAY_HOUR = 23;  // ⬅️ Có thể giữ 23 hoặc 24
+    
+    console.log(`⏰ Hiển thị lịch từ ${START_DISPLAY_HOUR}:00 đến ${END_DISPLAY_HOUR}:00`);
+    
+    let totalEventsCreated = 0;
+    for (let hour = START_DISPLAY_HOUR; hour <= END_DISPLAY_HOUR; hour++) {
         const row = document.createElement('tr');
         row.className = 'border-b border-slate-100 hover:bg-slate-50/50 transition-colors h-20';
 
-        // Time column (Giữ nguyên)
+        // Time column
         const timeCell = document.createElement('td');
         timeCell.className = 'p-2 text-xs text-slate-400 font-medium border-r border-slate-200 align-top text-center';
-        timeCell.textContent = `${hour}:00`;
+        
+        // Format hiển thị giờ (AM/PM)
+        let displayHour = hour;
+        let ampm = 'SA';
+        if (hour >= 12) {
+            ampm = 'CH';
+            if (hour > 12) displayHour = hour - 12;
+        }
+        if (hour === 0) displayHour = 12;
+        
+        timeCell.textContent = `${displayHour}:00 ${ampm}`;
         row.appendChild(timeCell);
 
         // Day columns
@@ -597,11 +741,10 @@ function renderCalendar() {
 
             const borderClass = index < days.length - 1 ? 'border-r border-slate-100' : '';
 
-            // ⭐️ CẬP NHẬT: Thêm data-day-index và đảm bảo position: relative
             cell.className = `p-1 ${borderClass} relative align-top transition-all calendar-day-cell`;
             cell.dataset.day = day;
             cell.dataset.hour = hour;
-            cell.dataset.dayIndex = dayIndex; // 👈 QUAN TRỌNG cho logic drag-to-create
+            cell.dataset.dayIndex = dayIndex;
 
             // ⚠️ Gắn Drag and Drop Handlers cho ô LỊCH TRỐNG (từ Task List) (Giữ nguyên)
             cell.ondragover = (e) => {
@@ -621,35 +764,83 @@ function renderCalendar() {
                 }
             };
 
-            // --- Logic CHÈN SỰ KIỆN TỪ weeklySchedule ---
-            if (weeklySchedule[day]) {
-                const events = weeklySchedule[day].filter(e => {
-                    // Lấy giờ bắt đầu từ chuỗi 'HH:MM'
-                    const startHour = parseInt(e.startTime.split(':')[0]); 
-                    // Kiểm tra xem sự kiện BẮT ĐẦU trong giờ hiện tại
-                    return startHour === hour;
+            // --- ⭐️ THAY ĐỔI QUAN TRỌNG: Sửa điều kiện filter ---
+            if (positionedWeeklyEvents[day]) {
+                // Lấy các sự kiện DIỄN RA TRONG giờ hiện tại, không chỉ BẮT ĐẦU trong giờ
+                const eventsToRender = positionedWeeklyEvents[day].filter(e => {
+                    const eventStartHour = Math.floor(e.startMinutes / 60);
+                    const eventEndHour = Math.ceil(e.endMinutes / 60);
+                    
+                    // Sự kiện diễn ra trong giờ hiện tại nếu:
+                    // 1. Bắt đầu trong giờ này, HOẶC
+                    // 2. Kết thúc trong giờ này, HOẶC
+                    // 3. Bắt đầu trước và kết thúc sau giờ này
+                    const shouldRender = (
+                        (eventStartHour === hour) || // Bắt đầu trong giờ
+                        (eventEndHour === hour + 1) || // Kết thúc trong giờ tiếp theo
+                        (eventStartHour < hour && eventEndHour > hour + 1) // Kéo dài qua giờ này
+                    );
+                    
+                    if (shouldRender) {
+                        console.log(`   📍 Sự kiện "${e.subject}" (${eventStartHour}:00-${eventEndHour}:00) render ở ô ${hour}:00`);
+                    }
+                    
+                    return shouldRender;
                 });
 
-                events.forEach(event => {
-                    // ⭐️ SỬ DỤNG HÀM TẠO SỰ KIỆN NÂNG CAO TỪ KHOA-TASKS.JS
+                console.log(`   📌 Ô ${day} ${hour}:00 có ${eventsToRender.length} sự kiện cần render`);
+
+                eventsToRender.forEach(event => {
+                    totalEventsCreated++;
+                    console.log(`   👉 Tạo event ${totalEventsCreated}:`, {
+                        subject: event.subject,
+                        startTime: event.startTime,
+                        endTime: event.endTime,
+                        startMinutes: event.startMinutes,
+                        endMinutes: event.endMinutes,
+                        width: event.width,
+                        left: event.left
+                    });
+
                     if (window.createScheduledEventDiv) {
+                        console.log(`   🔧 Gọi createScheduledEventDiv cho: ${event.subject}`);
                         const eventDiv = window.createScheduledEventDiv({
                             scheduleId: event.scheduleId,
-                            taskId: event.taskId, // Đảm bảo taskId có trong dữ liệu
+                            taskId: event.taskId,
                             subject: event.subject,
                             startTime: event.startTime,
                             endTime: event.endTime,
-                            dayOfWeek: day // Thêm dayOfWeek cho tính toán vị trí
+                            dayOfWeek: day,
+                            widthPercentage: event.width,
+                            leftPercentage: event.left
                         });
 
-                        // ⭐️ GẮN HANDLERS TƯƠNG TÁC
+                        console.log(`   ✅ DOM created for event: ${event.subject}`);
+                        
+                        // Kiểm tra element có hợp lệ không
+                        if (!eventDiv || !(eventDiv instanceof HTMLElement)) {
+                            console.error(`   ❌ eventDiv không hợp lệ cho event: ${event.subject}`);
+                            return;
+                        }
+
+                        // Kiểm tra style
+                        console.log(`   🎨 Event style:`, {
+                            top: eventDiv.style.top,
+                            height: eventDiv.style.height,
+                            width: eventDiv.style.width,
+                            left: eventDiv.style.left
+                        });
+
                         if (window.attachResizeHandlers && window.attachDragHandlers) {
                             window.attachResizeHandlers(eventDiv);
                             window.attachDragHandlers(eventDiv);
+                            console.log(`   🔗 Đã gắn handlers resize/drag`);
                         }
 
                         cell.appendChild(eventDiv);
+                        console.log(`   ✅ Đã append vào cell`);
                     } else {
+                        console.log(`   ⚠️ createScheduledEventDiv không tồn tại, dùng fallback`);
                         // Logic fallback đơn giản nếu hàm nâng cao không tồn tại
                         const eventDiv = document.createElement('div');
                         eventDiv.className = 'bg-indigo-50 text-indigo-700 border border-indigo-200 p-1.5 rounded-md text-xs mb-1 font-medium cursor-pointer hover:bg-indigo-100 transition-colors truncate shadow-sm';
@@ -666,10 +857,35 @@ function renderCalendar() {
         calendarGrid.appendChild(row);
     }
 
-    // ⭐️ GỌI SETUP EVENTS: Gắn sự kiện mousedown/click vào các ô .calendar-day-cell để kích hoạt Drag-to-Create
+    console.log(`🎯 Tổng số sự kiện được tạo: ${totalEventsCreated}`);
+    
+    if (totalEventsCreated === 0) {
+        console.warn("⚠️ KHÔNG có sự kiện nào được tạo! Kiểm tra:");
+        console.warn("   1. Dữ liệu trong window.weeklySchedule");
+        console.warn("   2. Hàm timeToMinutes có chuyển đổi đúng không");
+        console.warn("   3. positionedWeeklyEvents có dữ liệu không");
+        console.warn("   4. Sự kiện có nằm trong khoảng hiển thị không");
+        
+        // Debug chi tiết hơn
+        days.forEach(day => {
+            if (positionedWeeklyEvents[day]) {
+                console.log(`   Debug ${day}:`);
+                positionedWeeklyEvents[day].forEach((event, i) => {
+                    const startHour = Math.floor(event.startMinutes / 60);
+                    const endHour = Math.ceil(event.endMinutes / 60);
+                    console.log(`     Event ${i}: ${event.subject} (${startHour}:00 - ${endHour}:00)`);
+                });
+            }
+        });
+    }
+
+    // ⭐️ GỌI SETUP EVENTS
     if (window.setupEvents) {
+        console.log("🔗 Gọi setupEvents()");
         window.setupEvents();
     }
+    
+    console.log("✅ renderCalendar() kết thúc");
 }
 window.renderCalendar = renderCalendar;
 
@@ -837,13 +1053,21 @@ function getDateFromDayAndHour(dayName, hour) {
  * Format date for API (yyyy-MM-dd HH:mm:ss)
  */
 function formatDateForApi(date) {
+    if (!date || isNaN(date.getTime())) {
+        console.error("❌ Invalid date in formatDateForApi:", date);
+        return null;
+    }
+    
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     const hours = String(date.getHours()).padStart(2, '0');
     const minutes = String(date.getMinutes()).padStart(2, '0');
     const seconds = String(date.getSeconds()).padStart(2, '0');
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    
+    const formatted = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    console.log("📅 Formatted deadline for API:", formatted);
+    return formatted;
 }
 
 /**
@@ -980,83 +1204,109 @@ function setupFormHandler() {
 async function handleScheduleTaskSubmission(taskData) {
     if (!currentCollectionId) {
         alert('Please select a schedule collection first!');
-        // ⚠️ Đảm bảo xóa eventElement nếu không lưu được
-        tempScheduledEvent.element.remove();
+        if (tempScheduledEvent && tempScheduledEvent.element) tempScheduledEvent.element.remove();
         return;
     }
 
-    // 1. TÍNH TOÁN THỜI GIAN KẾT THÚC DỰA TRÊN DEADLINE VÀ DURATION CỦA FORM
-    const startDateTime = new Date(document.getElementById('taskDeadline').value);
-    const endDateTime = new Date(startDateTime.getTime() + taskData.duration * 60000);
-
-    const newStartTime = `${String(startDateTime.getHours()).padStart(2, '0')}:${String(startDateTime.getMinutes()).padStart(2, '0')}:00`;
-    const newEndTime = `${String(endDateTime.getHours()).padStart(2, '0')}:${String(endDateTime.getMinutes()).padStart(2, '0')}:00`;
-
     try {
-        // 2. TẠO Task trên server (và cập nhật deadline đã tính)
+        // --- BƯỚC 1: LẤY THỜI GIAN THỰC TẾ TỪ VỊ TRÍ ELEMENT TRÊN LỊCH ---
+        const eventEl = tempScheduledEvent.element;
+        const topPx = parseFloat(eventEl.style.top);
+        const heightPx = parseFloat(eventEl.style.height);
+
+        // Chuyển đổi Pixel sang Phút (Ví dụ: 7h sáng + số phút offset)
+        const startMinsTotal = (START_HOUR * 60) + Math.round(topPx / PIXELS_PER_MINUTE);
+        const durationMins = Math.round(heightPx / PIXELS_PER_MINUTE);
+        const endMinsTotal = startMinsTotal + durationMins;
+
+        // Chuyển sang định dạng chuỗi chuẩn để lưu Backend (HH:mm:ss)
+        const newStartTime = window.formatMinutesToHHMMSS(startMinsTotal);
+        const newEndTime = window.formatMinutesToHHMMSS(endMinsTotal);
+
+        // --- BƯỚC 2: KIỂM TRA VA CHẠM LẦN CUỐI TRƯỚC KHI GỬI SERVER ---
+        // Sử dụng hàm checkCollision bạn đã viết
+        const day = tempScheduledEvent.day;
+        // Lưu ý: Nếu checkCollision yêu cầu định dạng "SA/CH", hãy đảm bảo formatMinutesToHHMMSS trả về đúng
+        if (window.checkCollision(day, newStartTime, newEndTime, null)) {
+            alert("Không thể lưu: Vị trí này đã bị trùng với lịch khác!");
+            return; 
+        }
+        
+        console.log("🎯 Bước 1: Bắt đầu lưu task và schedule");
+        console.log("Day:", day, "Start:", newStartTime, "End:", newEndTime);
+
+        // --- BƯỚC 3: TẠO TASK VÀ LƯU SCHEDULE ---
         const createTaskResult = await createTask(taskData);
-        const newTaskId = createTaskResult.taskId; // Lấy ID mới
+        const newTaskId = createTaskResult.taskId;
+        console.log("✅ Task created, ID:", newTaskId);
 
         if (newTaskId) {
-            // 3. LƯU Schedule (Lên lịch)
             const scheduleData = {
                 collectionId: parseInt(currentCollectionId),
-                dayOfWeek: tempScheduledEvent.day,
+                dayOfWeek: day,
                 startTime: newStartTime,
                 endTime: newEndTime,
                 subject: taskData.title,
-                taskId: newTaskId, // 👈 Gắn taskId
+                taskId: newTaskId,
                 type: 'self-study'
             };
-
-            // ⚠️ GỌI HÀM BACKEND ĐÃ SỬA ĐỂ TRẢ VỀ PROMISE/KẾT QUẢ
+            
+            console.log("📤 Sending schedule data:", scheduleData);
             const addScheduleResult = await window.addToScheduleBackend(scheduleData);
 
-            // 4. Hoàn tất giao diện
+            console.log("📥 Schedule add result:", addScheduleResult);
+
             if (addScheduleResult.success) {
-                const eventElement = tempScheduledEvent.element;
-                eventElement.classList.remove('temp-event', 'creating', 'bg-blue-100', 'border-blue-400'); // Xóa các class tạm thời
-                // ⭐️ THÊM CLASS VĨNH VIỄN (ví dụ: bg-indigo-50)
-                eventElement.classList.add('bg-indigo-50', 'text-indigo-700', 'border-indigo-200');
+                // --- BƯỚC 4: CẬP NHẬT BIẾN TOÀN CỤC VÀ VẼ LẠI ---
+                if (!window.weeklySchedule) window.weeklySchedule = {};
+                if (!window.weeklySchedule[day]) window.weeklySchedule[day] = [];
 
-                eventElement.dataset.scheduleId = addScheduleResult.scheduleId;
-                eventElement.dataset.taskId = newTaskId;
+                const newTaskEntry = {
+                    scheduleId: addScheduleResult.scheduleId,
+                    taskId: newTaskId,
+                    subject: taskData.title,
+                    startTime: newStartTime,
+                    endTime: newEndTime,
+                    dayOfWeek: day,
+                    startMinutes: startMinsTotal, // Quan trọng để renderCalendar tính vị trí
+                    endMinutes: endMinsTotal
+                };
 
-                // Cập nhật nội dung span để khớp với sự kiện chính thức
-                eventElement.querySelector('span').textContent = taskData.title + eventElement.querySelector('span').textContent.substring(eventElement.querySelector('span').textContent.indexOf('('));
+                window.weeklySchedule[day].push(newTaskEntry);
 
-                // ⭐️ GẮN HANDLERS VĨNH VIỄN (Cần truy cập các hàm từ khoa-tasks.js)
-                window.attachResizeHandlers(eventElement);
-                window.attachDragHandlers(eventElement);
-
-
-                // ⭐️ ĐẢM BẢO BƯỚC NÀY ĐƯỢC THỰC HIỆN:
-                if (window.tempScheduledEvent && window.tempScheduledEvent.element) {
-                    const element = window.tempScheduledEvent.element;
-
-                    // 1. Gán ID chính thức
-                    element.dataset.scheduleId = addScheduleResult.scheduleId;
-
-                    // 2. XÓA CLASS TẠM THỜI (để các hàm startResize/startMove nhận diện nó là chính thức)
-                    element.classList.remove('temp-event');
+                // Xóa khung tạm màu xanh
+                if (tempScheduledEvent.element) {
+                    tempScheduledEvent.element.remove();
+                    console.log("🗑️ Temp event removed");
                 }
 
-// ⭐️ SỬA ĐỔI: Phải gọi loadSchedule để tải lại dữ liệu lịch trình từ DB
-                loadSchedule(currentCollectionId);
-                loadTasks(); // Tải lại Task List và Lịch
+
+                console.log("🔄 Gọi loadSchedule để tải dữ liệu mới từ server...");
+                await loadSchedule(currentCollectionId);
+                console.log("✅ loadSchedule completed");
+                
+                                // Kiểm tra dữ liệu sau khi tải
+                console.log("📊 window.weeklySchedule sau khi load:", window.weeklySchedule);
+                console.log("📊 Dữ liệu cho ngày", day, ":", window.weeklySchedule[day]);
+                
+                // Reset biến tạm TRƯỚC KHI gọi hideTaskForm
+                tempScheduledEvent = null;
+
+                loadTasks();
+                
+                 // Ẩn form
+                hideTaskForm();  // Hàm này sẽ thấy tempScheduledEvent = null nên không xóa gì cả
+                console.log("🎉 Quá trình hoàn tất");
             } else {
-                alert('Failed to add to schedule: ' + (addScheduleResult.message || 'Time conflict'));
-                tempScheduledEvent.element.remove();
+                console.error("❌ Lỗi khi thêm schedule:", addScheduleResult.message);
+                alert('Lỗi: ' + (addScheduleResult.message || 'Trùng lịch trên server'));
+                tempScheduledEvent = null;
+                hideTaskForm();
             }
         }
     } catch (error) {
-        console.error('Error saving scheduled task:', error);
-        alert('Failed to save scheduled task: ' + error.message);
-        // Xóa element tạm thời nếu có lỗi tạo task
-        if (tempScheduledEvent && tempScheduledEvent.element) {
-            tempScheduledEvent.element.remove();
-        }
-    } finally {
+        console.error('Error saving:', error);
+        alert('Lỗi hệ thống: ' + error.message);
         tempScheduledEvent = null;
         hideTaskForm();
     }
@@ -1072,12 +1322,9 @@ window.openTaskDetailModalFromSchedule = function (eventElement, dayOfWeek, star
         return;
     }
 
-    // ⭐️ KIỂM TRA ĐÂY: eventElement có phải là element DOM không?
-    if (!(eventElement instanceof HTMLElement)) {
-        console.error("Lỗi: eventElement không phải là đối tượng HTML Element hợp lệ.");
-        return; // Thoát nếu không phải element hợp lệ
-    }
-
+    // ⭐️ THÊM: Set flag để biết đang tạo task từ lịch
+    window.isCreatingFromSchedule = true;
+    
     window.tempScheduledEvent = {
         element: eventElement,
         day: dayOfWeek,
@@ -1097,9 +1344,6 @@ window.openTaskDetailModalFromSchedule = function (eventElement, dayOfWeek, star
     document.getElementById('formTitle').textContent = 'New Scheduled Task';
     document.getElementById('taskDeadline').value = formattedDeadline;
     document.getElementById('taskDuration').value = duration;
-
-    // Cần phải có nút Cancel gọi hàm này (đã thêm vào HTML ở bước trước)
-    // document.getElementById('taskFormContainer').querySelector('button[type="button"]').onclick = window.cancelScheduleCreation;
 };
 
 
@@ -1179,5 +1423,31 @@ window.updateTaskFormDuration = function (duration, startTime, dayOfWeek) {
         // formatForInput phải đảm bảo đầu ra là yyyy-MM-ddThh:mm
         deadlineInput.value = formatForInput(calculatedDate);
     }
+}
+
+//hàm dùng để Debug
+function debugScheduleData() {
+    if (!window.weeklySchedule) {
+        console.warn("❌ window.weeklySchedule không tồn tại");
+        return;
+    }
+    
+    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    days.forEach(day => {
+        if (window.weeklySchedule[day] && window.weeklySchedule[day].length > 0) {
+            console.log(`📋 ${day}:`, window.weeklySchedule[day]);
+            window.weeklySchedule[day].forEach((event, i) => {
+                console.log(`   Event ${i}:`, {
+                    scheduleId: event.scheduleId,
+                    taskId: event.taskId,
+                    subject: event.subject,
+                    startTime: event.startTime,
+                    endTime: event.endTime,
+                    hasStartMinutes: 'startMinutes' in event,
+                    hasEndMinutes: 'endMinutes' in event
+                });
+            });
+        }
+    });
 }
 

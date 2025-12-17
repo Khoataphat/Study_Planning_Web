@@ -308,9 +308,13 @@
         <%-- Đảm bảo toàn bộ HTML của lớp phủ được tải vào DOM trước khi JS chạy --%>
         <%@ include file="settings-overlay.jsp" %>
 
-        <script src="/resources/js/tasks.js"></script>
+        
+        
+        
 
         <!-- khoa -->
+        <script src="/resources/js/tasks.js"></script>
+        <script src="/resources/js/schedule-collision.js"></script>
         <script src="/resources/js/khoa-tasks.js"></script>
 
 

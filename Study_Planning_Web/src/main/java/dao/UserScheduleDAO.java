@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * DAO class for user_schedule table
- * Handles all database operations for schedules
+ * DAO class for user_schedule table Handles all database operations for
+ * schedules
  */
 public class UserScheduleDAO {
 
@@ -22,12 +22,11 @@ public class UserScheduleDAO {
     public List<UserSchedule> getAllByUserId(int userId) {
         List<UserSchedule> schedules = new ArrayList<>();
         // Modified to JOIN with schedule_collection to filter by user_id
-        String sql = "SELECT us.* FROM user_schedule us " +
-                "JOIN schedule_collection sc ON us.collection_id = sc.collection_id " +
-                "WHERE sc.user_id = ? ORDER BY us.day_of_week, us.start_time";
+        String sql = "SELECT us.* FROM user_schedule us "
+                + "JOIN schedule_collection sc ON us.collection_id = sc.collection_id "
+                + "WHERE sc.user_id = ? ORDER BY us.day_of_week, us.start_time";
 
-        try (Connection conn = DBUtil.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, userId);
             ResultSet rs = stmt.executeQuery();
@@ -48,8 +47,7 @@ public class UserScheduleDAO {
     public UserSchedule getById(int scheduleId) {
         String sql = "SELECT * FROM user_schedule WHERE schedule_id = ?";
 
-        try (Connection conn = DBUtil.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, scheduleId);
             ResultSet rs = stmt.executeQuery();
@@ -70,12 +68,11 @@ public class UserScheduleDAO {
     public List<UserSchedule> getByUserIdAndDay(int userId, String dayOfWeek) {
         List<UserSchedule> schedules = new ArrayList<>();
         // Modified to JOIN with schedule_collection to filter by user_id
-        String sql = "SELECT us.* FROM user_schedule us " +
-                "JOIN schedule_collection sc ON us.collection_id = sc.collection_id " +
-                "WHERE sc.user_id = ? AND us.day_of_week = ? ORDER BY us.start_time";
+        String sql = "SELECT us.* FROM user_schedule us "
+                + "JOIN schedule_collection sc ON us.collection_id = sc.collection_id "
+                + "WHERE sc.user_id = ? AND us.day_of_week = ? ORDER BY us.start_time";
 
-        try (Connection conn = DBUtil.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, userId);
             stmt.setString(2, dayOfWeek);
@@ -98,8 +95,7 @@ public class UserScheduleDAO {
         List<UserSchedule> schedules = new ArrayList<>();
         String sql = "SELECT * FROM user_schedule WHERE collection_id = ? ORDER BY day_of_week, start_time";
 
-        try (Connection conn = DBUtil.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, collectionId);
             ResultSet rs = stmt.executeQuery();
@@ -115,23 +111,31 @@ public class UserScheduleDAO {
     }
 
     /**
-     * Insert new schedule
-     * Returns the generated schedule_id
+     * Insert new schedule Returns the generated schedule_id
      */
     public int insert(UserSchedule schedule) {
-        // user_id removed from INSERT statement
-        String sql = "INSERT INTO user_schedule (collection_id, day_of_week, start_time, end_time, subject, type) VALUES (?, ?, ?, ?, ?, ?)";
+        // Kiểm tra xem bảng có cột task_id không
+        String sql;
+        if (hasTaskIdColumn()) {
+            sql = "INSERT INTO user_schedule (collection_id, task_id, day_of_week, start_time, end_time, subject, type) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        } else {
+            sql = "INSERT INTO user_schedule (collection_id, day_of_week, start_time, end_time, subject, type) VALUES (?, ?, ?, ?, ?, ?)";
+        }
 
-        try (Connection conn = DBUtil.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            // stmt.setInt(1, schedule.getUserId()); // Removed
-            stmt.setInt(1, schedule.getCollectionId());
-            stmt.setString(2, schedule.getDayOfWeek());
-            stmt.setTime(3, schedule.getStartTime());
-            stmt.setTime(4, schedule.getEndTime());
-            stmt.setString(5, schedule.getSubject());
-            stmt.setString(6, schedule.getType());
+            int paramIndex = 1;
+            stmt.setInt(paramIndex++, schedule.getCollectionId());
+
+            if (hasTaskIdColumn()) {
+                stmt.setInt(paramIndex++, schedule.getTaskId());
+            }
+
+            stmt.setString(paramIndex++, schedule.getDayOfWeek());
+            stmt.setTime(paramIndex++, schedule.getStartTime());
+            stmt.setTime(paramIndex++, schedule.getEndTime());
+            stmt.setString(paramIndex++, schedule.getSubject());
+            stmt.setString(paramIndex, schedule.getType());
 
             int affectedRows = stmt.executeUpdate();
 
@@ -148,14 +152,25 @@ public class UserScheduleDAO {
         return -1;
     }
 
+// Helper method để kiểm tra xem bảng có cột task_id không
+    private boolean hasTaskIdColumn() {
+        try (Connection conn = DBUtil.getConnection()) {
+            DatabaseMetaData metaData = conn.getMetaData();
+            ResultSet columns = metaData.getColumns(null, null, "user_schedule", "task_id");
+            return columns.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     /**
      * Update existing schedule
      */
     public boolean update(UserSchedule schedule) {
         String sql = "UPDATE user_schedule SET day_of_week = ?, start_time = ?, end_time = ?, subject = ?, type = ? WHERE schedule_id = ?";
 
-        try (Connection conn = DBUtil.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setString(1, schedule.getDayOfWeek());
             stmt.setTime(2, schedule.getStartTime());
@@ -178,8 +193,7 @@ public class UserScheduleDAO {
     public boolean delete(int scheduleId) {
         String sql = "DELETE FROM user_schedule WHERE schedule_id = ?";
 
-        try (Connection conn = DBUtil.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, scheduleId);
             return stmt.executeUpdate() > 0;
@@ -196,8 +210,7 @@ public class UserScheduleDAO {
     public boolean deleteByCollectionId(int collectionId) {
         String sql = "DELETE FROM user_schedule WHERE collection_id = ?";
 
-        try (Connection conn = DBUtil.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, collectionId);
             return stmt.executeUpdate() > 0;
@@ -214,8 +227,7 @@ public class UserScheduleDAO {
     public int countByCollectionId(int collectionId) {
         String sql = "SELECT COUNT(*) FROM user_schedule WHERE collection_id = ?";
 
-        try (Connection conn = DBUtil.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, collectionId);
             ResultSet rs = stmt.executeQuery();
@@ -235,12 +247,11 @@ public class UserScheduleDAO {
      */
     public int countByUserId(int userId) {
         // Modified to JOIN with schedule_collection
-        String sql = "SELECT COUNT(*) FROM user_schedule us " +
-                "JOIN schedule_collection sc ON us.collection_id = sc.collection_id " +
-                "WHERE sc.user_id = ?";
+        String sql = "SELECT COUNT(*) FROM user_schedule us "
+                + "JOIN schedule_collection sc ON us.collection_id = sc.collection_id "
+                + "WHERE sc.user_id = ?";
 
-        try (Connection conn = DBUtil.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtil.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, userId);
             ResultSet rs = stmt.executeQuery();
@@ -259,15 +270,44 @@ public class UserScheduleDAO {
      * Helper method to extract UserSchedule from ResultSet
      */
     private UserSchedule extractScheduleFromResultSet(ResultSet rs) throws SQLException {
+        // ⭐️ Lấy task_id nếu có, mặc định 0 nếu không
+        int taskId = 0;
+        try {
+            taskId = rs.getInt("task_id");
+        } catch (SQLException e) {
+            // Cột không tồn tại
+            taskId = 0;
+        }
+
         return new UserSchedule(
                 rs.getInt("schedule_id"),
                 // rs.getInt("user_id"), // Removed
                 rs.getInt("collection_id"),
+                taskId,
                 rs.getString("day_of_week"),
                 rs.getTime("start_time"),
                 rs.getTime("end_time"),
                 rs.getString("subject"),
                 rs.getString("type"),
                 rs.getTimestamp("created_at"));
+
+    }
+
+    //hàm Debug
+    public void debugTableStructure() {
+        try (Connection conn = DBUtil.getConnection()) {
+            DatabaseMetaData metaData = conn.getMetaData();
+            ResultSet columns = metaData.getColumns(null, null, "user_schedule", null);
+
+            System.out.println("=== user_schedule Table Structure ===");
+            while (columns.next()) {
+                String columnName = columns.getString("COLUMN_NAME");
+                String columnType = columns.getString("TYPE_NAME");
+                System.out.println(columnName + " : " + columnType);
+            }
+            System.out.println("=====================================");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

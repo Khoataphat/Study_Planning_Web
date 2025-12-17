@@ -13,6 +13,8 @@ public class Task {
     private String priority; // low, medium, high
     private int duration; // in minutes
     private Timestamp deadline;
+    
+    private Timestamp startTime;
     private String status; // pending, in_progress, done
     private Timestamp createdAt;
     private Timestamp updatedAt;
@@ -30,6 +32,9 @@ public class Task {
         this.deadline = deadline;
         this.status = status;
     }
+    
+    public Timestamp getStartTime() { return startTime; } // ⭐️ THÊM
+    public void setStartTime(Timestamp startTime) { this.startTime = startTime; } // ⭐️ THÊM
 
     // Getters and Setters
     public int getTaskId() {

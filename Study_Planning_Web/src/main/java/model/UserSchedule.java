@@ -17,7 +17,8 @@ public class UserSchedule {
     private String type; // class, break, self-study, activity
     private String description; // Added for Smart Schedule details
     private Timestamp createdAt;
-
+    private int taskId; //khoa
+    
     // Constructors
     public UserSchedule() {
     }
@@ -36,6 +37,21 @@ public class UserSchedule {
             String subject, String type, Timestamp createdAt) {
         this.scheduleId = scheduleId;
         this.collectionId = collectionId;
+        this.dayOfWeek = dayOfWeek;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.subject = subject;
+        this.type = type;
+        this.createdAt = createdAt;
+    }
+    
+        // Constructor mới với taskId
+    public UserSchedule(int scheduleId, int collectionId, int taskId, String dayOfWeek, 
+                       Time startTime, Time endTime, String subject, 
+                       String type, Timestamp createdAt) {
+        this.scheduleId = scheduleId;
+        this.collectionId = collectionId;
+        this.taskId = taskId;
         this.dayOfWeek = dayOfWeek;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -115,6 +131,16 @@ public class UserSchedule {
 
     public void setCreatedAt(Timestamp createdAt) {
         this.createdAt = createdAt;
+    }
+    
+    //khoa
+        // Getter và Setter cho taskId
+    public int getTaskId() {
+        return taskId;
+    }
+    
+    public void setTaskId(int taskId) {
+        this.taskId = taskId;
     }
 
     @Override
