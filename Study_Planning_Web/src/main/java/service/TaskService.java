@@ -1,15 +1,48 @@
 package service;
 
+<<<<<<< HEAD
+import java.util.List;
+import model.Task;
+
+=======
 import dao.TaskDAO;
 import model.Task;
 
 import java.sql.Timestamp;
 import java.util.List;
 
+>>>>>>> 087cb0900ff15358cd9896d5d912d12c6de39ddf
 /**
  * Service layer for Task business logic
  */
 public class TaskService {
+<<<<<<< HEAD
+
+    public List<Task> getTasksByStatus(int userId, String status) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public boolean updateTask(Task task) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public boolean deleteTask(int taskId) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public List<Task> getAllTasksByUserId(int userId) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public Task getTaskById(int taskId) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public int createTask(Task task) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+=======
     private final TaskDAO taskDAO;
 
     public TaskService() {
@@ -132,4 +165,5 @@ public class TaskService {
     public int getTaskCountByStatus(int userId, String status) {
         return taskDAO.getByUserIdAndStatus(userId, status).size();
     }
+>>>>>>> 087cb0900ff15358cd9896d5d912d12c6de39ddf
 }

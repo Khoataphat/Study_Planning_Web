@@ -38,6 +38,24 @@ public class UserProfiles {
     
     // created_at DATETIME
     private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+    
+    // Personal Info 
+    private String fullName;
+    private String description;
+    
+    // Learning & working styles
+    private String workStyle;
+    private String hobbies;
+    
+    //Thêm các fields mới cho form khám phá
+    private String studyMethodVisual;
+    private String studyMethodAuditory;
+    private String studyMethodReading;
+    private String studyMethodPractice;
+    private String productiveTime;
+    private Integer groupStudyPreference;
+    private String interests;
 
     // --- Constructor ---
     
@@ -46,7 +64,7 @@ public class UserProfiles {
     }
 
     // Constructor đầy đủ (có thể thêm/bớt tùy nhu cầu)
-    public UserProfiles(Integer profileId, Integer userId, Integer yearOfStudy, String personalityType, String preferredStudyTime, String learningStyle, Integer focusDuration, String goal, LocalDateTime createdAt) {
+    public UserProfiles(Integer profileId, Integer userId, Integer yearOfStudy, String personalityType, String preferredStudyTime, String learningStyle, Integer focusDuration, String goal, LocalDateTime createdAt, String fullName, String description, String workStyle, String hobbies, String studyMethodVisual, String studyMethodAuditory, String studyMethodReading, String studyMethodPractice, String productiveTime, Integer groupStudyPreference, LocalDateTime updatedAt, String interests) {
         this.profileId = profileId;
         this.userId = userId;
         this.yearOfStudy = yearOfStudy;
@@ -56,6 +74,19 @@ public class UserProfiles {
         this.focusDuration = focusDuration;
         this.goal = goal;
         this.createdAt = createdAt;
+        this.fullName = fullName;
+        this.description = description;
+        this.workStyle = workStyle;
+        this.hobbies = hobbies;
+        this.studyMethodVisual = studyMethodVisual;
+        this.studyMethodAuditory = studyMethodAuditory;
+        this.studyMethodReading = studyMethodReading;
+        this.studyMethodPractice = studyMethodPractice;
+        this.productiveTime = productiveTime;
+        this.groupStudyPreference = groupStudyPreference;
+        this.updatedAt = updatedAt;
+        this.interests = interests;
+        
     }
 
     // --- Getters và Setters ---
@@ -131,11 +162,110 @@ public class UserProfiles {
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
+    
+    public String getFullName(){
+        return fullName;
+    }
+    
+    public void setFullName(String fullName){
+        this.fullName = fullName;
+    }
+    
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
+    public String getWorkStyle() {
+        return workStyle;
+    }
+
+    public void setWorkStyle(String workStyle) {
+        this.workStyle = workStyle;
+    }
+
+    public String getHobbies() {
+        return hobbies;
+    }
+
+    public void setHobbies(String hobbies) {
+        this.hobbies = hobbies;
+    }
+    
+    public String getStudyMethodVisual() {
+        return studyMethodVisual;
+    }
+
+    public void setStudyMethodVisual(String studyMethodVisual) {
+        this.studyMethodVisual = studyMethodVisual;
+    }
+
+    public String getStudyMethodAuditory() {
+        return studyMethodAuditory;
+    }
+
+    public void setStudyMethodAuditory(String studyMethodAuditory) {
+        this.studyMethodAuditory = studyMethodAuditory;
+    }
+    
+    public String getStudyMethodReading() {
+        return studyMethodReading;
+    }
+
+    public void setStudyMethodReading(String studyMethodReading) {
+        this.studyMethodReading = studyMethodReading;
+    }
+
+    public String getStudyMethodPractice() {
+        return studyMethodPractice;
+    }
+
+    public void setStudyMethodPractice(String studyMethodPractice) {
+        this.studyMethodPractice = studyMethodPractice;
+    }
+    
+    public String getProductiveTime() {
+        return productiveTime;
+    }
+
+    public void setProductiveTime(String productiveTime) {
+        this.productiveTime = productiveTime;
+    }
+
+    public Integer getGroupStudyPreference() {
+        return groupStudyPreference;
+    }
+
+    public void setGroupStudyPreference(Integer groupStudyPreference) {
+        this.groupStudyPreference = groupStudyPreference;
+    }
+    
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+    
+    public String getInterests() {
+        return interests;
+    }
+
+    public void setInterests(String interests) {
+        this.interests = interests;
+    }    
+    
+    
 
     // Bạn có thể thêm phương thức toString() để dễ dàng debug
     @Override
     public String toString() {
-        return "UserProfiles{" +
+        return '}' +
+                "UserProfiles{" +
                 "profileId=" + profileId +
                 ", userId=" + userId +
                 ", yearOfStudy=" + yearOfStudy +
@@ -145,6 +275,18 @@ public class UserProfiles {
                 ", focusDuration=" + focusDuration +
                 ", goal='" + goal + '\'' +
                 ", createdAt=" + createdAt +
-                '}';
+                ", fullName='" + fullName + '\'' +
+                ", description='" + description + '\'' +
+                ", workStyle='" + workStyle + '\'' +
+                ", hobbies='" + hobbies + '\'' +
+                ", studyMethodVisual='" + studyMethodVisual + '\'' +
+                ", studyMethodAuditory='" + studyMethodAuditory + '\'' +
+                ", studyMethodReading='" + studyMethodReading + '\'' +
+                ", studyMethodPractice='" + studyMethodPractice + '\'' +
+                ", productiveTime='" + productiveTime + '\'' +
+                ", groupStudyPreference=" + groupStudyPreference +
+                ", updatedAt=" + updatedAt + 
+                ", interests='" + interests + '\'' +
+                '}';        
     }
-}
+}    
