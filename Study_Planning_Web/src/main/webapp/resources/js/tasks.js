@@ -10,34 +10,101 @@ let isScheduleLoaded = false;
 
 //khoa
 // ⭐️ BIẾN MỚI: Theo dõi sự kiện lịch tạm thời (được tạo bằng click)
-let tempScheduledEvent = null;
+// ⭐️ ĐẢM BẢO LÀ GLOBAL
+window.tempScheduledEvent = null;
+
+//khoa
+function formatMinutesToHHMMSS(minutes) {
+    if (minutes < 0) minutes = 0;
+    if (minutes >= 24 * 60) minutes = 23 * 60 + 59;
+
+    let hours = Math.floor(minutes / 60);
+    let mins = minutes % 60;
+    
+    console.log(`🕐 formatMinutesToHHMMSS debug: ${minutes} min = ${hours}:${mins}`);
+    
+    // ⭐️ SỬA QUAN TRỌNG: Logic chính xác cho 12h format
+    let ampm = 'SA';
+    let displayHours = hours;
+    
+    // Xử lý các trường hợp đặc biệt
+    if (hours === 0) {
+        // 0 giờ = 12 SA (nửa đêm)
+        displayHours = 12;
+        ampm = 'SA';
+    } else if (hours < 12) {
+        // 1-11 giờ = SA
+        displayHours = hours;
+        ampm = 'SA';
+    } else if (hours === 12) {
+        // 12 giờ = 12 CH (trưa)
+        displayHours = 12;
+        ampm = 'CH';
+    } else {
+        // 13-23 giờ = 1-11 CH
+        displayHours = hours - 12;
+        ampm = 'CH';
+    }
+    
+    const formatted = `${displayHours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:00 ${ampm}`;
+    
+    console.log(`   Formatted: ${formatted} (hours=${hours}, display=${displayHours}, ${ampm})`);
+    
+    return formatted;
+}
+window.formatMinutesToHHMMSS = formatMinutesToHHMMSS;
+
+
 
 // Khởi tạo cấu trúc rỗng để tránh lỗi 'undefined'
 window.weeklySchedule = window.weeklySchedule || {
     'Mon': [], 'Tue': [], 'Wed': [], 'Thu': [], 'Fri': [], 'Sat': [], 'Sun': []
 };
-// Initialize on page load
-document.addEventListener('DOMContentLoaded', function () {
-    loadTasks();
-    loadScheduleCollections();
-    setupFormHandler();
-});
 
 /**
  * Load all tasks from server
  */
 function loadTasks() {
+    console.log("🔍 loadTasks() được gọi");
+    
     fetch('/user/tasks?action=list')
-            .then(response => response.json())
-            .then(tasks => {
-                allTasks = tasks;
-                renderTaskList();
-                renderCalendar();
-            })
-            .catch(error => {
-                console.error('Error loading tasks:', error);
-                showEmptyState('Error loading tasks');
+        .then(response => response.json())
+        .then(tasks => {
+            console.log(`📥 Tải được ${tasks.length} tasks từ server:`, tasks);
+            
+            // Log từng task để debug
+            tasks.forEach((task, index) => {
+                console.log(`  Task ${index + 1}: ID=${task.taskId}, Title="${task.title}"`);
             });
+            
+            // ⭐️ Kiểm tra trùng lặp ngay từ đầu
+            const uniqueTasks = [];
+            const seenIds = new Set();
+            const duplicateIds = [];
+            
+            tasks.forEach(task => {
+                if (seenIds.has(task.taskId)) {
+                    duplicateIds.push(task.taskId);
+                } else {
+                    seenIds.add(task.taskId);
+                    uniqueTasks.push(task);
+                }
+            });
+            
+            if (duplicateIds.length > 0) {
+                console.warn(`⚠️ Server trả về task trùng lặp: ${duplicateIds.join(', ')}`);
+            }
+            
+            allTasks = uniqueTasks;
+            console.log(`✅ Đã lọc xuống ${allTasks.length} task duy nhất`);
+            
+            renderTaskList();
+            renderCalendar();
+        })
+        .catch(error => {
+            console.error('Error loading tasks:', error);
+            showEmptyState('Error loading tasks');
+        });
 }
 
 /**
@@ -84,49 +151,189 @@ function changeSchedule() {
  * Load weekly schedule
  */
 // Trong tasks.js
+function timeToMinutes(timeStr) {
+    if (!timeStr) {
+        console.warn(`⚠️ timeStr là undefined hoặc null`);
+        return 0;
+    }
 
-function loadSchedule(collectionId) {
+    console.log(`⏱️ timeToMinutes INPUT: "${timeStr}"`);
+
+    // Tách phần thời gian và AM/PM
+    const parts = timeStr.trim().split(' ');
+    let timePart = parts[0];
+    let ampm = parts.length > 1 ? parts[1].toUpperCase() : '';
+
+    // Parse giờ và phút
+    const [h, m, s] = timePart.split(':').map(Number);
+    let hours = h || 0;
+    const minutes = m || 0;
+
+    console.log(`⏱️ Parsed: hours=${hours}, minutes=${minutes}, ampm="${ampm}"`);
+
+    // ⭐️ SỬA QUAN TRỌNG: Xử lý AM/PM đơn giản
+    if (ampm === 'CH' || ampm === 'PM') {
+        // CH = PM (chiều)
+        // 12:xx CH = 12:xx (giữ nguyên)
+        // 1:xx CH đến 11:xx CH = +12 giờ
+        if (hours < 12) {
+            hours += 12;
+        }
+    } else if (ampm === 'SA' || ampm === 'AM') {
+        // SA = AM (sáng)
+        // 12:xx SA = 0:xx
+        // 1:xx SA đến 11:xx SA = giữ nguyên
+        if (hours === 12) {
+            hours = 0;
+        }
+    }
+
+    // ⭐️ LOẠI BỎ: Không điều chỉnh timezone ở client
+    // const timezoneOffset = 7; // ⚠️ BỎ DÒNG NÀY
+    // hours = (hours - timezoneOffset + 24) % 24; // ⚠️ BỎ DÒNG NÀY
+
+    const totalMinutes = hours * 60 + minutes;
+    console.log(`⏱️ OUTPUT: "${timeStr}" -> ${hours}:${minutes} -> ${totalMinutes} phút`);
+
+    return totalMinutes;
+
+}
+
+window.timeToMinutes = timeToMinutes;
+
+// ⭐️ HÀM MỚI: Parse thời gian một cách thống nhất
+function parseTime(timeStr) {
+    if (!timeStr)
+        return {hours: 0, minutes: 0, ampm: ''};
+
+    // Chuẩn hóa input
+    timeStr = timeStr.trim().toUpperCase();
+
+    // Tách phần thời gian và AM/PM
+    const parts = timeStr.split(' ');
+    let timePart = parts[0];
+    let ampm = parts.length > 1 ? parts[1] : '';
+
+    // Chuyển đổi viết tắt tiếng Việt
+    if (ampm === 'SA')
+        ampm = 'AM';
+    if (ampm === 'CH')
+        ampm = 'PM';
+
+    // Parse giờ và phút
+    const [h, m] = timePart.split(':').map(Number);
+    let hours = h || 0;
+    const minutes = m || 0;
+
+    // Đảm bảo AM/PM hợp lệ
+    if (!['AM', 'PM', ''].includes(ampm)) {
+        // Nếu không có AM/PM, kiểm tra xem có phải 24h format
+        if (hours < 12 && timeStr.includes('SA'))
+            ampm = 'AM';
+        else if (hours < 12 && timeStr.includes('CH'))
+            ampm = 'PM';
+        else if (hours >= 12 && hours <= 23)
+            ampm = 'PM';
+        else
+            ampm = 'AM';
+    }
+
+    return {hours, minutes, ampm};
+}
+
+
+async function loadSchedule(collectionId) {
     if (!collectionId) {
-        // Nếu không có ID, coi như tải xong với dữ liệu rỗng
         isScheduleLoaded = true;
         return Promise.resolve();
     }
 
-    // Đặt lại cờ khi bắt đầu tải (để xử lý nếu hàm này được gọi lại)
+    // ⭐️ SỬA: Reset trạng thái loading
     isScheduleLoaded = false;
     console.log("🔄 loadSchedule đang tải collectionId:", collectionId);
 
-    fetch(`/user/schedule?action=weekly&collectionId=${collectionId}`)
-            .then(response => response.json())
-            .then(data => {
-                // Thay vì gán weeklySchedule = data;
-                // Hãy dùng window. để đảm bảo nó ghi đè vào biến toàn cục
-                console.log("📥 Dữ liệu schedule từ server:", data);
-                window.weeklySchedule = data;
-                console.log("Dữ liệu đã nạp vào window:", window.weeklySchedule);
-                // Debug chi tiết
-                debugScheduleData();
+    try {
+        const response = await fetch(`/user/schedule?action=weekly&collectionId=${collectionId}`);
         
-                renderCalendar();
-                console.log("✅ renderCalendar() đã được gọi");
-            })
-            .catch(error => {
-                console.error('Error loading schedule:', error);
-                // Gán giá trị an toàn nếu lỗi
-                weeklySchedule = {};
-            })
-            .finally(() => {
-                // ⭐️ ĐIỂM QUAN TRỌNG: Dù thành công hay thất bại, cờ cũng phải được BẬT
-                isScheduleLoaded = true;
-                console.info("✅ Dữ liệu Lịch đã hoàn thành tải. isScheduleLoaded = true.");
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log("📥 Dữ liệu schedule từ server:", data);
+        console.log(JSON.stringify(data, null, 2));
+
+        // Debug chi tiết từng event
+        console.log("\n🔍 Chi tiết từng event:");
+        Object.keys(data).forEach(day => {
+            if (Array.isArray(data[day])) {
+                data[day].forEach((event, i) => {
+                    console.log(`${day}[${i}]:`, {
+                        scheduleId: event.scheduleId,
+                        taskId: event.taskId,
+                        subject: event.subject,
+                        startTime: event.startTime,
+                        endTime: event.endTime,
+                        type: event.type
+                    });
+                });
+            }
+        });
+
+        // Đảm bảo dữ liệu có cấu trúc đúng
+        if (data && typeof data === 'object') {
+            // KHỞI TẠO LẠI CẤU TRÚC weeklySchedule
+            window.weeklySchedule = {
+                'Mon': [], 'Tue': [], 'Wed': [], 'Thu': [], 'Fri': [], 'Sat': [], 'Sun': []
+            };
+
+            // Cập nhật dữ liệu mới từ server
+            Object.keys(data).forEach(day => {
+                if (window.weeklySchedule.hasOwnProperty(day)) {
+                    // Sao chép mảng events từ server
+                    window.weeklySchedule[day] = Array.isArray(data[day])
+                            ? [...data[day]]
+                            : [];
+                }
             });
+
+            console.log("✅ Dữ liệu schedule sau khi xử lý:");
+            console.log(window.weeklySchedule);
+        }
+
+        debugScheduleData();
+
+        // ⭐️ SỬA QUAN TRỌNG: Đảm bảo renderCalendar() chỉ gọi khi có dữ liệu
+        if (window.weeklySchedule && Object.keys(window.weeklySchedule).length > 0) {
+            console.log("🔄 Gọi renderCalendar từ loadSchedule với dữ liệu mới");
+            renderCalendar();
+        } else {
+            console.warn("⚠️ Không có dữ liệu schedule để render");
+            renderCalendar(); // Vẫn render nhưng sẽ hiển thị lịch trống
+        }
+
+    } catch (error) {
+        console.error('Error loading schedule:', error);
+        // KHỞI TẠO LẠI KHI CÓ LỖI
+        window.weeklySchedule = {
+            'Mon': [], 'Tue': [], 'Wed': [], 'Thu': [], 'Fri': [], 'Sat': [], 'Sun': []
+        };
+        renderCalendar(); // Render với schedule rỗng
+    } finally {
+        isScheduleLoaded = true;
+        console.info("✅ Dữ liệu Lịch đã hoàn thành tải. isScheduleLoaded = true.");
+    }
 }
 
 /**
  * Render task list
  */
 function renderTaskList() {
+    console.log("🔄 renderTaskList được gọi - Stack trace:");
+    console.trace(); // Hiển thị nơi gọi hàm này
+    
     const taskList = document.getElementById('taskList');
+    console.log(`📊 Số task hiện tại: ${allTasks.length}`);
 
     // Filter tasks
     let filteredTasks = allTasks;
@@ -222,45 +429,56 @@ function createTaskCard(task) {
 /**
  * Setup form submission handler
  */
-function setupFormHandler() {
-    const form = document.getElementById('taskForm');
-    form.onsubmit = async (e) => {
-        e.preventDefault();
-
-        const taskData = {
-            title: document.getElementById('taskTitle').value,
-            description: document.getElementById('taskDescription').value,
-            priority: document.getElementById('taskPriority').value,
-            status: document.getElementById('taskStatus').value,
-            deadline: formatDateForApi(new Date(document.getElementById('taskDeadline').value)),
-            duration: parseInt(document.getElementById('taskDuration').value)
-        };
-
-        try {
-            if (editingTaskId) {
-                // Update existing task
-                await updateTask(editingTaskId, taskData);
-            } else {
-                // Create new task
-                await createTask(taskData);
-            }
-
-            // Hide form and reload tasks
-            hideTaskForm();
-            loadTasks();
-        } catch (error) {
-            console.error('Error saving task:', error);
-            alert('Failed to save task. Please try again.');
-        }
-    };
-}
+//function setupFormHandler() {
+//    const form = document.getElementById('taskForm');
+//    form.onsubmit = async (e) => {
+//        e.preventDefault();
+//
+//        const taskData = {
+//            title: document.getElementById('taskTitle').value,
+//            description: document.getElementById('taskDescription').value,
+//            priority: document.getElementById('taskPriority').value,
+//            status: document.getElementById('taskStatus').value,
+//            deadline: document.getElementById('taskDeadline').value ? formatDateForApi(new Date(document.getElementById('taskDeadline').value)) : null,
+//            duration: parseInt(document.getElementById('taskDuration').value)
+//        };
+//
+//        console.log("📝 Form submitted with data:", taskData);
+//        console.log("📝 tempScheduledEvent exists?", !!tempScheduledEvent);
+//        console.log("📝 editingTaskId:", editingTaskId);
+//
+//        try {
+//            if (tempScheduledEvent) {
+//                // ⭐️ TRƯỜNG HỢP 1: LƯU TÁC VỤ MỚI VÀ LÊN LỊCH
+//                console.log("🔄 Calling handleScheduleTaskSubmission...");
+//                await handleScheduleTaskSubmission(taskData);
+//            } else if (editingTaskId) {
+//                // TRƯỜNG HỢP 2: CẬP NHẬT TÁC VỤ CÓ SẴN
+//                console.log("🔄 Calling updateTask...");
+//                await updateTask(editingTaskId, taskData);
+//                hideTaskForm();
+//                loadTasks();
+//            } else {
+//                // TRƯỜNG HỢP 3: TẠO TÁC VỤ THÔNG THƯỜNG
+//                console.log("🔄 Calling createTask (normal)...");
+//                await createTask(taskData);
+//                hideTaskForm();
+//                loadTasks();
+//            }
+//        } catch (error) {
+//            console.error('Error saving task:', error);
+//            alert('Failed to save task. Please try again.');
+//        }
+//    };
+//}
 
 /**
  * Create new task
  */
 async function createTask(taskData) {
-    console.log("📤 Sending task data to server:", taskData);
-    
+    console.log("🚀 [createTask] Bắt đầu gửi task data...");
+    console.log("📤 [createTask] Data:", taskData);
+
     try {
         const response = await fetch('/user/tasks', {
             method: 'POST',
@@ -270,21 +488,22 @@ async function createTask(taskData) {
             body: JSON.stringify(taskData)
         });
 
-        console.log("📥 Response status:", response.status);
-        console.log("📥 Response headers:", response.headers);
+        console.log("📥 [createTask] Response status:", response.status);
+        console.log("📥 [createTask] Response headers:", response.headers);
 
         const result = await response.json();
-        console.log("📥 Response data:", result);
+        console.log("📥 [createTask] Response data:", result);
 
         if (!result.success) {
-            console.error("❌ Server error:", result.error || result.message);
+            console.error("❌ [createTask] Server error:", result.error || result.message);
             throw new Error(result.error || 'Failed to create task');
         }
 
-        console.log("✅ Task created successfully, taskId:", result.taskId);
+        console.log("✅ [createTask] Task created successfully, taskId:", result.taskId);
         return result;
+
     } catch (error) {
-        console.error("❌ Network/parsing error:", error);
+        console.error("❌ [createTask] Network/parsing error:", error);
         throw error;
     }
 }
@@ -313,35 +532,74 @@ async function updateTask(taskId, taskData) {
 /**
  * Show task form for adding new task
  */
-function showTaskForm() {
-    const formContainer = document.getElementById('taskFormContainer');
-    const formTitle = document.getElementById('formTitle');
-    const addBtn = document.getElementById('addTaskBtn');
+function setupFormHandler() {
+    const form = document.getElementById('taskForm');
 
-    formContainer.classList.remove('hidden');
-    formTitle.textContent = 'Add New Task';
-    addBtn.classList.add('hidden');
+    if (!form) {
+        console.error("❌ Form not found!");
+        return;
+    }
 
-    // Reset form
-    document.getElementById('taskForm').reset();
-    editingTaskId = null;
-    document.getElementById('submitBtnText').textContent = 'Save Task';
-    document.getElementById('taskId').value = '';
+    console.log("✅ Form found, setting up handler");
 
-    // Focus on title input
-    setTimeout(() => {
-        document.getElementById('taskTitle').focus();
-    }, 100);
+    form.onsubmit = async (e) => {
+        e.preventDefault();
+        console.log("📤 FORM SUBMITTED!");
+
+        const taskData = {
+            title: document.getElementById('taskTitle').value,
+            description: document.getElementById('taskDescription').value,
+            priority: document.getElementById('taskPriority').value,
+            status: document.getElementById('taskStatus').value,
+            deadline: document.getElementById('taskDeadline').value ? formatDateForApi(new Date(document.getElementById('taskDeadline').value)) : null,
+            duration: parseInt(document.getElementById('taskDuration').value)
+        };
+
+        console.log("📊 Form data:", taskData);
+        console.log("🔍 Checking conditions:");
+        console.log("  1. tempScheduledEvent:", !!tempScheduledEvent, tempScheduledEvent);
+        console.log("  2. window.tempScheduledEvent:", !!window.tempScheduledEvent, window.tempScheduledEvent);
+        console.log("  3. editingTaskId:", editingTaskId);
+
+        try {
+            // ⭐️ SỬA: Kiểm tra cả window.tempScheduledEvent
+            const scheduleEvent = tempScheduledEvent || window.tempScheduledEvent;
+
+            if (scheduleEvent) {
+                console.log("🔄 CASE 1: Schedule creation detected");
+                console.log("   Schedule event:", scheduleEvent);
+                await handleScheduleTaskSubmission(taskData);
+            } else if (editingTaskId) {
+                console.log("🔄 CASE 2: Editing existing task");
+                await updateTask(editingTaskId, taskData);
+                hideTaskForm();
+                loadTasks();
+            } else {
+                console.log("🔄 CASE 3: Normal task creation");
+                await createTask(taskData);
+                hideTaskForm();
+                loadTasks();
+            }
+        } catch (error) {
+            console.error('❌ Error saving task:', error);
+            alert('Failed to save task. Please try again.');
+        }
+    };
+
+    console.log("✅ Form handler setup complete");
 }
 
 /**
  * Hide task form
  */
-window.tempScheduledEvent = null;
 
 function hideTaskForm() {
     console.log("-----------------------------------------");
     console.log("1. HÀM hideTaskForm ĐƯỢC GỌI.");
+
+    // ⭐️ THÊM: Biến theo dõi để tránh gọi render nhiều lần
+    let shouldRenderTaskList = true;
+    let shouldReloadSchedule = false;
 
     // ⭐️ LOGIC KIỂM TRA VÀ XÓA SỰ KIỆN TẠM THỜI
     if (window.tempScheduledEvent) {
@@ -355,16 +613,19 @@ function hideTaskForm() {
             console.log("3. Element đã được lưu. Type:", element.tagName);
             console.log("4. Element có còn trong DOM không?", isElementInDOM);
 
-            // Tiến hành xóa
-            element.remove();
-            console.log("5. Đã gọi element.remove().");
+            // Chỉ xóa nếu element còn trong DOM
+            if (isElementInDOM) {
+                element.remove();
+                console.log("5. Đã gọi element.remove().");
+            } else {
+                console.log("5. Element không còn trong DOM, bỏ qua remove().");
+            }
 
             // Đặt lại biến
             window.tempScheduledEvent = null;
             console.log("6. window.tempScheduledEvent đã được reset thành NULL.");
         } else {
             console.log("3. LỖI: Thuộc tính .element trong tempScheduledEvent là NULL/UNDEFINED.");
-            console.log("   (Kiểm tra lại hàm khởi tạo openTaskDetailModalFromSchedule)");
         }
     } else {
         console.log("2. window.tempScheduledEvent là NULL. Không có lịch trình tạm thời nào để xóa.");
@@ -374,29 +635,80 @@ function hideTaskForm() {
     const formContainer = document.getElementById('taskFormContainer');
     const addBtn = document.getElementById('addTaskBtn');
 
-    formContainer.classList.add('hidden');
-    addBtn.classList.remove('hidden');
-    console.log("7. Form đã bị ẩn.");
+    if (formContainer) {
+        formContainer.classList.add('hidden');
+        console.log("7. Form đã bị ẩn.");
+    }
+
+    if (addBtn) {
+        addBtn.classList.remove('hidden');
+    }
 
     // Reset form
-    document.getElementById('taskForm').reset();
-    editingTaskId = null;
-    document.getElementById('submitBtnText').textContent = 'Save Task';
-    document.getElementById('taskId').value = '';
+    const taskForm = document.getElementById('taskForm');
+    if (taskForm) {
+        taskForm.reset();
+        editingTaskId = null;
+        
+        const submitBtnText = document.getElementById('submitBtnText');
+        if (submitBtnText) {
+            submitBtnText.textContent = 'Save Task';
+        }
+        
+        const taskIdInput = document.getElementById('taskId');
+        if (taskIdInput) {
+            taskIdInput.value = '';
+        }
+    }
 
-    renderTaskList();
-    console.log("8. renderTaskList đã được gọi.");
-    // ⭐️ THÊM: Reload schedule nếu vừa tạo task từ lịch
-    if (wasCreatingFromSchedule && currentCollectionId) {
-        console.log("🔄 Detected schedule task creation - reloading calendar");
+    // ⭐️ SỬA QUAN TRỌNG: Logic quyết định khi nào gọi renderTaskList
+    if (window.isProcessingSchedule) {
+        console.log("⏸️  Đang xử lý schedule, bỏ qua renderTaskList trong hideTaskForm");
+        window.isProcessingSchedule = false;
+        shouldRenderTaskList = false;
+    }
+
+    // ⭐️ SỬA: Kiểm tra trạng thái tạo từ lịch
+    if (window.isCreatingFromSchedule) {
+        console.log("🔄 Đang ở chế độ tạo từ lịch");
+        shouldReloadSchedule = true;
+        shouldRenderTaskList = false; // ⭐️ QUAN TRỌNG: Không gọi renderTaskList ở đây
+        window.isCreatingFromSchedule = false;
+    }
+
+    // ⭐️ SỬA: Gọi renderTaskList() TRƯỚC KHI loadSchedule() (nếu cần)
+    if (shouldRenderTaskList) {
+        console.log("8. Gọi renderTaskList()...");
+        renderTaskList();
+    } else {
+        console.log("8. Bỏ qua renderTaskList() trong hideTaskForm");
+    }
+
+    // ⭐️ SỬA: Reload schedule (nếu cần) - sẽ gọi renderCalendar() bên trong
+    if (shouldReloadSchedule && currentCollectionId) {
+        console.log("🔄 Auto-reloading schedule after task creation...");
+        
+        // ⭐️ THÊM: Sử dụng Promise để đảm bảo thứ tự thực hiện
         setTimeout(() => {
             loadSchedule(currentCollectionId).then(() => {
-                console.log("✅ Calendar reloaded with new task");
+                console.log("✅ Schedule reloaded successfully");
+            }).catch(error => {
+                console.error("❌ Error reloading schedule:", error);
             });
-        }, 500); // Delay 500ms để đảm bảo task đã được lưu trong DB
+        }, 100); // Delay nhỏ để đảm bảo các xử lý khác hoàn thành
     }
-    console.log("-----------------------------------------");
+
+    // ⭐️ THÊM: Reset lại các biến trạng thái
+    if (window.tempScheduledEvent) {
+        window.tempScheduledEvent = null;
+    }
     
+    if (tempScheduledEvent) {
+        tempScheduledEvent = null;
+    }
+
+    console.log("✅ hideTaskForm() hoàn thành");
+    console.log("-----------------------------------------");
 }
 window.hideTaskForm = hideTaskForm;
 
@@ -448,11 +760,35 @@ function editTask(taskId) {
  * Delete task
  */
 async function deleteTask(taskId) {
-    if (!confirm('Are you sure you want to delete this task?')) {
+    if (!confirm('Bạn có chắc muốn xóa task này?')) {
         return;
     }
 
     try {
+        console.log(`🗑️ Bắt đầu xóa task ${taskId}...`);
+        
+        // 1. Kiểm tra task có tồn tại trong danh sách không
+        const task = allTasks.find(t => t.taskId == taskId);
+        if (!task) {
+            alert('Không tìm thấy task để xóa');
+            return;
+        }
+        
+        // 2. Kiểm tra task có trong schedule hiện tại không
+        let isInCurrentSchedule = false;
+        if (window.weeklySchedule && currentCollectionId) {
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            for (const day of days) {
+                const event = window.weeklySchedule[day]?.find(e => e.taskId == taskId);
+                if (event) {
+                    isInCurrentSchedule = true;
+                    console.log(`📅 Task có trong schedule: ${day} ${event.startTime}-${event.endTime}`);
+                    break;
+                }
+            }
+        }
+        
+        // 3. Gọi API xóa task
         const response = await fetch(`/user/tasks?id=${taskId}`, {
             method: 'DELETE'
         });
@@ -460,14 +796,74 @@ async function deleteTask(taskId) {
         const result = await response.json();
 
         if (result.success) {
-            loadTasks();
+            console.log("✅ Task đã được xóa khỏi database");
+            
+            // 4. Cập nhật UI ngay lập tức (không chờ reload)
+            
+            // 4a. Xóa task khỏi danh sách local
+            const index = allTasks.findIndex(t => t.taskId == taskId);
+            if (index > -1) {
+                allTasks.splice(index, 1);
+            }
+            
+            // 4b. Render lại danh sách task
+            renderTaskList();
+            
+            // 4c. Nếu task có trong schedule, load lại schedule
+            if (isInCurrentSchedule && currentCollectionId) {
+                console.log("🔄 Đang load lại schedule...");
+                
+                // Load lại schedule với độ trễ nhỏ để đảm bảo dữ liệu đồng bộ
+                setTimeout(async () => {
+                    try {
+                        await loadSchedule(currentCollectionId);
+                        console.log("✅ Schedule đã được cập nhật sau khi xóa task");
+                    } catch (scheduleError) {
+                        console.error("Lỗi khi load schedule:", scheduleError);
+                    }
+                }, 300);
+            }
+            
+            // 4d. Hiển thị thông báo thành công
+            showNotification(`Đã xóa task "${task.title}" thành công`, 'success');
+            
         } else {
-            alert('Failed to delete task');
+            alert('Không thể xóa task: ' + (result.error || result.message));
         }
     } catch (error) {
-        console.error('Error deleting task:', error);
-        alert('Failed to delete task. Please try again.');
+        console.error('Lỗi khi xóa task:', error);
+        alert('Lỗi khi xóa task. Vui lòng thử lại.');
     }
+}
+
+/**
+ * ⭐️ HÀM MỚI: Hiển thị thông báo
+ */
+function showNotification(message, type = 'info') {
+    // Tạo và hiển thị thông báo
+    const notification = document.createElement('div');
+    notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg z-50 ${
+        type === 'success' ? 'bg-green-500 text-white' : 
+        type === 'error' ? 'bg-red-500 text-white' : 
+        'bg-blue-500 text-white'
+    }`;
+    notification.innerHTML = `
+        <div class="flex items-center">
+            <i class="fa-solid ${
+                type === 'success' ? 'fa-check-circle' : 
+                type === 'error' ? 'fa-exclamation-circle' : 
+                'fa-info-circle'
+            } mr-2"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Tự động ẩn sau 3 giây
+    setTimeout(() => {
+        notification.remove();
+    }, 3000);
 }
 
 /**
@@ -598,14 +994,42 @@ function filterByStatus(status) {
 //        calendarGrid.appendChild(row);
 //    }
 //}
+function formatHourForDisplay(hour) {
+    // ⭐️ SỬA: Logic đơn giản và rõ ràng
+    let displayHour = hour;
+    let ampm = 'SA'; // Mặc định là sáng
+    
+    if (hour === 0) {
+        // 0 giờ = 12 SA (nửa đêm)
+        displayHour = 12;
+        ampm = 'SA';
+    } else if (hour < 12) {
+        // 1-11 giờ = SA
+        displayHour = hour;
+        ampm = 'SA';
+    } else if (hour === 12) {
+        // 12 giờ = 12 CH (trưa)
+        displayHour = 12;
+        ampm = 'CH';
+    } else {
+        // 13-23 giờ = 1-11 CH
+        displayHour = hour - 12;
+        ampm = 'CH';
+    }
+    
+    return `${displayHour}:00 ${ampm}`;
+}
+window.formatHourForDisplay = formatHourForDisplay; // Đảm bảo global
+
 function renderCalendar() {
+    console.log("🎨 ===== RENDER CALENDAR DEBUG =====");
     console.log("🎨 renderCalendar() bắt đầu");
     const calendarGrid = document.getElementById('calendarGrid');
     if (!calendarGrid) {
         console.error("❌ Không tìm thấy calendarGrid");
         return;
     }
-    
+
     calendarGrid.innerHTML = '';
     console.log("🧹 Đã xóa calendarGrid cũ");
 
@@ -635,55 +1059,116 @@ function renderCalendar() {
         document.getElementById('weekLabel').textContent = `${Math.abs(currentWeekOffset)} weeks ${currentWeekOffset > 0 ? 'ahead' : 'ago'}`;
     }
 
-    console.log("📅 Dữ liệu weeklySchedule trong renderCalendar:", window.weeklySchedule);
+    // ⭐️ THÊM DEBUG CHI TIẾT VỀ WEEKLY SCHEDULE
+    console.log("📅 ===== DEBUG WEEKLY SCHEDULE DATA =====");
+    console.log("1. currentCollectionId:", currentCollectionId);
+    console.log("2. window.weeklySchedule exists:", !!window.weeklySchedule);
+    console.log("3. window.weeklySchedule type:", typeof window.weeklySchedule);
+    console.log("4. Raw window.weeklySchedule:", window.weeklySchedule);
 
-    // Thứ tự ngày trong lịch: Mon, Tue, Wed, Thu, Fri, Sat, Sun
+    // Debug chi tiết dữ liệu từng ngày
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+    let totalEvents = 0;
+    console.log("📊 Chi tiết từng ngày:");
+    days.forEach(day => {
+        const events = window.weeklySchedule && window.weeklySchedule[day];
+        if (events && Array.isArray(events)) {
+            console.log(`${day}: ${events.length} sự kiện`);
+            events.forEach((event, i) => {
+                console.log(`  [${i}] ScheduleID: ${event.scheduleId}, TaskID: ${event.taskId}`);
+                console.log(`     Subject: "${event.subject}"`);
+                console.log(`     Time: ${event.startTime} - ${event.endTime}`);
+                console.log(`     Type: ${event.type}, Day: ${event.dayOfWeek}`);
+                console.log(`     Has startMinutes: ${'startMinutes' in event}`);
+                console.log(`     Has endMinutes: ${'endMinutes' in event}`);
+                console.log(`     Full object:`, event);
+            });
+            totalEvents += events.length;
+        } else {
+            console.log(`${day}: Không có sự kiện hoặc dữ liệu không hợp lệ`);
+        }
+    });
+    console.log(`Tổng cộng: ${totalEvents} sự kiện trong weeklySchedule`);
+    console.log("========================================");
 
     // ⭐️ BƯỚC MỚI: TÍNH TOÁN VỊ TRÍ VA CHẠM CHO TẤT CẢ CÁC NGÀY TRƯỚC
     const positionedWeeklyEvents = {};
     const timeToMinutes = (timeStr) => {
-        console.log(`⏱️ Converting time: ${timeStr}`);
+        if (!timeStr) {
+            console.warn(`⚠️ timeStr là undefined hoặc null`);
+            return 0;
+        }
+
+        console.log(`⏱️ Converting time: "${timeStr}"`);
+
         // Xử lý cả định dạng "HH:MM:SS" và "HH:MM:SS SA/CH"
         const parts = timeStr.split(' ');
         let timePart = parts[0];
         let ampm = parts.length > 1 ? parts[1] : '';
-        
+
         const [h, m, s] = timePart.split(':').map(Number);
-        let hours = h;
-        
-        // Xử lý AM/PM nếu có
-        if (ampm === 'CH' && hours < 12) { // CH = PM
-            hours += 12;
-        } else if (ampm === 'SA' && hours === 12) { // SA = AM
-            hours = 0;
+        let hours = h || 0;
+        const minutes = m || 0;
+
+        console.log(`   Raw: hours=${hours}, minutes=${minutes}, ampm="${ampm}"`);
+
+        // ⭐️ SỬA QUAN TRỌNG: Xử lý AM/PM tiếng Việt
+        if (ampm === 'CH') {
+            // CH = PM (chiều)
+            // 12:xx CH = 12:xx (giữ nguyên)
+            // 1:xx CH đến 11:xx CH = +12 giờ
+            if (hours < 12) {
+                hours += 12;
+            }
+            console.log(`   After PM conversion: ${hours}:${minutes}`);
+        } else if (ampm === 'SA') {
+            // SA = AM (sáng)
+            // 12:xx SA = 0:xx
+            // 1:xx SA đến 11:xx SA = giữ nguyên
+            if (hours === 12) {
+                hours = 0;
+            }
+            console.log(`   After AM conversion: ${hours}:${minutes}`);
+        } else if (!ampm) {
+            // Không có AM/PM, giả sử là 24h format
+            console.log(`   No AM/PM, using 24h format: ${hours}:${minutes}`);
         }
-        
-        const totalMinutes = hours * 60 + m;
-        console.log(`   ${timeStr} -> ${hours}:${m} -> ${totalMinutes} phút`);
+
+        const totalMinutes = hours * 60 + minutes;
+        console.log(`   "${timeStr}" -> ${hours}:${minutes} -> ${totalMinutes} phút`);
         return totalMinutes;
     };
-    
+
+    console.log("🔍 Bắt đầu xử lý từng ngày để tính toán vị trí...");
     days.forEach(day => {
-        console.log(`🔍 Xử lý ngày ${day}:`);
-        if (window.weeklySchedule && window.weeklySchedule[day] && window.weeklySchedule[day].length > 0) {
+        console.log(`\n--- Xử lý ngày ${day} ---`);
+        if (window.weeklySchedule && window.weeklySchedule[day] && Array.isArray(window.weeklySchedule[day]) && window.weeklySchedule[day].length > 0) {
             console.log(`   Có ${window.weeklySchedule[day].length} sự kiện`);
 
             // Tiền xử lý để có startMinutes và endMinutes
             const dayEvents = window.weeklySchedule[day].map(e => {
                 console.log(`   Processing event: ${e.subject} (${e.startTime} - ${e.endTime})`);
+
+                // Kiểm tra dữ liệu
+                if (!e.startTime || !e.endTime) {
+                    console.warn(`   ⚠️ Event thiếu startTime hoặc endTime:`, e);
+                    return null;
+                }
+
                 const startMinutes = timeToMinutes(e.startTime);
                 const endMinutes = timeToMinutes(e.endTime);
-                
+
                 const processedEvent = {
                     ...e,
                     startMinutes: startMinutes,
                     endMinutes: endMinutes
                 };
-                
+
                 console.log(`     -> startMinutes: ${startMinutes}, endMinutes: ${endMinutes}`);
                 return processedEvent;
             }).filter(e => {
+                if (!e)
+                    return false;
                 const isValid = e.endMinutes > e.startMinutes;
                 if (!isValid) {
                     console.warn(`   ⚠️ Bỏ qua event không hợp lệ: endTime (${e.endMinutes}) <= startTime (${e.startMinutes})`);
@@ -692,27 +1177,32 @@ function renderCalendar() {
             });
 
             console.log(`   Sau khi filter: ${dayEvents.length} sự kiện hợp lệ`);
-            
+
             if (dayEvents.length > 0) {
                 positionedWeeklyEvents[day] = calculateEventPositions(dayEvents);
                 console.log(`   positionedWeeklyEvents[${day}]:`, positionedWeeklyEvents[day]);
+
+                // Debug chi tiết positioned events
+                positionedWeeklyEvents[day].forEach((event, index) => {
+                    console.log(`     [${index}] "${event.subject}": width=${event.width}%, left=${event.left}%`);
+                });
             } else {
                 console.log(`   Không có sự kiện hợp lệ cho ${day}`);
             }
         } else {
-            console.log(`   Không có sự kiện cho ${day}`);
+            console.log(`   Không có sự kiện cho ${day} (hoặc dữ liệu không hợp lệ)`);
         }
     });
 
-    console.log("📊 positionedWeeklyEvents:", positionedWeeklyEvents);
+    console.log("📊 Kết quả positionedWeeklyEvents:", positionedWeeklyEvents);
 
     // --- ⭐️ THAY ĐỔI QUAN TRỌNG: Mở rộng khoảng thời gian hiển thị ---
     // Thay vì 7-22h, hiển thị từ 0-23h để đảm bảo hiển thị tất cả sự kiện
     const START_DISPLAY_HOUR = 0; // ⬅️ Thay đổi từ 7 thành 0
     const END_DISPLAY_HOUR = 23;  // ⬅️ Có thể giữ 23 hoặc 24
-    
+
     console.log(`⏰ Hiển thị lịch từ ${START_DISPLAY_HOUR}:00 đến ${END_DISPLAY_HOUR}:00`);
-    
+
     let totalEventsCreated = 0;
     for (let hour = START_DISPLAY_HOUR; hour <= END_DISPLAY_HOUR; hour++) {
         const row = document.createElement('tr');
@@ -721,17 +1211,9 @@ function renderCalendar() {
         // Time column
         const timeCell = document.createElement('td');
         timeCell.className = 'p-2 text-xs text-slate-400 font-medium border-r border-slate-200 align-top text-center';
-        
-        // Format hiển thị giờ (AM/PM)
-        let displayHour = hour;
-        let ampm = 'SA';
-        if (hour >= 12) {
-            ampm = 'CH';
-            if (hour > 12) displayHour = hour - 12;
-        }
-        if (hour === 0) displayHour = 12;
-        
-        timeCell.textContent = `${displayHour}:00 ${ampm}`;
+
+        // ⭐️ SỬA: Sử dụng hàm formatHourForDisplay
+        timeCell.textContent = formatHourForDisplay(hour);
         row.appendChild(timeCell);
 
         // Day columns
@@ -770,40 +1252,54 @@ function renderCalendar() {
                 const eventsToRender = positionedWeeklyEvents[day].filter(e => {
                     const eventStartHour = Math.floor(e.startMinutes / 60);
                     const eventEndHour = Math.ceil(e.endMinutes / 60);
-                    
-                    // Sự kiện diễn ra trong giờ hiện tại nếu:
-                    // 1. Bắt đầu trong giờ này, HOẶC
-                    // 2. Kết thúc trong giờ này, HOẶC
-                    // 3. Bắt đầu trước và kết thúc sau giờ này
-                    const shouldRender = (
-                        (eventStartHour === hour) || // Bắt đầu trong giờ
-                        (eventEndHour === hour + 1) || // Kết thúc trong giờ tiếp theo
-                        (eventStartHour < hour && eventEndHour > hour + 1) // Kéo dài qua giờ này
-                    );
-                    
+                    const eventStartMinute = e.startMinutes % 60;
+
+                    // ⭐️ SỬA: Chỉ render ở ô BẮT ĐẦU của event
+                    const shouldRender = (eventStartHour === hour);
+
+                    // Debug
+                    // Debug chi tiết
                     if (shouldRender) {
-                        console.log(`   📍 Sự kiện "${e.subject}" (${eventStartHour}:00-${eventEndHour}:00) render ở ô ${hour}:00`);
+                        console.log(`   📍 Event: "${e.subject}"`);
+                        console.log(`     Start: ${eventStartHour}:${eventStartMinute.toString().padStart(2, '0')}`);
+                        console.log(`     End: ${Math.floor(e.endMinutes / 60)}:${(e.endMinutes % 60).toString().padStart(2, '0')}`);
+                        console.log(`     Render at hour: ${hour}:00 (start hour match)`);
                     }
-                    
+
                     return shouldRender;
                 });
 
-                console.log(`   📌 Ô ${day} ${hour}:00 có ${eventsToRender.length} sự kiện cần render`);
+                if (eventsToRender.length > 0) {
+                    console.log(`   📌 Ô ${day} ${hour}:00 có ${eventsToRender.length} sự kiện cần render`);
+                }
 
                 eventsToRender.forEach(event => {
                     totalEventsCreated++;
-                    console.log(`   👉 Tạo event ${totalEventsCreated}:`, {
-                        subject: event.subject,
-                        startTime: event.startTime,
-                        endTime: event.endTime,
-                        startMinutes: event.startMinutes,
-                        endMinutes: event.endMinutes,
-                        width: event.width,
-                        left: event.left
-                    });
+                    console.log(`\n   👉 Tạo event ${totalEventsCreated}:`);
+                    console.log(`     Subject: "${event.subject}"`);
+                    console.log(`     ScheduleID: ${event.scheduleId}, TaskID: ${event.taskId}`);
+                    console.log(`     Time: ${event.startTime} - ${event.endTime}`);
+                    console.log(`     Minutes: ${event.startMinutes} - ${event.endMinutes}`);
+                    console.log(`     Position: width=${event.width}%, left=${event.left}%`);
+
+                    console.log(`🕐 EVENT TIME CHECK: ${event.subject}`);
+                    console.log(`   Original startTime: ${event.startTime}`);
+                    console.log(`   Original endTime: ${event.endTime}`);
+                    console.log(`   Calculated minutes: ${event.startMinutes} - ${event.endMinutes}`);
+
+                    // Kiểm tra chuyển đổi ngược
+                    const testStart = formatMinutesToHHMMSS(event.startMinutes);
+                    const testEnd = formatMinutesToHHMMSS(event.endMinutes);
+                    console.log(`   Converted back: ${testStart} - ${testEnd}`);
+
+                    if (event.startTime !== testStart || event.endTime !== testEnd) {
+                        console.warn(`   ⚠️ MISMATCH!`);
+                        console.warn(`   Original: ${event.startTime} - ${event.endTime}`);
+                        console.warn(`   Converted: ${testStart} - ${testEnd}`);
+                    }
 
                     if (window.createScheduledEventDiv) {
-                        console.log(`   🔧 Gọi createScheduledEventDiv cho: ${event.subject}`);
+                        console.log(`   🔧 Gọi createScheduledEventDiv...`);
                         const eventDiv = window.createScheduledEventDiv({
                             scheduleId: event.scheduleId,
                             taskId: event.taskId,
@@ -815,30 +1311,42 @@ function renderCalendar() {
                             leftPercentage: event.left
                         });
 
-                        console.log(`   ✅ DOM created for event: ${event.subject}`);
-                        
-                        // Kiểm tra element có hợp lệ không
-                        if (!eventDiv || !(eventDiv instanceof HTMLElement)) {
-                            console.error(`   ❌ eventDiv không hợp lệ cho event: ${event.subject}`);
+                        if (!eventDiv) {
+                            console.error(`   ❌ createScheduledEventDiv trả về null/undefined`);
                             return;
                         }
 
-                        // Kiểm tra style
-                        console.log(`   🎨 Event style:`, {
-                            top: eventDiv.style.top,
-                            height: eventDiv.style.height,
-                            width: eventDiv.style.width,
-                            left: eventDiv.style.left
-                        });
+                        console.log(`   ✅ DOM created for event: ${event.subject}`);
+                        console.log(`   🎨 Event element details:`);
+                        console.log(`     - Tag: ${eventDiv.tagName}`);
+                        console.log(`     - Classes: ${eventDiv.className}`);
+                        console.log(`     - Style top: ${eventDiv.style.top}`);
+                        console.log(`     - Style height: ${eventDiv.style.height}`);
+                        console.log(`     - Style width: ${eventDiv.style.width}`);
+                        console.log(`     - Style left: ${eventDiv.style.left}`);
+
+                        // Kiểm tra element có hợp lệ không
+                        if (!(eventDiv instanceof HTMLElement)) {
+                            console.error(`   ❌ eventDiv không phải HTMLElement`);
+                            return;
+                        }
+
+                        // ⭐️ THÊM: Đánh dấu đã render để tránh trùng
+                        eventDiv.dataset.rendered = 'true';
 
                         if (window.attachResizeHandlers && window.attachDragHandlers) {
-                            window.attachResizeHandlers(eventDiv);
-                            window.attachDragHandlers(eventDiv);
-                            console.log(`   🔗 Đã gắn handlers resize/drag`);
+                            // ⭐️ CHỈ attach handlers cho event chưa có scheduleId (temp event)
+                            if (!event.scheduleId || event.scheduleId === "0" || event.scheduleId === 0) {
+                                window.attachResizeHandlers(eventDiv);
+                                window.attachDragHandlers(eventDiv);
+                                console.log(`   🔗 Đã gắn handlers resize/drag`);
+                            } else {
+                                console.log(`   ⏭️ Event đã có scheduleId (${event.scheduleId}), không gắn handlers resize/drag`);
+                            }
                         }
 
                         cell.appendChild(eventDiv);
-                        console.log(`   ✅ Đã append vào cell`);
+                        console.log(`   ✅ Đã append vào cell ${day} ${hour}:00`);
                     } else {
                         console.log(`   ⚠️ createScheduledEventDiv không tồn tại, dùng fallback`);
                         // Logic fallback đơn giản nếu hàm nâng cao không tồn tại
@@ -857,35 +1365,62 @@ function renderCalendar() {
         calendarGrid.appendChild(row);
     }
 
-    console.log(`🎯 Tổng số sự kiện được tạo: ${totalEventsCreated}`);
-    
+    console.log(`\n🎯 Tổng số sự kiện được tạo: ${totalEventsCreated}`);
+
     if (totalEventsCreated === 0) {
-        console.warn("⚠️ KHÔNG có sự kiện nào được tạo! Kiểm tra:");
-        console.warn("   1. Dữ liệu trong window.weeklySchedule");
-        console.warn("   2. Hàm timeToMinutes có chuyển đổi đúng không");
-        console.warn("   3. positionedWeeklyEvents có dữ liệu không");
-        console.warn("   4. Sự kiện có nằm trong khoảng hiển thị không");
-        
+        console.warn("\n⚠️ ⚠️ ⚠️ KHÔNG có sự kiện nào được tạo! ⚠️ ⚠️ ⚠️");
+        console.warn("Nguyên nhân có thể là:");
+        console.warn("1. Dữ liệu trong window.weeklySchedule rỗng");
+        console.warn("2. Hàm timeToMinutes không chuyển đổi đúng thời gian");
+        console.warn("3. positionedWeeklyEvents không có dữ liệu");
+        console.warn("4. Sự kiện không nằm trong khoảng hiển thị (0-23h)");
+        console.warn("5. Điều kiện filter không khớp");
+
         // Debug chi tiết hơn
+        console.log("\n🔍 Debug chi tiết:");
         days.forEach(day => {
+            console.log(`\n--- Debug ${day} ---`);
             if (positionedWeeklyEvents[day]) {
-                console.log(`   Debug ${day}:`);
                 positionedWeeklyEvents[day].forEach((event, i) => {
                     const startHour = Math.floor(event.startMinutes / 60);
                     const endHour = Math.ceil(event.endMinutes / 60);
-                    console.log(`     Event ${i}: ${event.subject} (${startHour}:00 - ${endHour}:00)`);
+                    console.log(`  Event ${i}: "${event.subject}"`);
+                    console.log(`    Time: ${startHour}:00 - ${endHour}:00 (${event.startMinutes}-${event.endMinutes} phút)`);
+                    console.log(`    Display range: ${START_DISPLAY_HOUR}:00 - ${END_DISPLAY_HOUR}:00`);
+
+                    // Kiểm tra xem có nằm trong khoảng hiển thị không
+                    const isInDisplayRange = (startHour >= START_DISPLAY_HOUR && startHour <= END_DISPLAY_HOUR) ||
+                            (endHour >= START_DISPLAY_HOUR && endHour <= END_DISPLAY_HOUR);
+                    console.log(`    In display range? ${isInDisplayRange}`);
+                });
+            } else {
+                console.log(`  Không có positioned events`);
+            }
+        });
+
+        // Kiểm tra dữ liệu gốc
+        console.log("\n🔍 Kiểm tra dữ liệu gốc từ window.weeklySchedule:");
+        days.forEach(day => {
+            const events = window.weeklySchedule && window.weeklySchedule[day];
+            if (events && Array.isArray(events)) {
+                console.log(`${day}: ${events.length} events`);
+                events.forEach((event, i) => {
+                    console.log(`  [${i}] Subject: "${event.subject}", Time: ${event.startTime} - ${event.endTime}`);
                 });
             }
         });
+    } else {
+        console.log("✅ Render thành công!");
     }
 
     // ⭐️ GỌI SETUP EVENTS
     if (window.setupEvents) {
-        console.log("🔗 Gọi setupEvents()");
+        console.log("\n🔗 Gọi setupEvents()");
         window.setupEvents();
     }
-    
-    console.log("✅ renderCalendar() kết thúc");
+
+    console.log("\n✅ renderCalendar() kết thúc");
+    console.log("🎨 ===== END RENDER CALENDAR DEBUG =====\n");
 }
 window.renderCalendar = renderCalendar;
 
@@ -983,8 +1518,8 @@ window.renderCalendar = renderCalendar;
 //            alert('Error adding to schedule');
 //        });
 //}
-function addToScheduleBackend(scheduleData) { // Nhận scheduleData trực tiếp
-    // Tính toán thời gian (đã được xử lý ở hàm gọi)
+function addToScheduleBackend(scheduleData) {
+    console.log("📤 Sending schedule data to backend:", scheduleData);
 
     return fetch('/user/schedule?action=add', {
         method: 'POST',
@@ -993,18 +1528,47 @@ function addToScheduleBackend(scheduleData) { // Nhận scheduleData trực ti�
         },
         body: JSON.stringify(scheduleData)
     })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Trả về dữ liệu cần thiết cho hàm gọi (scheduleId)
-                    return {success: true, scheduleId: data.scheduleId, message: 'Schedule added'};
-                } else {
-                    return {success: false, message: data.message || 'Time conflict'};
+            .then(response => {
+                console.log("📥 Backend response status:", response.status);
+                console.log("📥 Backend response headers:", response.headers);
+
+                if (!response.ok) {
+                    console.error("❌ Backend returned error status:", response.status);
+                    return response.text().then(text => {
+                        console.error("❌ Backend error response text:", text);
+                        throw new Error(`HTTP ${response.status}: ${text}`);
+                    });
                 }
+
+                return response.json();
+            })
+            .then(data => {
+                console.log("📊 Full backend response data:", data);
+
+                // ⭐️ THÊM DEBUG CHI TIẾT
+                if (data.error || data.message) {
+                    console.error("❌ Backend error details:", {
+                        error: data.error,
+                        message: data.message,
+                        fullData: data
+                    });
+                }
+
+                return {
+                    success: data.success || false,
+                    scheduleId: data.scheduleId || data.id || null,
+                    message: data.message || data.error || '',
+                    fullResponse: data // ⭐️ Thêm toàn bộ response để debug
+                };
             })
             .catch(error => {
-                console.error('Error adding to schedule:', error);
-                return {success: false, message: 'Network error'};
+                console.error('❌ Network/parsing error adding to schedule:', error);
+                return {
+                    success: false,
+                    scheduleId: null,
+                    message: 'Network error: ' + error.message,
+                    fullResponse: null
+                };
             });
 }
 window.addToScheduleBackend = addToScheduleBackend;
@@ -1012,42 +1576,70 @@ window.addToScheduleBackend = addToScheduleBackend;
 /**
  * Get Date object from Day Name and Hour
  */
-function getDateFromDayAndHour(dayName, hour) {
+function getDateFromDayAndHour(dayName, hour, minute = 0) {  // ⭐️ Đã có tham số minute
+    console.log("📅 getDateFromDayAndHour DEBUG START:");
+    console.log("  Input - dayName:", dayName, "hour:", hour, "type(hour):", typeof hour, "minute:", minute);
+
+    // ⭐️ QUAN TRỌNG: Xử lý hour có thể là string hoặc number
+    let hourNum, minuteNum;
+    
+    if (typeof hour === 'string') {
+        // Nếu hour là "09:00:00 SA", phân tích thành phần
+        if (hour.includes(':')) {
+            const timeParts = hour.split(':');
+            hourNum = parseInt(timeParts[0]);
+            minuteNum = parseInt(timeParts[1]) || 0;
+        } else {
+            hourNum = parseInt(hour);
+            minuteNum = parseInt(minute) || 0;  // ⭐️ Sử dụng tham số minute
+        }
+    } else {
+        hourNum = parseInt(hour);
+        minuteNum = parseInt(minute) || 0;  // ⭐️ Sử dụng tham số minute
+    }
+
+    console.log("  Parsed hour:", hourNum, "minute:", minuteNum);
+
+    if (isNaN(hourNum)) {
+        console.error("❌ Lỗi: hour không phải số:", hour);
+        hourNum = 9; // Mặc định 9:00
+    }
+
     const today = new Date();
     const currentDayIndex = today.getDay(); // 0 (Sun) - 6 (Sat)
 
-    // Map day name to index (Mon=1, ... Sun=0/7)
+    // Map day name to index
     const dayMap = {'Mon': 1, 'Tue': 2, 'Wed': 3, 'Thu': 4, 'Fri': 5, 'Sat': 6, 'Sun': 0};
 
-
-// ⭐️ BỔ SUNG: ĐẢM BẢO dayName là chuỗi trước khi sử dụng
-// ⭐️ SỬA LỖI QUAN TRỌNG: ĐẢM BẢO dayName là chuỗi và hour là số.
-    let dayNameStr = String(dayName);
-    let hourNum = parseInt(hour); // Chắc chắn là số
-
-    // Kiểm tra đầu vào
-    if (!dayNameStr || dayMap[dayNameStr] === undefined || isNaN(hourNum)) {
-        console.error("Lỗi đầu vào getDateFromDayAndHour:", {dayName: dayName, hour: hour});
-        return new Date('Invalid'); // Trả về Invalid Date
+    let targetDayIndex = dayMap[dayName];
+    if (targetDayIndex === undefined) {
+        console.error("❌ Lỗi: dayName không hợp lệ:", dayName);
+        targetDayIndex = today.getDay();
     }
 
-    let targetDayIndex = dayMap[dayNameStr];
+    // Tính số ngày chênh lệch
+    let diff = targetDayIndex - currentDayIndex;
 
-
-    // Fix logic for Mon-Sun week:
-    // Treat Sun as 7.
-    let currentDayIso = currentDayIndex === 0 ? 7 : currentDayIndex;
-    let targetDayIso = targetDayIndex === 0 ? 7 : targetDayIndex;
-
-    let diff = targetDayIso - currentDayIso;
-    diff += (currentWeekOffset * 7);
+    // Điều chỉnh
+    if (diff < 0)
+        diff += 7;
 
     const targetDate = new Date(today);
     targetDate.setDate(today.getDate() + diff);
-    targetDate.setHours(hour, 0, 0, 0);
+    
+    // ⭐️ SỬA QUAN TRỌNG: Sử dụng minuteNum thay vì minute
+    targetDate.setHours(hourNum, minuteNum || 0, 0, 0);  // ⭐️ ĐÃ SỬA
+
+    console.log("📅 getDateFromDayAndHour DEBUG END:");
+    console.log("  Today:", today.toDateString());
+    console.log("  Target date:", targetDate.toDateString());
+    console.log("  Target time:", targetDate.toTimeString());
+    console.log("  Hour set:", hourNum, "Minute set:", minuteNum);
+    console.log("  Diff days:", diff);
 
     return targetDate;
 }
+window.getDateFromDayAndHour = getDateFromDayAndHour;
 
 /**
  * Format date for API (yyyy-MM-dd HH:mm:ss)
@@ -1057,19 +1649,50 @@ function formatDateForApi(date) {
         console.error("❌ Invalid date in formatDateForApi:", date);
         return null;
     }
-    
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    const hours = String(date.getHours()).padStart(2, '0');
-    const minutes = String(date.getMinutes()).padStart(2, '0');
-    const seconds = String(date.getSeconds()).padStart(2, '0');
-    
+
+    // ⭐️ THÊM: Validate và fix năm trước khi format
+    const validatedDate = validateAndFixDate(date);
+
+    const year = validatedDate.getFullYear();
+    const month = String(validatedDate.getMonth() + 1).padStart(2, '0');
+    const day = String(validatedDate.getDate()).padStart(2, '0');
+    const hours = String(validatedDate.getHours()).padStart(2, '0');
+    const minutes = String(validatedDate.getMinutes()).padStart(2, '0');
+    const seconds = String(validatedDate.getSeconds()).padStart(2, '0');
+
     const formatted = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
-    console.log("📅 Formatted deadline for API:", formatted);
+    console.log("📅 Formatted date for API:", formatted, "Year check:", year);
     return formatted;
 }
 
+function validateAndFixDate(date) {
+    if (!date || isNaN(date.getTime())) {
+        console.error("❌ Invalid date");
+        return new Date();
+    }
+
+    const currentYear = new Date().getFullYear();
+    const dateYear = date.getFullYear();
+
+    // ⭐️ KIỂM TRA: Nếu năm sai (không phải năm hiện tại hoặc năm sau)
+    if (dateYear > currentYear + 1) {
+        console.warn(`⚠️ Năm bị sai: ${dateYear} (hiện tại: ${currentYear}), điều chỉnh...`);
+
+        // Điều chỉnh về năm hiện tại
+        date.setFullYear(currentYear);
+
+        // Kiểm tra nếu ngày đã qua trong năm (tháng/ngày đã qua)
+        const today = new Date();
+        if (date < today) {
+            // Nếu đã qua, đặt sang năm sau
+            date.setFullYear(currentYear + 1);
+        }
+
+        console.log(`✅ Đã điều chỉnh năm thành: ${date.getFullYear()}`);
+    }
+
+    return date;
+}
 /**
  * Format date for input (yyyy-MM-ddTHH:mm)
  */
@@ -1086,14 +1709,23 @@ function formatForInput(date) {
  * Navigate to different week
  */
 function navigateWeek(offset) {
+    console.log("🔄 navigateWeek called, offset:", offset, "currentWeekOffset before:", currentWeekOffset);
+
     if (offset === 0) {
         currentWeekOffset = 0;
     } else {
         currentWeekOffset += offset;
     }
+
+    // ⭐️ GIỚI HẠN: Không cho phép currentWeekOffset quá lớn
+    if (currentWeekOffset > 52)
+        currentWeekOffset = 52;
+    if (currentWeekOffset < -52)
+        currentWeekOffset = -52;
+
+    console.log("🔄 currentWeekOffset after:", currentWeekOffset);
     renderCalendar();
 }
-
 /**
  * Format deadline for display
  */
@@ -1161,154 +1793,249 @@ function showEmptyState(message) {
     `;
 }
 
-//Sửa hàm này để nó có thể phân biệt giữa việc Lưu Task thường, Cập nhật Task, và Lưu Task từ Lịch
-function setupFormHandler() {
-    const form = document.getElementById('taskForm');
-    form.onsubmit = async (e) => {
-        e.preventDefault();
-
-        const taskData = {
-            title: document.getElementById('taskTitle').value,
-            description: document.getElementById('taskDescription').value,
-            priority: document.getElementById('taskPriority').value,
-            status: document.getElementById('taskStatus').value,
-            // Sử dụng giá trị từ input datetime-local
-            deadline: document.getElementById('taskDeadline').value ? formatDateForApi(new Date(document.getElementById('taskDeadline').value)) : null,
-            duration: parseInt(document.getElementById('taskDuration').value)
-        };
-
-        try {
-            if (tempScheduledEvent) {
-                // ⭐️ TRƯỜNG HỢP 1: LƯU TÁC VỤ MỚI VÀ LÊN LỊCH
-                await handleScheduleTaskSubmission(taskData);
-            } else if (editingTaskId) {
-                // TRƯỜNG HỢP 2: CẬP NHẬT TÁC VỤ CÓ SẴN
-                await updateTask(editingTaskId, taskData);
-                hideTaskForm();
-                loadTasks();
-            } else {
-                // TRƯỜNG HỢP 3: TẠO TÁC VỤ THÔNG THƯỜNG
-                await createTask(taskData);
-                hideTaskForm();
-                loadTasks();
-            }
-        } catch (error) {
-            console.error('Error saving task:', error);
-            alert('Failed to save task. Please try again.');
-        }
-    };
-}
+////Sửa hàm này để nó có thể phân biệt giữa việc Lưu Task thường, Cập nhật Task, và Lưu Task từ Lịch
+//function setupFormHandler() {
+//    const form = document.getElementById('taskForm');
+//    form.onsubmit = async (e) => {
+//        e.preventDefault();
+//
+//        const taskData = {
+//            title: document.getElementById('taskTitle').value,
+//            description: document.getElementById('taskDescription').value,
+//            priority: document.getElementById('taskPriority').value,
+//            status: document.getElementById('taskStatus').value,
+//            // Sử dụng giá trị từ input datetime-local
+//            deadline: document.getElementById('taskDeadline').value ? formatDateForApi(new Date(document.getElementById('taskDeadline').value)) : null,
+//            duration: parseInt(document.getElementById('taskDuration').value)
+//        };
+//
+//        try {
+//            if (tempScheduledEvent) {
+//                // ⭐️ TRƯỜNG HỢP 1: LƯU TÁC VỤ MỚI VÀ LÊN LỊCH
+//                await handleScheduleTaskSubmission(taskData);
+//            } else if (editingTaskId) {
+//                // TRƯỜNG HỢP 2: CẬP NHẬT TÁC VỤ CÓ SẴN
+//                await updateTask(editingTaskId, taskData);
+//                hideTaskForm();
+//                loadTasks();
+//            } else {
+//                // TRƯỜNG HỢP 3: TẠO TÁC VỤ THÔNG THƯỜNG
+//                await createTask(taskData);
+//                hideTaskForm();
+//                loadTasks();
+//            }
+//        } catch (error) {
+//            console.error('Error saving task:', error);
+//            alert('Failed to save task. Please try again.');
+//        }
+//    };
+//}
 
 
 // ⭐️ HÀM MỚI: Xử lý lưu Task và Schedule sau khi submit Form
 async function handleScheduleTaskSubmission(taskData) {
+    console.log("🔵 ===========================================");
+    console.log("🔵 BẮT ĐẦU: handleScheduleTaskSubmission");
+    console.log("🔵 ===========================================");
+
     if (!currentCollectionId) {
-        alert('Please select a schedule collection first!');
-        if (tempScheduledEvent && tempScheduledEvent.element) tempScheduledEvent.element.remove();
+        alert('❌ Vui lòng chọn một lịch trình trước!');
+        return;
+    }
+
+    if (!tempScheduledEvent || !tempScheduledEvent.element) {
+        console.error("❌ Lỗi: tempScheduledEvent không tồn tại!");
+        alert('Lỗi: Không tìm thấy thông tin lịch trình.');
         return;
     }
 
     try {
-        // --- BƯỚC 1: LẤY THỜI GIAN THỰC TẾ TỪ VỊ TRÍ ELEMENT TRÊN LỊCH ---
+        // ⭐️ BƯỚC MỚI: Load lại schedule để có dữ liệu mới nhất
+        console.log("🔄 Loading latest schedule data...");
+        await loadSchedule(currentCollectionId);
+        console.log("✅ Schedule loaded, checking data...");
+
+        // Debug schedule hiện tại
+        console.log("📅 Current schedule data for conflict checking:");
+        const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        days.forEach(day => {
+            if (window.weeklySchedule && window.weeklySchedule[day]) {
+                console.log(`${day}:`, window.weeklySchedule[day]);
+            }
+        });
+
+        // 1. Lấy thông tin từ temp event
         const eventEl = tempScheduledEvent.element;
-        const topPx = parseFloat(eventEl.style.top);
-        const heightPx = parseFloat(eventEl.style.height);
+        const dayOfWeek = eventEl.dataset.dayIndex ?
+                DAYS_OF_WEEK[parseInt(eventEl.dataset.dayIndex) - 1] :
+                tempScheduledEvent.day;
 
-        // Chuyển đổi Pixel sang Phút (Ví dụ: 7h sáng + số phút offset)
-        const startMinsTotal = (START_HOUR * 60) + Math.round(topPx / PIXELS_PER_MINUTE);
-        const durationMins = Math.round(heightPx / PIXELS_PER_MINUTE);
-        const endMinsTotal = startMinsTotal + durationMins;
+        const startTime = eventEl.dataset.startTime || tempScheduledEvent.start;
+        const endTime = eventEl.dataset.endTime || tempScheduledEvent.end;
 
-        // Chuyển sang định dạng chuỗi chuẩn để lưu Backend (HH:mm:ss)
-        const newStartTime = window.formatMinutesToHHMMSS(startMinsTotal);
-        const newEndTime = window.formatMinutesToHHMMSS(endMinsTotal);
+        console.log("📊 Task information:");
+        console.log("  Day:", dayOfWeek);
+        console.log("  Time:", startTime, "-", endTime);
 
-        // --- BƯỚC 2: KIỂM TRA VA CHẠM LẦN CUỐI TRƯỚC KHI GỬI SERVER ---
-        // Sử dụng hàm checkCollision bạn đã viết
-        const day = tempScheduledEvent.day;
-        // Lưu ý: Nếu checkCollision yêu cầu định dạng "SA/CH", hãy đảm bảo formatMinutesToHHMMSS trả về đúng
-        if (window.checkCollision(day, newStartTime, newEndTime, null)) {
-            alert("Không thể lưu: Vị trí này đã bị trùng với lịch khác!");
-            return; 
-        }
-        
-        console.log("🎯 Bước 1: Bắt đầu lưu task và schedule");
-        console.log("Day:", day, "Start:", newStartTime, "End:", newEndTime);
+        // 2. Kiểm tra xung đột với dữ liệu MỚI NHẤT
+        console.log("🔍 Checking for conflicts with latest data...");
+        if (window.checkCollision) {
+            const hasConflict = window.checkCollision(dayOfWeek, startTime, endTime, null);
+            console.log("  Conflict check result:", hasConflict);
 
-        // --- BƯỚC 3: TẠO TASK VÀ LƯU SCHEDULE ---
-        const createTaskResult = await createTask(taskData);
-        const newTaskId = createTaskResult.taskId;
-        console.log("✅ Task created, ID:", newTaskId);
-
-        if (newTaskId) {
-            const scheduleData = {
-                collectionId: parseInt(currentCollectionId),
-                dayOfWeek: day,
-                startTime: newStartTime,
-                endTime: newEndTime,
-                subject: taskData.title,
-                taskId: newTaskId,
-                type: 'self-study'
-            };
-            
-            console.log("📤 Sending schedule data:", scheduleData);
-            const addScheduleResult = await window.addToScheduleBackend(scheduleData);
-
-            console.log("📥 Schedule add result:", addScheduleResult);
-
-            if (addScheduleResult.success) {
-                // --- BƯỚC 4: CẬP NHẬT BIẾN TOÀN CỤC VÀ VẼ LẠI ---
-                if (!window.weeklySchedule) window.weeklySchedule = {};
-                if (!window.weeklySchedule[day]) window.weeklySchedule[day] = [];
-
-                const newTaskEntry = {
-                    scheduleId: addScheduleResult.scheduleId,
-                    taskId: newTaskId,
-                    subject: taskData.title,
-                    startTime: newStartTime,
-                    endTime: newEndTime,
-                    dayOfWeek: day,
-                    startMinutes: startMinsTotal, // Quan trọng để renderCalendar tính vị trí
-                    endMinutes: endMinsTotal
-                };
-
-                window.weeklySchedule[day].push(newTaskEntry);
-
-                // Xóa khung tạm màu xanh
-                if (tempScheduledEvent.element) {
-                    tempScheduledEvent.element.remove();
-                    console.log("🗑️ Temp event removed");
+            if (hasConflict) {
+                // Hiển thị chi tiết xung đột
+                console.log("  Conflict details for", dayOfWeek + ":");
+                if (window.weeklySchedule && window.weeklySchedule[dayOfWeek]) {
+                    window.weeklySchedule[dayOfWeek].forEach(event => {
+                        console.log(`    - ${event.subject || 'No subject'}: ${event.startTime} - ${event.endTime}`);
+                    });
                 }
 
+                throw new Error('Xung đột thời gian với sự kiện đã có. Vui lòng chọn thời gian khác.');
+            }
+        } else {
+            console.warn("⚠️ checkCollision function not available");
+        }
 
-                console.log("🔄 Gọi loadSchedule để tải dữ liệu mới từ server...");
-                await loadSchedule(currentCollectionId);
-                console.log("✅ loadSchedule completed");
-                
-                                // Kiểm tra dữ liệu sau khi tải
-                console.log("📊 window.weeklySchedule sau khi load:", window.weeklySchedule);
-                console.log("📊 Dữ liệu cho ngày", day, ":", window.weeklySchedule[day]);
-                
-                // Reset biến tạm TRƯỚC KHI gọi hideTaskForm
-                tempScheduledEvent = null;
+        // 3. Parse thời gian và tính toán
+        const startTimeParts = startTime.split(' ');
+        const timePart = startTimeParts[0];
+        const ampm = startTimeParts.length > 1 ? startTimeParts[1] : '';
 
-                loadTasks();
-                
-                 // Ẩn form
-                hideTaskForm();  // Hàm này sẽ thấy tempScheduledEvent = null nên không xóa gì cả
-                console.log("🎉 Quá trình hoàn tất");
+        const [startHourStr, startMinuteStr] = timePart.split(':');
+        let startHour = parseInt(startHourStr);
+        let startMinute = parseInt(startMinuteStr);
+
+        // Chuyển đổi sang 24h format
+        if (ampm === 'CH' && startHour < 12) {
+            startHour += 12;
+        } else if (ampm === 'SA' && startHour === 12) {
+            startHour = 0;
+        }
+
+        // 4. Tạo task
+        const calculatedDate = getDateFromDayAndHour(dayOfWeek, startHour, startMinute);
+        const calculatedDeadline = formatDateForApi(calculatedDate);
+
+        const taskDataForAPI = {
+            title: taskData.title || "",
+            description: taskData.description || "",
+            priority: taskData.priority || "medium",
+            status: taskData.status || "pending",
+            deadline: calculatedDeadline,
+            duration: 60 // Mặc định 60 phút
+        };
+
+        console.log("📦 Creating task:", taskDataForAPI);
+
+        const createTaskResult = await createTask(taskDataForAPI);
+
+        if (!createTaskResult.success || !createTaskResult.taskId) {
+            throw new Error('Tạo task thất bại: ' + (createTaskResult.message || 'Không rõ lỗi'));
+        }
+
+        const newTaskId = createTaskResult.taskId;
+        console.log("✅ Task created successfully! ID:", newTaskId);
+
+        // 5. Tạo schedule
+        const scheduleData = {
+            collectionId: parseInt(currentCollectionId),
+            dayOfWeek: dayOfWeek,
+            startTime: startTime,
+            endTime: endTime,
+            subject: taskData.title || "New Task",
+            taskId: newTaskId,
+            type: 'self-study'
+        };
+
+        console.log("📅 Creating schedule:", scheduleData);
+
+        const scheduleResult = await addToScheduleBackend(scheduleData);
+        console.log("📥 Schedule creation result:", scheduleResult);
+
+        if (!scheduleResult.success) {
+            // ⭐️ XỬ LÝ LỖI CHI TIẾT
+            console.error("❌ Schedule creation failed:", scheduleResult);
+
+            let errorMessage = 'Tạo schedule thất bại: ';
+
+            // Phân tích lỗi từ backend
+            if (scheduleResult.message.includes('conflict') ||
+                    scheduleResult.message.includes('Conflict') ||
+                    scheduleResult.message.includes('time conflict')) {
+
+                errorMessage = '⚠️ Xung đột thời gian với sự kiện khác trong database.\n\n';
+                errorMessage += 'Có thể có sự kiện không hiển thị trên lịch. ';
+                errorMessage += 'Vui lòng chọn thời gian khác.';
+
+                // ⭐️ QUAN TRỌNG: Xóa task đã tạo vì schedule thất bại
+                console.log("🔄 Deleting task since schedule failed...");
+                try {
+                    await deleteTask(newTaskId);
+                    console.log("✅ Task deleted successfully");
+                } catch (deleteError) {
+                    console.error("⚠️ Could not delete task:", deleteError);
+                }
+
+            } else if (scheduleResult.message.includes('DB error') ||
+                    scheduleResult.message.includes('database')) {
+                errorMessage = 'Lỗi database. Vui lòng thử lại sau.';
             } else {
-                console.error("❌ Lỗi khi thêm schedule:", addScheduleResult.message);
-                alert('Lỗi: ' + (addScheduleResult.message || 'Trùng lịch trên server'));
-                tempScheduledEvent = null;
-                hideTaskForm();
+                errorMessage += scheduleResult.message;
+            }
+
+            throw new Error(errorMessage);
+        }
+
+        console.log("✅ Schedule created successfully! ID:", scheduleResult.scheduleId);
+
+        // 6. Cập nhật UI
+        if (eventEl && eventEl.parentNode) {
+            eventEl.dataset.scheduleId = scheduleResult.scheduleId;
+            eventEl.dataset.taskId = newTaskId;
+            eventEl.classList.remove('temp-event');
+            eventEl.classList.add('saved-event');
+
+            const span = eventEl.querySelector('span');
+            if (span) {
+                const displayStart = startTime.substring(0, 5);
+                const displayEnd = endTime.substring(0, 5);
+                span.textContent = `${taskData.title} (${displayStart} – ${displayEnd})`;
             }
         }
-    } catch (error) {
-        console.error('Error saving:', error);
-        alert('Lỗi hệ thống: ' + error.message);
+
+        // 7. Reset và reload
         tempScheduledEvent = null;
-        hideTaskForm();
+        window.tempScheduledEvent = null;
+
+        const formContainer = document.getElementById('taskFormContainer');
+        const addBtn = document.getElementById('addTaskBtn');
+        formContainer.classList.add('hidden');
+        addBtn.classList.remove('hidden');
+        document.getElementById('taskForm').reset();
+
+        // Load lại toàn bộ dữ liệu
+        await loadTasks();
+        await loadSchedule(currentCollectionId);
+
+        console.log("🎉 COMPLETE: Task and schedule created successfully!");
+
+    } catch (error) {
+        console.error("💥 ERROR DETAILS:", error);
+
+        // Hiển thị thông báo lỗi
+        alert(error.message);
+
+        // ⭐️ QUAN TRỌNG: Không xóa temp event khi có lỗi xung đột
+        // Để người dùng có thể điều chỉnh
+        if (!error.message.includes('Xung đột')) {
+            if (tempScheduledEvent && tempScheduledEvent.element) {
+                tempScheduledEvent.element.remove();
+            }
+            tempScheduledEvent = null;
+            hideTaskForm();
+        }
     }
 }
 window.handleScheduleTaskSubmission = handleScheduleTaskSubmission;
@@ -1316,15 +2043,53 @@ window.handleScheduleTaskSubmission = handleScheduleTaskSubmission;
 
 // ⭐️ HÀM MỚI: Mở Modal từ sự kiện lịch (Được gọi bởi khoa-tasks.js)
 window.openTaskDetailModalFromSchedule = function (eventElement, dayOfWeek, startTime, endTime, duration) {
+    console.log("🎯 openTaskDetailModalFromSchedule called!");
+    console.log("📅 Day:", dayOfWeek);
+    console.log("⏰ Time:", startTime, "-", endTime);
+    console.log("⏱️ Duration:", duration);
+
+    // ⭐️ SỬA: Parse thời gian đúng cách
+    // startTime có thể là "10:30:00 SA" hoặc "10:30:00"
+    const [timePart, ampm] = startTime.split(' ');
+    const [hoursStr, minutesStr] = timePart.split(':');
+    
+    const startHour = parseInt(hoursStr);
+    const startMinute = parseInt(minutesStr);
+    
+    console.log("🔍 Parsed time:", { 
+        startHour, 
+        startMinute, 
+        ampm: ampm || 'SA',
+        timePart 
+    });
+
+    // ⭐️ KIỂM TRA QUAN TRỌNG: Nếu event đã có scheduleId (đã được lưu), KHÔNG mở form tạo mới
+    if (eventElement.dataset.scheduleId) {
+        console.log("⚠️ Event đã có scheduleId:", eventElement.dataset.scheduleId, "- KHÔNG mở form tạo mới");
+        alert('Sự kiện này đã được lên lịch. Vui lòng sửa task từ danh sách task.');
+        return;
+    }
+
+    // ⭐️ KIỂM TRA: Nếu event đã có taskId (đã liên kết với task), cũng không mở form
+    if (eventElement.dataset.taskId && eventElement.dataset.taskId !== "null" && eventElement.dataset.taskId !== "0") {
+        console.log("⚠️ Event đã có taskId:", eventElement.dataset.taskId, "- KHÔNG mở form tạo mới");
+        alert('Sự kiện này đã được liên kết với một task. Vui lòng sửa task từ danh sách task.');
+        return;
+    }
+
     if (!currentCollectionId) {
         alert('Please select a schedule collection first!');
         eventElement.remove();
         return;
     }
 
-    // ⭐️ THÊM: Set flag để biết đang tạo task từ lịch
-    window.isCreatingFromSchedule = true;
-    
+    // ⭐️ CHỈ tạo temp event cho những event thực sự mới (temp-event)
+    if (!eventElement.classList.contains('temp-event')) {
+        console.log("⚠️ Event không phải temp-event, không tạo mới");
+        return;
+    }
+
+    // ⭐️ QUAN TRỌNG: Set cả hai biến
     window.tempScheduledEvent = {
         element: eventElement,
         day: dayOfWeek,
@@ -1334,18 +2099,62 @@ window.openTaskDetailModalFromSchedule = function (eventElement, dayOfWeek, star
         taskId: null
     };
 
-    const [startHour, startMinute] = startTime.split(':').map(Number);
-    const calculatedDate = getDateFromDayAndHour(dayOfWeek, startHour);
-    calculatedDate.setMinutes(startMinute);
+    // Đồng bộ biến local
+    tempScheduledEvent = window.tempScheduledEvent;
 
+    console.log("✅ tempScheduledEvent set:", tempScheduledEvent);
+
+    // ⭐️ SỬA QUAN TRỌNG: Truyền cả phút và xử lý AM/PM
+    const calculatedDate = getDateFromDayAndHour(dayOfWeek, startHour, startMinute);
+    
+    // ⭐️ THÊM: Xử lý AM/PM nếu cần
+    // (Hàm getDateFromDayAndHour nên tự xử lý AM/PM từ chuỗi đầy đủ)
+    
     const formattedDeadline = formatForInput(calculatedDate);
 
     showTaskForm();
     document.getElementById('formTitle').textContent = 'New Scheduled Task';
     document.getElementById('taskDeadline').value = formattedDeadline;
     document.getElementById('taskDuration').value = duration;
+
+    // Debug thêm
+    console.log("📝 Form deadline set to:", formattedDeadline);
+    console.log("📝 Calculated date:", calculatedDate.toString());
+    console.log("📝 Form duration set to:", duration);
 };
 
+function showTaskForm() {
+    console.log("📝 showTaskForm called");
+    console.log("📝 Current tempScheduledEvent:", tempScheduledEvent);
+
+    const formContainer = document.getElementById('taskFormContainer');
+    const formTitle = document.getElementById('formTitle');
+    const addBtn = document.getElementById('addTaskBtn');
+
+    formContainer.classList.remove('hidden');
+
+    // ⭐️ XÁC ĐỊNH LOẠI FORM
+    if (tempScheduledEvent) {
+        formTitle.textContent = 'New Scheduled Task';
+        console.log("📝 Setting form as 'Scheduled Task'");
+    } else {
+        formTitle.textContent = 'Add New Task';
+        console.log("📝 Setting form as 'Normal Task'");
+    }
+
+    addBtn.classList.add('hidden');
+
+    // Reset form
+    document.getElementById('taskForm').reset();
+    editingTaskId = null;
+    document.getElementById('submitBtnText').textContent = 'Save Task';
+    document.getElementById('taskId').value = '';
+
+    // Focus on title input
+    setTimeout(() => {
+        document.getElementById('taskTitle').focus();
+    }, 100);
+}
 
 // ⭐️ HÀM MỚI: Xử lý Hủy Tạo Sự kiện từ Lịch (Được gọi bởi khoa-tasks.js hoặc nút Cancel)
 window.cancelScheduleCreation = function () {
@@ -1392,38 +2201,68 @@ window.updateScheduleTimeBackend = async function (scheduleId, dayOfWeek, startT
  * Cập nhật form task với duration và deadline mới
  */
 window.updateTaskFormDuration = function (duration, startTime, dayOfWeek) {
+    console.log("🔄 updateTaskFormDuration called:", {duration, startTime, dayOfWeek});
+
     // 1. Cập nhật Duration (input number)
     const durationInput = document.getElementById('taskDuration');
     if (durationInput) {
         durationInput.value = duration;
     }
 
-    // 2. Cập nhật Deadline (input datetime-local)
-    // ⚠️ PHẢI ĐẢM BẢO startTimeRaw KHÔNG BỊ UNDEFINED
-    const parts = startTime.split(':');
-    const startHour = parseInt(parts[0]);
-    const startMinute = parseInt(parts[1]);
+    // 2. Parse startTime để lấy giờ và phút
+    // ⭐️ SỬA: Xử lý cả format với AM/PM
+    let hourNum, minuteNum;
 
-    if (isNaN(startHour) || isNaN(startMinute)) {
-        console.error("Lỗi phân tích cú pháp thời gian trong updateTaskFormDuration:", startTime);
-        return;
+    // Kiểm tra định dạng thời gian
+    if (startTime.includes('SA') || startTime.includes('CH')) {
+        // Format có AM/PM: "HH:MM:SS SA/CH"
+        let startTimeParts = startTime.split(' ');
+        let timePart = startTimeParts[0];
+        let ampm = startTimeParts[1] || '';
+
+        let [hourStr, minuteStr] = timePart.split(':');
+        hourNum = parseInt(hourStr);
+        minuteNum = parseInt(minuteStr);
+
+        // Xử lý AM/PM
+        if (ampm === 'CH' && hourNum < 12) {
+            hourNum += 12;
+        } else if (ampm === 'SA' && hourNum === 12) {
+            hourNum = 0;
+        }
+    } else {
+        // Format 24h: "HH:MM:SS" hoặc "HH:MM"
+        let [hourStr, minuteStr] = startTime.split(':');
+        hourNum = parseInt(hourStr);
+        minuteNum = parseInt(minuteStr || '0');
     }
 
-    const calculatedDate = getDateFromDayAndHour(dayOfWeek, startHour);
-    calculatedDate.setMinutes(startMinute); // Đặt phút sau khi tính ngày
+    console.log("⏰ Parsed time:", {
+        original: startTime,
+        hour: hourNum,
+        minute: minuteNum
+    });
 
-    // ⭐️ BỔ SUNG KIỂM TRA: Nếu ngày không hợp lệ, KHÔNG gán giá trị
+    // ⭐️ SỬA: Gọi hàm với minuteNum
+    const calculatedDate = getDateFromDayAndHour(dayOfWeek, hourNum, minuteNum);
+    // ⭐️ ĐÃ XÓA: calculatedDate.setMinutes(startMinute); // Không cần vì hàm đã xử lý
+
+    // ⭐️ KIỂM TRA: Log ra để debug
+    console.log("📅 Calculated date:", calculatedDate.toString());
+    console.log("📅 Formatted for input:", formatForInput(calculatedDate));
+
+    // Kiểm tra xem ngày có hợp lệ không
     if (isNaN(calculatedDate.getTime())) {
-        console.error("Ngày tính toán không hợp lệ sau khi resize/move.");
+        console.error("❌ Ngày tính toán không hợp lệ!");
         return;
     }
 
     const deadlineInput = document.getElementById('taskDeadline');
     if (deadlineInput) {
-        // formatForInput phải đảm bảo đầu ra là yyyy-MM-ddThh:mm
         deadlineInput.value = formatForInput(calculatedDate);
+        console.log("✅ Updated deadline input to:", deadlineInput.value);
     }
-}
+};
 
 //hàm dùng để Debug
 function debugScheduleData() {
@@ -1431,7 +2270,7 @@ function debugScheduleData() {
         console.warn("❌ window.weeklySchedule không tồn tại");
         return;
     }
-    
+
     const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     days.forEach(day => {
         if (window.weeklySchedule[day] && window.weeklySchedule[day].length > 0) {
@@ -1451,3 +2290,86 @@ function debugScheduleData() {
     });
 }
 
+
+// ⭐️ THÊM HÀM MỚI: Tính toán vị trí sự kiện để tránh overlap
+function calculateEventPositions(events) {
+    if (!events || events.length === 0)
+        return [];
+
+    // Sắp xếp sự kiện theo thời gian bắt đầu
+    events.sort((a, b) => a.startMinutes - b.startMinutes);
+
+    const groups = [];
+    let currentGroup = [];
+    let currentEnd = -1;
+
+    // Nhóm các sự kiện chồng lấn
+    events.forEach(event => {
+        if (event.startMinutes >= currentEnd) {
+            if (currentGroup.length > 0) {
+                groups.push([...currentGroup]);
+            }
+            currentGroup = [event];
+            currentEnd = event.endMinutes;
+        } else {
+            currentGroup.push(event);
+            if (event.endMinutes > currentEnd) {
+                currentEnd = event.endMinutes;
+            }
+        }
+    });
+
+    if (currentGroup.length > 0) {
+        groups.push(currentGroup);
+    }
+
+    // Tính toán vị trí cho từng nhóm
+    const positionedEvents = [];
+    groups.forEach(group => {
+        group.sort((a, b) => a.startMinutes - b.startMinutes);
+
+        group.forEach((event, index) => {
+            // Tính toán chiều rộng và vị trí
+            const totalInGroup = group.length;
+            const widthPercentage = 100 / totalInGroup;
+            const leftPercentage = index * widthPercentage;
+
+            positionedEvents.push({
+                ...event,
+                width: widthPercentage,
+                left: leftPercentage
+            });
+        });
+    });
+
+    return positionedEvents;
+}
+
+function initializeApp() {
+    console.log("🚀 Khởi tạo ứng dụng...");
+    
+    // Load tasks trước
+    loadTasks();
+    
+    // Load schedule collections sau
+    setTimeout(() => {
+        loadScheduleCollections();
+    }, 500);
+    
+    // Setup form handler
+    setupFormHandler();
+}
+
+// Gọi khi trang đã load
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("📄 DOM đã load, bắt đầu khởi tạo...");
+    initializeApp();
+});
+
+// Hoặc gọi trực tiếp nếu DOM đã sẵn sàng
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeApp);
+} else {
+    initializeApp();
+}
+Sửa

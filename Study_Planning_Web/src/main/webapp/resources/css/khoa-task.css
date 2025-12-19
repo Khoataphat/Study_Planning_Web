@@ -32,6 +32,8 @@
     position: relative;
     vertical-align: top;
     overflow: visible;
+    height: 80px !important;
+    min-height: 80px !important;
 }
 
 .schedule-container {

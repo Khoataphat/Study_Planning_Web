@@ -78,7 +78,20 @@ window.checkCollision = checkCollision;  // Gán ra window để có thể truy 
 function formatMinutesToHHMMSS(totalMinutes) {
     const hour = Math.floor(totalMinutes / 60);
     const minute = totalMinutes % 60;
-    return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:00`;
+    const second = 0;
+    
+    // Format với AM/PM nếu cần
+    let ampm = 'SA'; // Sáng
+    let displayHour = hour;
+    
+    if (hour >= 12) {
+        ampm = 'CH'; // Chiều
+        if (hour > 12) displayHour = hour - 12;
+    }
+    if (hour === 0) displayHour = 12;
+    
+    // Trả về format "HH:MM:SS SA/CH"
+    return `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}:${String(second).padStart(2, '0')} ${ampm}`;
 }
 window.formatMinutesToHHMMSS = formatMinutesToHHMMSS;
 

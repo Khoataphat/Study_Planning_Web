@@ -22,6 +22,8 @@ import java.sql.Time;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import model.Task;
+import service.TaskService;
 
 /**
  * Controller for handling schedule-related HTTP requests
@@ -160,32 +162,53 @@ public class ScheduleController extends HttpServlet {
 
             // 4. Xử lý Tạo mới (action=add)
             if ("add".equals(action)) {
+                System.out.println("=== ADD SCHEDULE REQUEST ===");
+                System.out.println("JSON Data: " + jsonData);
+
                 UserSchedule schedule = gson.fromJson(jsonData, UserSchedule.class);
 
-                // GỌI SERVICE
+                // Debug log chi tiết
+                System.out.println("Parsed Schedule:");
+                System.out.println("  CollectionId: " + schedule.getCollectionId());
+                System.out.println("  TaskId: " + schedule.getTaskId());
+                System.out.println("  DayOfWeek: " + schedule.getDayOfWeek());
+                System.out.println("  StartTime: " + schedule.getStartTime());
+                System.out.println("  EndTime: " + schedule.getEndTime());
+                System.out.println("  Subject: " + schedule.getSubject());
+                System.out.println("  Type: " + schedule.getType());
+
+                // ⭐️ QUAN TRỌNG: Kiểm tra xem taskId đã có hay chưa
+                // Nếu taskId đã có (khác 0), chỉ tạo schedule, KHÔNG tạo task mới
+                if (schedule.getTaskId() > 0) {
+                    System.out.println("📌 TaskId đã tồn tại: " + schedule.getTaskId()
+                            + ", chỉ tạo schedule liên kết");
+
+                    // Kiểm tra xem task có tồn tại không
+                    TaskService taskService = new TaskService();
+                    Task existingTask = taskService.getTaskById(schedule.getTaskId());
+
+                    if (existingTask == null) {
+                        sendErrorResponse(response, "Task không tồn tại với ID: " + schedule.getTaskId(), 400);
+                        return;
+                    }
+                }
+
+                // Gọi service để tạo schedule
                 int newId = scheduleService.createSchedule(userId, schedule);
                 boolean success = newId > 0;
 
-//                Map<String, Object> result = new HashMap<>();
-//                result.put("success", success);
-//                result.put("message",
-//                        success ? "Schedule added successfully" : "Failed to add schedule (Time conflict or DB error)");
-//                if (success) {
-//                    result.put("scheduleId", newId);
-//                }
-                String message;
-                if (success) {
-                    message = "Schedule added successfully";
-                } else if (newId == -1) {
-                    // Giả định service trả về -1 chỉ khi validation thất bại
-                    message = "Failed to add schedule: Time conflict detected";
-                } else {
-                    message = "Failed to add schedule: Database error or unknown failure";
-                }
+                System.out.println("Service result - success: " + success + ", newId: " + newId);
 
                 Map<String, Object> result = new HashMap<>();
                 result.put("success", success);
-                result.put("message", message);
+                result.put("message",
+                        success ? "Schedule added successfully" : "Failed to add schedule (Time conflict or DB error)");
+                if (success) {
+                    result.put("scheduleId", newId);
+                }
+
+                System.out.println("Response: " + JsonUtil.toJson(result));
+                System.out.println("=== END ADD SCHEDULE ===");
 
                 try (PrintWriter out = response.getWriter()) {
                     out.print(JsonUtil.toJson(result));
@@ -290,11 +313,25 @@ public class ScheduleController extends HttpServlet {
     /**
      * Handle get weekly schedule
      */
-    private void handleWeeklySchedule(int collectionId, PrintWriter out) {
-        Map<String, List<UserSchedule>> weeklySchedule = scheduleService.getWeeklySchedule(collectionId);
-        out.print(JsonUtil.toJson(weeklySchedule));
-        out.flush();
+private void handleWeeklySchedule(int collectionId, PrintWriter out) {
+    System.out.println("[ScheduleController] Getting weekly schedule for collection: " + collectionId);
+    
+    Map<String, List<UserSchedule>> weeklySchedule = scheduleService.getWeeklySchedule(collectionId);
+    
+    // Debug log
+    System.out.println("[ScheduleController] Weekly schedule data:");
+    for (Map.Entry<String, List<UserSchedule>> entry : weeklySchedule.entrySet()) {
+        System.out.println("  " + entry.getKey() + ": " + entry.getValue().size() + " events");
+        for (UserSchedule schedule : entry.getValue()) {
+            System.out.println("    - ID:" + schedule.getScheduleId() + 
+                             ", TaskID:" + schedule.getTaskId() + 
+                             ", " + schedule.getSubject());
+        }
     }
+    
+    out.print(JsonUtil.toJson(weeklySchedule));
+    out.flush();
+}
 
     /**
      * Handle count schedules

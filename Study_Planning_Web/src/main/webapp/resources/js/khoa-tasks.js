@@ -16,8 +16,8 @@ const PIXELS_PER_MINUTE = PIXELS_PER_HOUR / 60;
 const DEFAULT_DURATION_MINUTES = 60;
 
 // === HẰNG SỐ MỚI ĐƯỢC BỔ SUNG ===
-const START_HOUR = 7;
-const END_HOUR = 18; // Kết thúc ở mép dưới của 17:00
+const START_HOUR = 0;
+const END_HOUR = 23; // Kết thúc ở mép dưới của 17:00
 const DAYS_OF_WEEK = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
 // =================================================================
@@ -47,6 +47,11 @@ function setupEvents() {
 
 function createDefaultEvent(e) {
 
+    console.log("🎯 CLICK CREATE DEFAULT EVENT DEBUG:");
+    console.log("  Click coordinates:", e.clientX, e.clientY);
+    console.log("  Target class:", e.target.className);
+    console.log("  Current target dataset:", e.currentTarget.dataset);
+
     // ⭐️ BỔ SUNG LOGIC CHẶN SỰ KIỆN TẠM THỜI THỨ HAI
     if (window.tempScheduledEvent !== null) {
         console.warn("LƯU Ý: Vui lòng hoàn thành (Save) hoặc hủy (Cancel) tác vụ đang tạo trước.");
@@ -69,6 +74,24 @@ function createDefaultEvent(e) {
     // Lấy container (ô lịch ngày/giờ) đã được click
     const container = e.currentTarget;
 
+    console.log("🔍 DEBUG 1: CONTAINER INFO");
+    console.log("- Container class:", container.className);
+    console.log("- Container dataset:", container.dataset);
+    console.log("- Container data-hour RAW:", container.dataset.hour);
+    console.log("- Container data-hour PARSED:", parseInt(container.dataset.hour));
+    console.log("- Container data-day-index:", container.dataset.dayIndex);
+    console.log("- Container innerHTML (first 100 chars):", container.innerHTML.substring(0, 100));
+
+// Kiểm tra tất cả các ô cùng giờ
+    console.log("- All cells with hour", container.dataset.hour, ":");
+    document.querySelectorAll(`.calendar-day-cell[data-hour="${container.dataset.hour}"]`).forEach((cell, i) => {
+        console.log(`  [${i}] ${cell.dataset.day} - ${cell.innerHTML.substring(0, 50)}...`);
+    });
+
+// Kiểm tra START_HOUR
+    console.log("- window.START_HOUR:", window.START_HOUR);
+    console.log("- window.PIXELS_PER_MINUTE:", window.PIXELS_PER_MINUTE);
+
     // Kiểm tra xem container có phải là ô lịch hợp lệ không (chắc chắn hơn)
     if (!container.classList.contains('calendar-day-cell')) {
         return;
@@ -85,10 +108,31 @@ function createDefaultEvent(e) {
     const finalTop = startMinutesRounded * PIXELS_PER_MINUTE;
     const finalHeight = DEFAULT_DURATION_MINUTES * PIXELS_PER_MINUTE;
 
+    console.log("🔍 DEBUG 2: POSITION CALCULATION");
+    console.log("- clickY:", clickY, "px");
+    console.log("- minutesOffset:", minutesOffset, "phút");
+    console.log("- startMinutesRounded:", startMinutesRounded, "phút");
+    console.log("- PIXELS_PER_MINUTE:", PIXELS_PER_MINUTE);
+    console.log("- finalTop:", finalTop, "px (", finalTop / PIXELS_PER_MINUTE, "phút)");
+    console.log("- finalHeight:", finalHeight, "px (", finalHeight / PIXELS_PER_MINUTE, "phút)");
+    console.log("- finalTop in hours:", finalTop / 80, "giờ từ đỉnh ô");
+
+// Kiểm tra nếu finalTop bị âm hoặc quá lớn
+    if (finalTop < 0)
+        console.error("❌ finalTop NEGATIVE!");
+    if (finalTop > 80)
+        console.warn("⚠️ finalTop > 80px - vượt quá chiều cao ô!");
+
     const parentCell = container; // container chính là .calendar-day-cell
     const startHourOfCell = parseInt(container.dataset.hour);
     const dayIndex = parseInt(container.dataset.dayIndex); // Sử dụng data-day-index (1=Mon, 7=Sun)
     const dayOfWeek = DAYS_OF_WEEK[dayIndex - 1];
+
+    console.log("📅 Cell info:");
+    console.log("  Day index:", dayIndex, "-> Day:", dayOfWeek);
+    console.log("  Cell hour:", startHourOfCell);
+    console.log("  Rounded top:", finalTop, "px");
+    console.log("  Final height:", finalHeight, "px");
 
     // Tính toán giờ và phút bắt đầu thực tế
     const totalStartMinutes = (startHourOfCell * 60) + startMinutesRounded;
@@ -100,8 +144,46 @@ function createDefaultEvent(e) {
     const actualEndHour = Math.floor(totalEndMinutes / 60);
     const endMinute = totalEndMinutes % 60;
 
-    const startTime = `${String(actualStartHour).padStart(2, '0')}:${String(startMinute).padStart(2, '0')}`;
-    const endTime = `${String(actualEndHour).padStart(2, '0')}:${String(endMinute).padStart(2, '0')}`;
+    console.log("🔍 DEBUG 3: TIME CALCULATION");
+    console.log("- startHourOfCell:", startHourOfCell, "(từ container.dataset.hour)");
+    console.log("- startMinutesRounded:", startMinutesRounded, "phút");
+    console.log("- totalStartMinutes:", totalStartMinutes,
+            `= ${startHourOfCell}×60 + ${startMinutesRounded}`);
+    console.log("- Giờ thực tế:", Math.floor(totalStartMinutes / 60),
+            ":", totalStartMinutes % 60);
+
+// ⭐️ QUAN TRỌNG: KIỂM TRA 3-GIỜ LỆCH
+    const expectedHour = startHourOfCell + (startMinutesRounded / 60);
+    console.log("- Giờ dự kiến trong ô:", expectedHour.toFixed(2));
+    console.log("- Chênh lệch với startHourOfCell:", (expectedHour - startHourOfCell).toFixed(2), "giờ");
+
+    if (Math.abs(expectedHour - startHourOfCell - 3) < 0.1) {
+        console.error("❌❌❌ PHÁT HIỆN LỖI 3-GIỜ LỆCH!");
+        console.error("   startHourOfCell:", startHourOfCell);
+        console.error("   expectedHour trong ô:", expectedHour);
+        console.error("   Difference:", expectedHour - startHourOfCell);
+    }
+
+
+    console.log("⏰ Time calculations:");
+    console.log("  Total start minutes:", totalStartMinutes);
+    console.log("  Start hour/minute:", actualStartHour, ":", startMinute);
+    console.log("  Total end minutes:", totalEndMinutes);
+    console.log("  End hour/minute:", actualEndHour, ":", endMinute);
+
+    // ⭐️ QUAN TRỌNG: Sửa format thời gian
+    // Gọi hàm formatMinutesToHHMMSS để có format đúng "HH:MM:SS SA/CH"
+    const startTime = window.formatMinutesToHHMMSS ?
+            window.formatMinutesToHHMMSS(totalStartMinutes) :
+            `${String(actualStartHour).padStart(2, '0')}:${String(startMinute).padStart(2, '0')}:00 ${actualStartHour >= 12 ? 'CH' : 'SA'}`;
+
+    const endTime = window.formatMinutesToHHMMSS ?
+            window.formatMinutesToHHMMSS(totalEndMinutes) :
+            `${String(actualEndHour).padStart(2, '0')}:${String(endMinute).padStart(2, '0')}:00 ${actualEndHour >= 12 ? 'CH' : 'SA'}`;
+
+    console.log("🕐 Formatted times:");
+    console.log("  Start time:", startTime);
+    console.log("  End time:", endTime);
 
     // --- 2. Tạo khối sự kiện TẠM THỜI (TEMP EVENT) ---
     const eventElement = document.createElement('div');
@@ -109,35 +191,94 @@ function createDefaultEvent(e) {
     eventElement.style.top = `${finalTop}px`;
     eventElement.style.height = `${finalHeight}px`;
 
-// ⭐️ THAY ĐỔI LÕI: Thêm các tay cầm Resize vào HTML của sự kiện TẠM THỜI
-        eventElement.innerHTML = `
-        <div class="resize-handle top-handle" data-handle="top"></div> 
-        <span class="p-1 text-blue-800 text-xs font-semibold truncate">${startTime} – ${endTime}</span>
-        <div class="resize-handle bottom-handle" data-handle="bottom"></div> 
-    `;
+// Hiển thị thời gian dạng ngắn cho UI
+    const displayStart = `${String(actualStartHour).padStart(2, '0')}:${String(startMinute).padStart(2, '0')}`;
+    const displayEnd = `${String(actualEndHour).padStart(2, '0')}:${String(endMinute).padStart(2, '0')}`;
 
+    eventElement.innerHTML = `
+        <div class="resize-handle top-handle" data-handle="top"></div> 
+        <span class="p-1 text-blue-800 text-xs font-semibold truncate">${displayStart} – ${displayEnd}</span>
+        <div class="resize-handle bottom-handle" data-handle="bottom"></div> 
+    `;
 
     parentCell.appendChild(eventElement);
+    console.log("✅ Temp event created and appended");
+
+    setTimeout(() => {
+        console.log("🔍 DEBUG 4: ACTUAL POSITION CHECK");
+
+        const eventRect = eventElement.getBoundingClientRect();
+        const cellRect = parentCell.getBoundingClientRect();
+
+        console.log("- Event actual top (relative to cell):", eventRect.top - cellRect.top, "px");
+        console.log("- Event style.top:", eventElement.style.top);
+        console.log("- Cell height:", cellRect.height, "px");
+        console.log("- Cell top in page:", cellRect.top, "px");
+        console.log("- Event top in page:", eventRect.top, "px");
+
+        // Tính toán thời gian từ vị trí thực tế
+        const actualTop = eventRect.top - cellRect.top;
+        const actualMinutes = actualTop / PIXELS_PER_MINUTE;
+        const actualHourInCell = actualMinutes / 60;
+        const actualTotalMinutes = (startHourOfCell * 60) + actualMinutes;
+
+        console.log("- Actual minutes in cell:", actualMinutes);
+        console.log("- Actual hour in cell:", actualHourInCell.toFixed(2));
+        console.log("- Actual total minutes:", actualTotalMinutes);
+        console.log("- Actual time:", Math.floor(actualTotalMinutes / 60), ":", Math.round(actualTotalMinutes % 60));
+
+        // So sánh với dự kiến
+        console.log("📊 COMPARISON:");
+        console.log("  Expected top:", finalTop, "px");
+        console.log("  Actual top:", actualTop, "px");
+        console.log("  Difference:", actualTop - finalTop, "px");
+        console.log("  Difference in hours:", (actualTop - finalTop) / 80, "giờ");
+
+        // Kiểm tra CSS
+        const computedStyle = window.getComputedStyle(eventElement);
+        console.log("🎨 COMPUTED STYLES:");
+        console.log("  top:", computedStyle.top);
+        console.log("  position:", computedStyle.position);
+        console.log("  transform:", computedStyle.transform);
+        console.log("  margin-top:", computedStyle.marginTop);
+    }, 100);
 
     // ⭐️ THÊM: Gắn handlers cho sự kiện TẠM THỜI
-        window.attachResizeHandlers(eventElement);
-        window.attachDragHandlers(eventElement);
+    if (window.attachResizeHandlers) {
+        window.attachResizeHandlers(eventElement);
+        console.log("🔗 Resize handlers attached");
+    }
 
-    // Lưu thông tin vị trí vào eventElement (hữu ích nếu modal cần biết phải xóa/cập nhật cái gì)
+    if (window.attachDragHandlers) {
+        window.attachDragHandlers(eventElement);
+        console.log("🔗 Drag handlers attached");
+    }
+
+    // Lưu thông tin vị trí vào eventElement
     eventElement.dataset.dayIndex = dayIndex;
-    eventElement.dataset.startTime = startTime;
-    eventElement.dataset.endTime = endTime;
+    eventElement.dataset.startTime = startTime; // Lưu format đầy đủ
+    eventElement.dataset.endTime = endTime;     // Lưu format đầy đủ
+    eventElement.dataset.startMinutes = totalStartMinutes;
+    eventElement.dataset.endMinutes = totalEndMinutes;
+
+    console.log("📊 Event element dataset:", eventElement.dataset);
 
     // --- 3. GỌI MODAL DỮ LIỆU ---
-    // Giao eventElement tạm thời cho modal để modal có thể xóa nó nếu Hủy, 
-    // hoặc chuyển đổi nó thành sự kiện chính thức nếu Lưu.
-    window.openTaskDetailModalFromSchedule(
-            eventElement, // Tham số 1
-            dayOfWeek, // Tham số 2
-            startTime, // Tham số 3
-            endTime, // Tham số 4
-            DEFAULT_DURATION_MINUTES // Tham số 5
-            );
+    console.log("📞 Calling openTaskDetailModalFromSchedule...");
+    if (window.openTaskDetailModalFromSchedule) {
+        window.openTaskDetailModalFromSchedule(
+                eventElement,
+                dayOfWeek,
+                startTime,
+                endTime,
+                DEFAULT_DURATION_MINUTES
+                );
+        console.log("✅ Modal opened");
+    } else {
+        console.error("❌ openTaskDetailModalFromSchedule not available!");
+    }
+
+    console.log("🎯 createDefaultEvent COMPLETED\n");
 }
 
 // =================================================================
@@ -178,7 +319,7 @@ function startResize(e) {
     currentEvent.dataset.originalHeight = currentEvent.style.height;
 
     currentEvent.classList.add('resizing');
-}
+};
 
 function duringResize(e) {
     if (!isResizing || !currentEvent)
@@ -302,7 +443,7 @@ function endResize(e) {
 
     resizeHandle = null;
     currentEvent = null;
-}
+};
 
 // =================================================================
 // 5. LOGIC DI CHUYỂN (DRAG-AND-DROP) ĐÃ SỬA
@@ -321,11 +462,11 @@ function startMove(e) {
     if (!eventElement) {
         return;
     }
-    
+
     // ⭐️ CHỈ CHO PHÉP MOVE NẾU DỮ LIỆU ĐÃ TẢI XONG
-    if (!isScheduleLoaded) { 
+    if (!isScheduleLoaded) {
         console.warn("Chặn thao tác: Dữ liệu lịch chưa tải xong.");
-        return; 
+        return;
     }
 
     // ⭐️ LOGIC CHẶN CHÍNH THỨC: Chặn nếu KHÔNG phải tạm thời VÀ CÓ Schedule ID
@@ -350,14 +491,16 @@ function startMove(e) {
     currentEventToMove.dataset.originalTop = currentEventToMove.style.top;
 
     currentEventToMove.classList.add('dragging');
-}
+};
 
 /**
  * HÀM duringMove ĐÃ CHỈNH SỬA
  */
 function duringMove(e) {
-    if (!isDragging || !currentEventToMove) return;
-    if (isResizing) return;
+    if (!isDragging || !currentEventToMove)
+        return;
+    if (isResizing)
+        return;
 
     const deltaY = e.clientY - dragStartY;
     let newTop = dragStartTop + deltaY;
@@ -372,15 +515,16 @@ function duringMove(e) {
 
         // Tìm ô gốc của ngày đích
         const firstCellOfDayTarget = document.querySelector(`.calendar-day-cell[data-day-index="${targetDayIndex}"][data-hour="${START_HOUR}"]`);
-        if (!firstCellOfDayTarget) return;
+        if (!firstCellOfDayTarget)
+            return;
 
         // --- ⭐️ LOGIC CHẶN VA CHẠM (BLOCKING) ⭐️ ---
-        
+
         // A. Giả lập tính toán thời gian tại vị trí chuột mới
         const eventHeight = parseFloat(currentEventToMove.style.height);
         const startMinutesOffset = Math.round(newTop / PIXELS_PER_MINUTE);
         const durationMinutes = Math.round(eventHeight / PIXELS_PER_MINUTE);
-        
+
         const testStartMinutes = (START_HOUR * 60) + startMinutesOffset;
         const testEndMinutes = testStartMinutes + durationMinutes;
 
@@ -394,7 +538,7 @@ function duringMove(e) {
         if (isCollision) {
             // NẾU VA CHẠM: Dừng hàm tại đây, không cập nhật style.top mới.
             // Điều này làm task "khựng lại" khi chạm vào vật cản.
-            return; 
+            return;
         }
 
         // --- NẾU KHÔNG VA CHẠM: TIẾP TỤC DI CHUYỂN ---
@@ -419,14 +563,16 @@ function duringMove(e) {
 
         // 2. GIỚI HẠN KÉO DỌC (Top/Bottom)
         const totalDayHeight = (END_HOUR - START_HOUR) * PIXELS_PER_HOUR;
-        if (newTop < 0) newTop = 0;
-        if (newTop + eventHeight > totalDayHeight) newTop = totalDayHeight - eventHeight;
+        if (newTop < 0)
+            newTop = 0;
+        if (newTop + eventHeight > totalDayHeight)
+            newTop = totalDayHeight - eventHeight;
 
         // Cập nhật vị trí và hiển thị thời gian
         currentEventToMove.style.top = `${newTop}px`;
         updateEventTimeDisplay(currentEventToMove);
     }
-}
+};
 
 /**
  * HÀM endMove ĐÃ TÁCH RA NGOÀI VÀ CHỈNH SỬA
@@ -434,11 +580,11 @@ function duringMove(e) {
 function endMove(e) {
     if (!isDragging || !currentEventToMove)
         return;
-    
+
     // ⭐️ CHỈ CHO PHÉP MOVE NẾU DỮ LIỆU ĐÃ TẢI XONG
-    if (!isScheduleLoaded) { 
+    if (!isScheduleLoaded) {
         console.warn("Chặn thao tác: Dữ liệu lịch chưa tải xong.");
-        return; 
+        return;
     }
 
     isDragging = false;
@@ -506,19 +652,38 @@ function endMove(e) {
     currentEventToMove.dataset.endTime = newEndTime;
 
     // ⭐️ Xử lý Sự kiện TẠM THỜI (Cập nhật Form)
+//    if (currentEventToMove.classList.contains('temp-event')) {
+//        // Logic cập nhật form task (Giữ nguyên logic cũ, chỉ thay startTimeRaw bằng newStartTime)
+//        const dayOfWeek = DAYS_OF_WEEK[parseInt(newDayIndex) - 1];
+//        const durationMinutes = Math.round(eventHeight / PIXELS_PER_MINUTE); 
+//
+//        // TÍNH DATE VÀ CẬP NHẬT FORM
+//        const [startHour, startMinute] = newStartTime.split(':').map(Number);
+//        const calculatedDate = window.getDateFromDayAndHour(dayOfWeek, startHour);
+//        calculatedDate.setMinutes(startMinute);
+//        const formattedDeadline = window.formatForInput(calculatedDate);
+//
+//        if (window.updateTaskFormDuration) {
+//            window.updateTaskFormDuration(durationMinutes, formattedDeadline, dayOfWeek); 
+//        }
+//    }
     if (currentEventToMove.classList.contains('temp-event')) {
-        // Logic cập nhật form task (Giữ nguyên logic cũ, chỉ thay startTimeRaw bằng newStartTime)
-        const dayOfWeek = DAYS_OF_WEEK[parseInt(newDayIndex) - 1];
-        const durationMinutes = Math.round(eventHeight / PIXELS_PER_MINUTE); 
+        // Parse thời gian mới
+        const [startHour, startMinute, startSecond] = newStartTime.split(':').map(Number);
 
-        // TÍNH DATE VÀ CẬP NHẬT FORM
-        const [startHour, startMinute] = newStartTime.split(':').map(Number);
-        const calculatedDate = window.getDateFromDayAndHour(dayOfWeek, startHour);
-        calculatedDate.setMinutes(startMinute);
-        const formattedDeadline = window.formatForInput(calculatedDate);
-
+        // ⭐️ QUAN TRỌNG: Gọi đúng hàm với các tham số
         if (window.updateTaskFormDuration) {
-            window.updateTaskFormDuration(durationMinutes, formattedDeadline, dayOfWeek); 
+            // Tính toán duration từ roundedHeight
+            const eventHeight = parseFloat(currentEventToMove.style.height);
+            const durationMinutes = Math.round(eventHeight / PIXELS_PER_MINUTE);
+
+            console.log("📝 Calling updateTaskFormDuration:", {
+                duration: durationMinutes,
+                startTime: newStartTime,
+                dayOfWeek: newDayOfWeek
+            });
+
+            window.updateTaskFormDuration(durationMinutes, newStartTime, newDayOfWeek);
         }
     }
 
@@ -529,7 +694,7 @@ function endMove(e) {
     }
 
     currentEventToMove = null;
-}
+};
 
 // =================================================================
 // 6. CÁC HÀM TIỆN ÍCH (Giữ nguyên)
@@ -568,25 +733,66 @@ function endMove(e) {
 
 // ⭐️ HÀM MỚI: Tạo DOM cho sự kiện ĐÃ LÊN LỊCH (Được gọi bởi tasks.js/renderCalendar)
 function createScheduledEventDiv(eventData) {
-    console.log("🔧 createScheduledEventDiv được gọi với:", eventData);
+    console.log("🔧 ===== DEBUG createScheduledEventDiv =====");
+    console.log("Input:", eventData);
+    console.log("🔍 DEBUG START_HOUR:", START_HOUR);
+    console.log("🔍 DEBUG PIXELS_PER_MINUTE:", PIXELS_PER_MINUTE);
+    
     const eventDiv = document.createElement('div');
     eventDiv.className = 'calendar-event';
-    
+
     console.log("📌 Schedule ID:", eventData.scheduleId, "Task ID:", eventData.taskId);
+
+    // ⭐️ THÊM: Đánh dấu event đã được lưu (không phải temp)
+    if (eventData.scheduleId && eventData.scheduleId !== "null" && eventData.scheduleId !== "0") {
+        eventDiv.classList.add('saved-event');
+        eventDiv.title = "Đã lên lịch (Click để xem chi tiết)";
+    } else {
+        eventDiv.classList.add('temp-event');
+        eventDiv.title = "Chưa lưu (Click để tạo task)";
+    }
 
     // 1. Gắn Data ID Vĩnh Viễn
     eventDiv.dataset.scheduleId = eventData.scheduleId;
     eventDiv.dataset.taskId = eventData.taskId;
 
-    // 2. Tính toán Top và Height dựa trên thời gian
-    const start = eventData.startTime.split(':').map(Number);
-    const end = eventData.endTime.split(':').map(Number);
+    // 2. ⭐️ SỬA QUAN TRỌNG: Tính toán Top và Height với xử lý AM/PM
+    console.log("🕐 Parsing times:", {
+        startTime: eventData.startTime,
+        endTime: eventData.endTime
+    });
+    
+    // Sử dụng hàm timeToMinutes từ tasks.js nếu có
+    let startMinutes, endMinutes;
+    
+    if (window.timeToMinutes) {
+        // Dùng hàm chuẩn từ tasks.js
+        startMinutes = window.timeToMinutes(eventData.startTime);
+        endMinutes = window.timeToMinutes(eventData.endTime);
+        console.log("✅ Used window.timeToMinutes");
+    } else {
+        // Fallback: tự parse
+        console.warn("⚠️ window.timeToMinutes not found, using fallback");
+        startMinutes = parseTimeWithAMPM(eventData.startTime);
+        endMinutes = parseTimeWithAMPM(eventData.endTime);
+    }
+    
+    console.log("🔍 DEBUG startMinutes:", startMinutes);
+    console.log("🔍 DEBUG minutesOffset tính toán:", startMinutes - (START_HOUR * 60));
+    
+    console.log("🕐 Calculated minutes:", {
+        startMinutes: startMinutes,
+        endMinutes: endMinutes,
+        startTime: `${Math.floor(startMinutes / 60)}:${startMinutes % 60}`,
+        endTime: `${Math.floor(endMinutes / 60)}:${endMinutes % 60}`
+    });
 
-    const startMinutes = (start[0] * 60) + start[1];
-    const endMinutes = (end[0] * 60) + end[1];
 
-    const minutesOffset = startMinutes - (START_HOUR * 60);
-    const finalTop = minutesOffset * PIXELS_PER_MINUTE;
+
+//    const minutesOffset = startMinutes - (START_HOUR * 60);
+//    const finalTop = minutesOffset * PIXELS_PER_MINUTE;
+    const minutesOffset = startMinutes % 60;
+    const finalTop =  minutesOffset * PIXELS_PER_MINUTE;
 
     const durationMinutes = endMinutes - startMinutes;
     const finalHeight = durationMinutes * PIXELS_PER_MINUTE;
@@ -604,25 +810,100 @@ function createScheduledEventDiv(eventData) {
         eventDiv.style.left = '0%';
     }
 
-    eventDiv.style.top = `${finalTop}px`;
+    console.log("🎨 Top calculation:", {
+        startMinutes: startMinutes,
+        startHourOfDay: Math.floor(startMinutes / 60),
+        startMinute: startMinutes % 60,
+        START_HOUR: START_HOUR,
+        minutesOffset: minutesOffset,
+        finalTop: finalTop,
+        PIXELS_PER_MINUTE: PIXELS_PER_MINUTE
+    });
+
+    // ⭐️ THÊM: Đảm bảo top không âm
+    if (finalTop < 0) {
+        console.warn(`⚠️ Top negative (${finalTop}px), setting to 0`);
+        eventDiv.style.top = '0px';
+    } else {
+        eventDiv.style.top = `${finalTop}px`;
+    }
+
     eventDiv.style.height = `${finalHeight}px`;
 
+    // ⭐️ SỬA: Hiển thị thời gian đã format đúng
+    const displayStart = formatMinutesToDisplay(startMinutes);
+    const displayEnd = formatMinutesToDisplay(endMinutes);
+    
     eventDiv.innerHTML = `
         <div class="resize-handle top-handle" data-handle="top"></div>
-        <span>${eventData.subject || eventData.title} (${eventData.startTime.substring(0, 5)} – ${eventData.endTime.substring(0, 5)})</span>
+        <span>${eventData.subject || eventData.title} (${displayStart} – ${displayEnd})</span>
         <div class="resize-handle bottom-handle" data-handle="bottom"></div>
     `;
 
-        console.log("🎨 Event sẽ được tạo tại:", {
+    console.log("🎨 Event sẽ được tạo tại:", {
         top: eventDiv.style.top,
         height: eventDiv.style.height,
         width: eventDiv.style.width,
-        left: eventDiv.style.left
+        left: eventDiv.style.left,
+        displayText: `${displayStart} – ${displayEnd}`
     });
     
-    
+    console.log("🔧 ===== END DEBUG =====");
+
     return eventDiv;
 }
+
+// ⭐️ THÊM: Hàm parse time với AM/PM (fallback)
+function parseTimeWithAMPM(timeStr) {
+    console.log(`⏱️ parseTimeWithAMPM: "${timeStr}"`);
+    
+    // Tách phần thời gian và AM/PM
+    const parts = timeStr.split(' ');
+    const timePart = parts[0];
+    const ampm = parts.length > 1 ? parts[1].toUpperCase() : '';
+    
+    const [h, m, s] = timePart.split(':').map(Number);
+    let hours = h || 0;
+    const minutes = m || 0;
+    
+    console.log(`  Raw: hours=${hours}, minutes=${minutes}, ampm="${ampm}"`);
+    
+    // Xử lý AM/PM
+    if (ampm === 'CH') {
+        // CH = PM
+        if (hours === 12) {
+            // 12:xx CH = 12:xx
+            hours = 12;
+        } else if (hours >= 1 && hours <= 11) {
+            // 1:xx CH - 11:xx CH = +12
+            hours += 12;
+        }
+    } else if (ampm === 'SA') {
+        // SA = AM
+        if (hours === 12) {
+            // 12:xx SA = 0:xx
+            hours = 0;
+        }
+        // 1:xx SA - 11:xx SA giữ nguyên
+    }
+    
+    const totalMinutes = hours * 60 + minutes;
+    console.log(`  Result: ${hours}:${minutes} -> ${totalMinutes} phút`);
+    
+    return totalMinutes;
+}
+
+// ⭐️ THÊM: Hàm format phút thành HH:MM để hiển thị
+function formatMinutesToDisplay(minutes) {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    
+    // Format 24h cho hiển thị
+    return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+}
+
+// ⭐️ THÊM: Gán hàm parseTimeWithAMPM vào window để dùng chung
+window.parseTimeWithAMPM = parseTimeWithAMPM;
 
 function updateEventTimeDisplay(eventElement) {
     const currentTop = parseFloat(eventElement.style.top);
@@ -650,7 +931,7 @@ function updateEventTimeDisplay(eventElement) {
         // Cập nhật cả nội dung hiển thị và data attributes (nếu cần cho các logic khác)
         span.textContent = `Task (${startTime} – ${endTime})`;
     }
-}
+};
 
 
 // Gán hàm vào window để tasks.js có thể gọi

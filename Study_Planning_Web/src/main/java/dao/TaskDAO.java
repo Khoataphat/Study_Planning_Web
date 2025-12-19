@@ -140,43 +140,85 @@ private void linkTaskToUser(int taskId, int userId, Task task) {
             return;
         }
         
-        // 2. Tính start_time từ task
-        Timestamp startTime = task.getStartTime();
+        // ⭐️ QUAN TRỌNG: Sử dụng deadline từ task làm thời gian
         Timestamp deadline = task.getDeadline();
         
-        if (startTime == null && deadline != null && task.getDuration() > 0) {
+        if (deadline == null) {
+            System.err.println("[TaskDAO] Task deadline is null, cannot create schedule");
+            return;
+        }
+        
+        // 2. Tính startTime từ deadline và duration
+        Timestamp startTime = deadline;
+        if (task.getDuration() > 0) {
+            // Trừ duration từ deadline để lấy startTime
             long startMillis = deadline.getTime() - (task.getDuration() * 60000L);
             startTime = new Timestamp(startMillis);
         }
         
-        // 3. Insert vào user_schedule với is_task = TRUE
-        // ⭐️ SỬA: 'type' thành 'self-study' (không có dấu gạch ngang)
+        // ⭐️ QUAN TRỌNG: Tính day_of_week từ startTime (KHÔNG phải deadline)
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(startTime);
+        
+        // Chuyển đổi: Calendar day (1=Sunday, 2=Monday, ..., 7=Saturday)
+        // Sang hệ thống của chúng ta: (Mon=1, Tue=2, ..., Sun=7)
+        int calendarDayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+        String dayOfWeek = convertCalendarDayToDayName(calendarDayOfWeek);
+        
+        System.out.println("[TaskDAO] Date info - StartTime: " + startTime + 
+                         ", Deadline: " + deadline + 
+                         ", Calendar Day: " + calendarDayOfWeek + 
+                         ", Our Day: " + dayOfWeek);
+        
+        // 3. Insert vào user_schedule
         String insertSql = "INSERT INTO user_schedule " +
                           "(collection_id, task_id, day_of_week, schedule_date, " +
-                          "start_time, end_time, subject, type, is_task, created_at) " +
-                          "VALUES (?, ?, ?, ?, ?, ?, ?, 'self-study', TRUE, NOW())";
+                          "start_time, end_time, subject, type, created_at) " +
+                          "VALUES (?, ?, ?, ?, ?, ?, ?, 'self-study', NOW())";
         
         try (Connection conn = DBUtil.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(insertSql)) {
-            
-            // Tính day_of_week (1=Monday, 7=Sunday)
-            int dayOfWeek = getDayOfWeek(startTime);
+             PreparedStatement stmt = conn.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
             
             stmt.setInt(1, collectionId);
             stmt.setInt(2, taskId);
-            stmt.setInt(3, dayOfWeek);
-            stmt.setDate(4, new Date(startTime.getTime())); // schedule_date
+            stmt.setString(3, dayOfWeek);
+            stmt.setTimestamp(4, startTime); // schedule_date
             stmt.setTime(5, new Time(startTime.getTime())); // start_time
             stmt.setTime(6, new Time(deadline.getTime()));  // end_time
             stmt.setString(7, task.getTitle()); // subject
             
             int rows = stmt.executeUpdate();
-            System.out.println("[TaskDAO] Linked task " + taskId + " to schedule, type='self-study', rows: " + rows);
+            System.out.println("[TaskDAO] Linked task " + taskId + 
+                             " to schedule in collection " + collectionId + 
+                             ", day: " + dayOfWeek + 
+                             ", rows affected: " + rows);
+            
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs.next()) {
+                int scheduleId = rs.getInt(1);
+                System.out.println("[TaskDAO] Generated scheduleId: " + scheduleId);
+            }
         }
         
     } catch (SQLException e) {
         System.err.println("[TaskDAO] Error linking task to user: " + e.getMessage());
         e.printStackTrace();
+    }
+}
+
+// ⭐️ HÀM MỚI: Chuyển đổi Calendar.DAY_OF_WEEK sang hệ thống của chúng ta
+private String convertCalendarDayToDayName(int calendarDay) {
+    // Calendar: 1=Sunday, 2=Monday, ..., 7=Saturday
+    // Hệ thống: Mon=1, Tue=2, Wed=3, Thu=4, Fri=5, Sat=6, Sun=7
+    switch (calendarDay) {
+        case Calendar.MONDAY: return "Mon";
+        case Calendar.TUESDAY: return "Tue";
+        case Calendar.WEDNESDAY: return "Wed";
+        case Calendar.THURSDAY: return "Thu";
+        case Calendar.FRIDAY: return "Fri";
+        case Calendar.SATURDAY: return "Sat";
+        case Calendar.SUNDAY: return "Sun";
+        default: return "Mon";
     }
 }
 
