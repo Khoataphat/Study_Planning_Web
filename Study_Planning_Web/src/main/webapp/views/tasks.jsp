@@ -140,12 +140,6 @@
                     <!-- Left Panel: Task List & Form -->
                     <div class="w-[520px] flex flex-col bg-slate-50/50 border-r border-slate-200">
 
-                        <!-- Header -->
-                        <div class="px-6 py-5 bg-white/60 backdrop-blur-md border-b border-slate-200">
-                            <h2 class="text-xl font-bold text-slate-dark mb-1">Task Management</h2>
-                            <p class="text-sm text-slate-500">Manage your tasks and deadlines seamlessly</p>
-                        </div>
-
                         <!-- Status Filter & Add Button -->
                         <div class="px-6 py-4 border-b border-slate-200 space-y-3">
                             <div class="flex gap-2">
@@ -316,6 +310,7 @@
         <script src="/resources/js/tasks.js"></script>
         <script src="/resources/js/schedule-collision.js"></script>
         <script src="/resources/js/khoa-tasks.js"></script>
+        <script src="/resources/js/calendar-highlight.js"></script>
 
 
         <script src="../resources/js/smart-schedule.js"></script>

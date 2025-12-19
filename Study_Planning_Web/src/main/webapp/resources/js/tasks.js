@@ -1421,6 +1421,11 @@ function renderCalendar() {
 
     console.log("\n✅ renderCalendar() kết thúc");
     console.log("🎨 ===== END RENDER CALENDAR DEBUG =====\n");
+
+    // ⭐️ THÊM: Gửi sự kiện để calendar-highlight.js biết
+    setTimeout(() => {
+        document.dispatchEvent(new CustomEvent('calendarRendered'));
+    }, 50);
 }
 window.renderCalendar = renderCalendar;
 
@@ -2372,4 +2377,4 @@ if (document.readyState === 'loading') {
 } else {
     initializeApp();
 }
-Sửa
+
