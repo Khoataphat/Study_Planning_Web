@@ -140,13 +140,35 @@ public class ScheduleCollectionDAO {
      * This will cascade delete all schedules in the collection
      */
     public boolean delete(int collectionId) {
-        String sql = "DELETE FROM schedule_collection WHERE collection_id = ?";
+        String deleteSchedulesSql = "DELETE FROM user_schedule WHERE collection_id = ?";
+        String deleteCollectionSql = "DELETE FROM schedule_collection WHERE collection_id = ?";
 
-        try (Connection conn = DBUtil.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql)) {
+        try (Connection conn = DBUtil.getConnection()) {
+            // Start transaction
+            conn.setAutoCommit(false);
 
-            stmt.setInt(1, collectionId);
-            return stmt.executeUpdate() > 0;
+            try (PreparedStatement stmt1 = conn.prepareStatement(deleteSchedulesSql);
+                    PreparedStatement stmt2 = conn.prepareStatement(deleteCollectionSql)) {
+
+                // 1. Delete associated schedules
+                stmt1.setInt(1, collectionId);
+                stmt1.executeUpdate();
+
+                // 2. Delete the collection itself
+                stmt2.setInt(1, collectionId);
+                int rowsAffected = stmt2.executeUpdate();
+
+                conn.commit();
+                return rowsAffected > 0;
+
+            } catch (SQLException e) {
+                conn.rollback();
+                e.printStackTrace();
+                return false;
+            } finally {
+                conn.setAutoCommit(true);
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
         }

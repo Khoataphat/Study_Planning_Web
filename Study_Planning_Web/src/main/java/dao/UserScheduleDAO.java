@@ -233,6 +233,9 @@ public class UserScheduleDAO {
     /**
      * Count total schedules for a user
      */
+    /**
+     * Count total schedules for a user
+     */
     public int countByUserId(int userId) {
         // Modified to JOIN with schedule_collection
         String sql = "SELECT COUNT(*) FROM user_schedule us " +
@@ -253,6 +256,27 @@ public class UserScheduleDAO {
         }
 
         return 0;
+    }
+
+    /**
+     * Delete schedules by user ID and subject
+     * Usage: When a task is deleted, remove corresponding schedule entries
+     */
+    public boolean deleteByUserIdAndSubject(int userId, String subject) {
+        String sql = "DELETE us FROM user_schedule us " +
+                "JOIN schedule_collection sc ON us.collection_id = sc.collection_id " +
+                "WHERE sc.user_id = ? AND us.subject = ?";
+
+        try (Connection conn = DBUtil.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            stmt.setString(2, subject);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     /**
