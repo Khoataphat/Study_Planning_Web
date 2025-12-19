@@ -112,34 +112,59 @@ public class TaskController extends HttpServlet {
 
             String jsonData = sb.toString();
 
+            // ⭐️ THÊM DEBUG LOGGING
+            System.out.println("=== TASK CREATE REQUEST ===");
+            System.out.println("User ID: " + userId);
+            System.out.println("JSON Data: " + jsonData);
+
             // Parse JSON to Task with Timestamp deserializer
             Gson gson = new GsonBuilder()
                     .setDateFormat("yyyy-MM-dd HH:mm:ss")
                     .create();
 
             Task task = gson.fromJson(jsonData, Task.class);
+
+            // ⭐️ DEBUG: Log parsed task
+            System.out.println("Parsed Task:");
+            System.out.println("  Title: " + task.getTitle());
+            System.out.println("  Description: " + task.getDescription());
+            System.out.println("  Priority: " + task.getPriority());
+            System.out.println("  Status: " + task.getStatus());
+            System.out.println("  Deadline: " + task.getDeadline());
+            System.out.println("  Duration: " + task.getDuration());
+
             task.setUserId(userId);
 
             // Create task
             int taskId = taskService.createTask(task);
+
+            System.out.println("Task Service returned ID: " + taskId);
 
             Map<String, Object> result = new HashMap<>();
             if (taskId > 0) {
                 result.put("success", true);
                 result.put("taskId", taskId);
                 result.put("message", "Task created successfully");
+                System.out.println("✅ Task created successfully, ID: " + taskId);
             } else {
                 result.put("success", false);
                 result.put("message", "Failed to create task");
+                System.out.println("❌ Failed to create task");
             }
+
+            System.out.println("Response: " + JsonUtil.toJson(result));
+            System.out.println("=== END TASK CREATE ===");
 
             PrintWriter out = response.getWriter();
             out.print(JsonUtil.toJson(result));
             out.flush();
 
         } catch (IllegalArgumentException e) {
+            System.err.println("❌ IllegalArgumentException: " + e.getMessage());
+            e.printStackTrace();
             sendErrorResponse(response, e.getMessage(), 400);
         } catch (Exception e) {
+            System.err.println("❌ General Exception: " + e.getMessage());
             e.printStackTrace();
             sendErrorResponse(response, "Server error: " + e.getMessage(), 500);
         }

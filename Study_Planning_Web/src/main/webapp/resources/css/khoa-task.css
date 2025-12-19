@@ -1,0 +1,146 @@
+/* CSS CẤU TRÚC LỊCH (Giữ nguyên như yêu cầu trước) */
+.calendar-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+    border-top: 1px solid #e2e8f0;
+}
+
+.time-label {
+    width: 50px;
+    text-align: right;
+    padding: 0 4px;
+    font-size: 0.875rem;
+    vertical-align: top;
+    border-right: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.calendar-day-header {
+    text-align: center;
+    padding: 8px;
+    font-weight: bold;
+    border-left: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+/* QUAN TRỌNG: CONTAINER VÀ Ô NGÀY */
+.calendar-day-cell {
+    padding: 0 !important;
+    border-right: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+    position: relative;
+    vertical-align: top;
+    overflow: visible;
+    height: 80px !important;
+    min-height: 80px !important;
+}
+
+.schedule-container {
+    height: 80px;
+    /* 1 giờ = 80px */
+    position: relative;
+    /* Container cho sự kiện tuyệt đối */
+    cursor: pointer;
+    /* Thay đổi con trỏ để gợi ý nhấp chuột */
+    width: 100%;
+}
+
+/* KHUNG SỰ KIỆN MỚI/ĐÃ TẠO */
+.calendar-event {
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    background-color: rgba(99, 102, 241, 0.9);
+    /* Màu đậm hơn */
+    border: 1px solid rgb(99, 102, 241);
+    border-radius: 4px;
+    color: white;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    padding: 4px;
+    box-sizing: border-box;
+    cursor: move;
+    /* Con trỏ di chuyển sự kiện */
+    /* QUAN TRỌNG: KÍCH HOẠT KÉO XUNG QUANH */
+    user-select: none;
+    touch-action: none;
+}
+
+/* TAY CẦM (HANDLES) */
+.resize-handle {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 10px;
+    /* Chiều cao để dễ dàng chạm/nhấp */
+    cursor: ns-resize;
+    /* Con trỏ kéo dọc */
+    z-index: 11;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.resize-handle::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background-color: white;
+    border: 1px solid rgb(99, 102, 241);
+    border-radius: 50%;
+    /* Hình tròn */
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+}
+
+.top-handle {
+    top: -5px;
+    /* Để tay cầm nằm chính giữa mép trên */
+}
+
+.bottom-handle {
+    bottom: -5px;
+    /* Để tay cầm nằm chính giữa mép dưới */
+}
+
+
+/* static/calendar.css - Simple Version */
+
+/* Highlight đơn giản cho ngày hôm nay */
+.today-simple-highlight {
+    /* Chỉ có màu nền, không border */
+    background-color: rgba(254, 249, 195, 0.25) !important;
+}
+
+.today-simple-highlight:hover {
+    background-color: rgba(254, 249, 195, 0.4) !important;
+}
+
+/* Badge đơn giản */
+.today-simple-badge {
+    display: inline-block;
+    margin-left: 4px;
+    color: #fbbf24;
+    font-size: 12px;
+    vertical-align: middle;
+    animation: gentle-pulse 3s infinite;
+}
+
+/* Animation nhẹ nhàng */
+@keyframes gentle-pulse {
+    0%, 100% {
+        opacity: 0.7;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.1);
+    }
+}
+
+/* Đảm bảo các event trong ô vẫn hiển thị tốt */
+.today-simple-highlight .scheduled-event {
+    background-color: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(245, 158, 11, 0.2) !important;
+}

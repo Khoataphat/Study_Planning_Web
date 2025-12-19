@@ -24,6 +24,8 @@
         <link rel="stylesheet" href="../resources/css/pastel-overrides.css">
         <link rel="stylesheet" href="../resources/css/tasks.css">
         <!-- khoa -->
+        <link rel="stylesheet" href="/resources/css/khoa-task.css">
+        <!-- khoa -->
         <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet" />
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
         <script>
@@ -138,12 +140,6 @@
                     <!-- Left Panel: Task List & Form -->
                     <div class="w-[520px] flex flex-col bg-slate-50/50 border-r border-slate-200">
 
-                        <!-- Header -->
-                        <div class="px-6 py-5 bg-white/60 backdrop-blur-md border-b border-slate-200">
-                            <h2 class="text-xl font-bold text-slate-dark mb-1">Task Management</h2>
-                            <p class="text-sm text-slate-500">Manage your tasks and deadlines seamlessly</p>
-                        </div>
-
                         <!-- Status Filter & Add Button -->
                         <div class="px-6 py-4 border-b border-slate-200 space-y-3">
                             <div class="flex gap-2">
@@ -162,18 +158,12 @@
                             </div>
 
                             <!-- Add New Task Button -->
+
                             <button onclick="showTaskForm()" id="addTaskBtn" class="w-full btn-add-task">
                                 <i class="fa-solid fa-plus"></i>
                                 <span>Add New Task</span>
                             </button>
-                        </div>
 
-                        <!-- Task List - Now with more space! -->
-                        <div class="flex-1 overflow-y-auto px-4 py-4" id="taskListContainer">
-                            <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wide px-2 mb-3">YOUR TASKS</h3>
-                            <div id="taskList" class="space-y-2">
-                                <!-- Tasks will be dynamically added here -->
-                            </div>
                         </div>
 
                         <!-- Add/Edit Task Form - Collapsible -->
@@ -240,6 +230,15 @@
                                 </form>
                             </div>
                         </div>
+
+                        <!-- Task List - Now with more space! -->
+                        <div class="flex-1 overflow-y-auto px-4 py-4" id="taskListContainer">
+                            <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wide px-2 mb-3">YOUR TASKS</h3>
+                            <div id="taskList" class="space-y-2">
+                                <!-- Tasks will be dynamically added here -->
+                            </div>
+                        </div>
+
                     </div>
 
                     <!-- Right Panel: Calendar Timeline -->
@@ -303,7 +302,17 @@
         <%-- Đảm bảo toàn bộ HTML của lớp phủ được tải vào DOM trước khi JS chạy --%>
         <%@ include file="settings-overlay.jsp" %>
 
-        <script src="../resources/js/tasks.js"></script>
+        
+        
+        
+
+        <!-- khoa -->
+        <script src="/resources/js/tasks.js"></script>
+        <script src="/resources/js/schedule-collision.js"></script>
+        <script src="/resources/js/khoa-tasks.js"></script>
+        <script src="/resources/js/calendar-highlight.js"></script>
+
+
         <script src="../resources/js/smart-schedule.js"></script>
         <!-- khoa -->
         <script src="/resources/js/sidebar.js"></script>

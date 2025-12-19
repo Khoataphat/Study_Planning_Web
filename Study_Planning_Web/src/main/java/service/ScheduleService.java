@@ -10,10 +10,12 @@ import java.util.*;
  * Service layer for schedule business logic
  */
 public class ScheduleService {
+
     private final UserScheduleDAO scheduleDAO;
 
     public ScheduleService() {
         this.scheduleDAO = new UserScheduleDAO();
+        this.scheduleDAO.debugTableStructure();
     }
 
     /**
@@ -31,7 +33,7 @@ public class ScheduleService {
         Map<String, List<UserSchedule>> weeklySchedule = new LinkedHashMap<>();
 
         // Initialize all days
-        String[] days = { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+        String[] days = {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"};
         for (String day : days) {
             weeklySchedule.put(day, new ArrayList<>());
         }
@@ -46,8 +48,8 @@ public class ScheduleService {
     }
 
     /**
-     * Save multiple schedules (batch insert)
-     * Deletes existing schedules in the collection and inserts new ones
+     * Save multiple schedules (batch insert) Deletes existing schedules in the
+     * collection and inserts new ones
      */
     public boolean saveSchedules(int userId, int collectionId, List<UserSchedule> schedules) {
         try {
@@ -79,40 +81,62 @@ public class ScheduleService {
     }
 
     /**
-     * Validate time slot for conflicts
-     * Checks if the new schedule overlaps with existing ones
+     * Validate time slot for conflicts Checks if the new schedule overlaps with
+     * existing ones
      */
     public boolean validateTimeSlot(int userId, UserSchedule newSchedule) {
-        List<UserSchedule> existingSchedules = scheduleDAO.getByUserIdAndDay(
-                userId,
-                newSchedule.getDayOfWeek());
+    System.out.println("[SERVICE VALIDATE] Validating time slot:");
+    System.out.println("  Collection: " + newSchedule.getCollectionId());
+    System.out.println("  Day: " + newSchedule.getDayOfWeek());
+    System.out.println("  Time: " + newSchedule.getStartTime() + " - " + newSchedule.getEndTime());
+    System.out.println("  Subject: " + newSchedule.getSubject());
+    System.out.println("  TaskId: " + newSchedule.getTaskId());
+    
+    // ⭐️ SỬA: Gọi đúng method mới
+    List<UserSchedule> existingSchedules = scheduleDAO.getByCollectionIdAndDay(
+        newSchedule.getCollectionId(),
+        newSchedule.getDayOfWeek()
+    );
+    
+    System.out.println("[SERVICE VALIDATE] Found " + existingSchedules.size() + " existing schedules");
+    
 
-        Time newStart = newSchedule.getStartTime();
-        Time newEnd = newSchedule.getEndTime();
+    Time newStart = newSchedule.getStartTime();
+    Time newEnd = newSchedule.getEndTime();
 
-        // Check if start time is before end time
-        if (newStart.compareTo(newEnd) >= 0) {
+    // Kiểm tra start time < end time
+    if (newStart.compareTo(newEnd) >= 0) {
+        System.out.println("❌ Invalid time: start >= end");
+        return false;
+    }
+
+    // Kiểm tra overlap với existing schedules
+    for (UserSchedule existing : existingSchedules) {
+        // Skip nếu là cùng schedule (cho update)
+        if (existing.getScheduleId() == newSchedule.getScheduleId()) {
+            continue;
+        }
+
+        Time existingStart = existing.getStartTime();
+        Time existingEnd = existing.getEndTime();
+
+        // Debug log
+        System.out.println("🔍 Checking overlap with: " + existing.getSubject() + 
+                         " (" + existingStart + " - " + existingEnd + ")");
+
+        // Kiểm tra overlap
+        boolean overlaps = !(newEnd.compareTo(existingStart) <= 0 || 
+                           newStart.compareTo(existingEnd) >= 0);
+        
+        if (overlaps) {
+            System.out.println("❌ Overlap detected with: " + existing.getSubject());
             return false;
         }
-
-        // Check for overlaps with existing schedules
-        for (UserSchedule existing : existingSchedules) {
-            // Skip if it's the same schedule (for updates)
-            if (existing.getScheduleId() == newSchedule.getScheduleId()) {
-                continue;
-            }
-
-            Time existingStart = existing.getStartTime();
-            Time existingEnd = existing.getEndTime();
-
-            // Check for overlap
-            if (!(newEnd.compareTo(existingStart) <= 0 || newStart.compareTo(existingEnd) >= 0)) {
-                return false; // Overlap detected
-            }
-        }
-
-        return true;
     }
+
+    System.out.println("✅ No time conflicts detected");
+    return true;
+}
 
     /**
      * Count total schedules for a collection
@@ -147,6 +171,8 @@ public class ScheduleService {
         if (!validateTimeSlot(userId, schedule)) {
             return -1;
         }
+        // Debug: Log taskId
+        System.out.println("[DEBUG] Creating schedule with taskId: " + schedule.getTaskId());
         return scheduleDAO.insert(schedule);
     }
 }

@@ -22,19 +22,21 @@ import java.sql.Time;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import model.Task;
+import service.TaskService;
 
 /**
  * Controller for handling schedule-related HTTP requests
  */
-@WebServlet(name = "ScheduleController", urlPatterns = { "/user/schedule" })
+@WebServlet(name = "ScheduleController", urlPatterns = {"/user/schedule"})
 public class ScheduleController extends HttpServlet {
+
     private final ScheduleService scheduleService = new ScheduleService();
 
     /**
-     * Handle GET requests
-     * - action=list: Get all schedules for user
-     * - action=get&id=X: Get specific schedule
-     * - action=weekly: Get weekly schedule grouped by day
+     * Handle GET requests - action=list: Get all schedules for user -
+     * action=get&id=X: Get specific schedule - action=weekly: Get weekly
+     * schedule grouped by day
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -97,8 +99,7 @@ public class ScheduleController extends HttpServlet {
     }
 
     /**
-     * Handle POST requests
-     * - Create or update schedules (batch operation)
+     * Handle POST requests - Create or update schedules (batch operation)
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -108,9 +109,7 @@ public class ScheduleController extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         try {
-            // Get user ID from session
-            // Get user ID from session
-            // Get user ID from session
+            // 1. Kiểm tra trạng thái đăng nhập của User
             HttpSession session = request.getSession(false);
             User user = (session != null) ? (User) session.getAttribute("user") : null;
 
@@ -122,27 +121,83 @@ public class ScheduleController extends HttpServlet {
             int userId = user.getUserId();
             String action = request.getParameter("action");
 
-            // Define Gson for all operations
+            // Define Gson for all operations (Sử dụng tên đầy đủ trong khi khai báo)
             Gson gson = new com.google.gson.GsonBuilder()
                     .registerTypeAdapter(java.sql.Time.class, new utils.SqlTimeDeserializer())
                     .create();
 
-            // Read JSON body
+            // 2. Đọc JSON body từ request
             StringBuilder sb = new StringBuilder();
-            BufferedReader reader = request.getReader();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line);
+            try (BufferedReader reader = request.getReader()) { // Sử dụng try-with-resources để tự đóng reader
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line);
+                }
             }
             String jsonData = sb.toString();
 
-            if ("add".equals(action)) {
-                // Handle single schedule creation
+            // 3. Xử lý Cập nhật (action=update)
+            if ("update".equals(action)) {
                 UserSchedule schedule = gson.fromJson(jsonData, UserSchedule.class);
-                // schedule.setUserId(userId); // Set the logged-in user ID (Removed)
-                // Use createSchedule which returns int (last inserted ID)
+
+                if (schedule == null || schedule.getScheduleId() <= 0) {
+                    sendErrorResponse(response, "Schedule ID and data are required for update", 400);
+                    return;
+                }
+
+                // GỌI SERVICE (Đã sửa đúng tham số userId)
+                boolean success = scheduleService.updateSchedule(userId, schedule);
+
+                Map<String, Object> result = new HashMap<>();
+                result.put("success", success);
+                result.put("message",
+                        success ? "Schedule updated successfully" : "Failed to update schedule (Time conflict or DB error)");
+
+                try (PrintWriter out = response.getWriter()) {
+                    out.print(JsonUtil.toJson(result));
+                    out.flush();
+                }
+                return;
+            }
+
+            // 4. Xử lý Tạo mới (action=add)
+            if ("add".equals(action)) {
+                System.out.println("=== ADD SCHEDULE REQUEST ===");
+                System.out.println("JSON Data: " + jsonData);
+
+                UserSchedule schedule = gson.fromJson(jsonData, UserSchedule.class);
+
+                // Debug log chi tiết
+                System.out.println("Parsed Schedule:");
+                System.out.println("  CollectionId: " + schedule.getCollectionId());
+                System.out.println("  TaskId: " + schedule.getTaskId());
+                System.out.println("  DayOfWeek: " + schedule.getDayOfWeek());
+                System.out.println("  StartTime: " + schedule.getStartTime());
+                System.out.println("  EndTime: " + schedule.getEndTime());
+                System.out.println("  Subject: " + schedule.getSubject());
+                System.out.println("  Type: " + schedule.getType());
+
+                // ⭐️ QUAN TRỌNG: Kiểm tra xem taskId đã có hay chưa
+                // Nếu taskId đã có (khác 0), chỉ tạo schedule, KHÔNG tạo task mới
+                if (schedule.getTaskId() > 0) {
+                    System.out.println("📌 TaskId đã tồn tại: " + schedule.getTaskId()
+                            + ", chỉ tạo schedule liên kết");
+
+                    // Kiểm tra xem task có tồn tại không
+                    TaskService taskService = new TaskService();
+                    Task existingTask = taskService.getTaskById(schedule.getTaskId());
+
+                    if (existingTask == null) {
+                        sendErrorResponse(response, "Task không tồn tại với ID: " + schedule.getTaskId(), 400);
+                        return;
+                    }
+                }
+
+                // Gọi service để tạo schedule
                 int newId = scheduleService.createSchedule(userId, schedule);
                 boolean success = newId > 0;
+
+                System.out.println("Service result - success: " + success + ", newId: " + newId);
 
                 Map<String, Object> result = new HashMap<>();
                 result.put("success", success);
@@ -152,13 +207,17 @@ public class ScheduleController extends HttpServlet {
                     result.put("scheduleId", newId);
                 }
 
-                PrintWriter out = response.getWriter();
-                out.print(JsonUtil.toJson(result));
-                out.flush();
+                System.out.println("Response: " + JsonUtil.toJson(result));
+                System.out.println("=== END ADD SCHEDULE ===");
+
+                try (PrintWriter out = response.getWriter()) {
+                    out.print(JsonUtil.toJson(result));
+                    out.flush();
+                }
                 return;
             }
 
-            // Default behavior: Batch save (expecting collectionId param)
+            // 5. Hành vi Mặc định: Batch save
             String collectionIdParam = request.getParameter("collectionId");
             if (collectionIdParam == null) {
                 sendErrorResponse(response, "Collection ID is required", 400);
@@ -177,10 +236,14 @@ public class ScheduleController extends HttpServlet {
             result.put("success", success);
             result.put("message", success ? "Schedules saved successfully" : "Failed to save schedules");
 
-            PrintWriter out = response.getWriter();
-            out.print(JsonUtil.toJson(result));
-            out.flush();
+            try (PrintWriter out = response.getWriter()) {
+                out.print(JsonUtil.toJson(result));
+                out.flush();
+            }
 
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            sendErrorResponse(response, "Invalid Collection ID format", 400);
         } catch (Exception e) {
             e.printStackTrace();
             sendErrorResponse(response, "Server error: " + e.getMessage(), 500);
@@ -188,8 +251,7 @@ public class ScheduleController extends HttpServlet {
     }
 
     /**
-     * Handle DELETE requests
-     * - Delete specific schedule by ID
+     * Handle DELETE requests - Delete specific schedule by ID
      */
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
@@ -251,11 +313,25 @@ public class ScheduleController extends HttpServlet {
     /**
      * Handle get weekly schedule
      */
-    private void handleWeeklySchedule(int collectionId, PrintWriter out) {
-        Map<String, List<UserSchedule>> weeklySchedule = scheduleService.getWeeklySchedule(collectionId);
-        out.print(JsonUtil.toJson(weeklySchedule));
-        out.flush();
+private void handleWeeklySchedule(int collectionId, PrintWriter out) {
+    System.out.println("[ScheduleController] Getting weekly schedule for collection: " + collectionId);
+    
+    Map<String, List<UserSchedule>> weeklySchedule = scheduleService.getWeeklySchedule(collectionId);
+    
+    // Debug log
+    System.out.println("[ScheduleController] Weekly schedule data:");
+    for (Map.Entry<String, List<UserSchedule>> entry : weeklySchedule.entrySet()) {
+        System.out.println("  " + entry.getKey() + ": " + entry.getValue().size() + " events");
+        for (UserSchedule schedule : entry.getValue()) {
+            System.out.println("    - ID:" + schedule.getScheduleId() + 
+                             ", TaskID:" + schedule.getTaskId() + 
+                             ", " + schedule.getSubject());
+        }
     }
+    
+    out.print(JsonUtil.toJson(weeklySchedule));
+    out.flush();
+}
 
     /**
      * Handle count schedules

@@ -7,6 +7,7 @@ import java.sql.Timestamp;
  * Model class representing user_schedule table
  */
 public class UserSchedule {
+
     private int scheduleId;
     // user_id removed as per schema change (linked via collection_id)
     private int collectionId;
@@ -17,6 +18,8 @@ public class UserSchedule {
     private String type; // class, break, self-study, activity
     private String description; // Added for Smart Schedule details
     private Timestamp createdAt;
+    private int taskId; //khoa
+    private boolean isTask; //khoa
 
     // Constructors
     public UserSchedule() {
@@ -42,6 +45,30 @@ public class UserSchedule {
         this.subject = subject;
         this.type = type;
         this.createdAt = createdAt;
+    }
+
+    // Constructor mới với taskId
+    public UserSchedule(int scheduleId, int collectionId, int taskId, String dayOfWeek,
+            Time startTime, Time endTime, String subject,
+            String type, Timestamp createdAt) {
+        this.scheduleId = scheduleId;
+        this.collectionId = collectionId;
+        this.taskId = taskId;
+        this.dayOfWeek = dayOfWeek;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.subject = subject;
+        this.type = type;
+        this.createdAt = createdAt;
+        this.isTask = (taskId > 0); // Auto-set isTask based on taskId
+    }
+
+    public boolean isTask() {
+        return isTask;
+    }
+
+    public void setTask(boolean isTask) {
+        this.isTask = isTask;
     }
 
     // Getters and Setters
@@ -117,17 +144,32 @@ public class UserSchedule {
         this.createdAt = createdAt;
     }
 
+    //khoa
+    // Getter và Setter cho taskId
+    public int getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(int taskId) {
+        this.taskId = taskId;
+        if (taskId > 0) {
+            this.isTask = true; // Auto-set isTask khi có taskId
+        }
+    }
+
     @Override
     public String toString() {
-        return "UserSchedule{" +
-                "scheduleId=" + scheduleId +
-                ", collectionId=" + collectionId +
-                ", dayOfWeek='" + dayOfWeek + '\'' +
-                ", startTime=" + startTime +
-                ", endTime=" + endTime +
-                ", subject='" + subject + '\'' +
-                ", type='" + type + '\'' +
-                ", createdAt=" + createdAt +
-                '}';
+        return "UserSchedule{"
+                + "scheduleId=" + scheduleId
+                + ", collectionId=" + collectionId
+                + ", taskId=" + taskId
+                + ", isTask=" + isTask
+                + ", dayOfWeek='" + dayOfWeek + '\''
+                + ", startTime=" + startTime
+                + ", endTime=" + endTime
+                + ", subject='" + subject + '\''
+                + ", type='" + type + '\''
+                + ", createdAt=" + createdAt
+                + '}';
     }
 }
