@@ -1,0 +1,57 @@
+/* ======================================== */
+/* THIẾT LẬP CẦN THIẾT CHO SIDEBAR TỪ CÁC BƯỚC TRƯỚC */
+/* ======================================== */
+#sidebar {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    transition: all 0.5s ease-in-out;
+    align-items: flex-start;
+    width: 6rem; /* Mặc định w-24 */
+}
+#mainContent {
+    margin-left: 6rem; /* Mặc định margin-left w-24 */
+    transition: all 0.5s ease-in-out;
+}
+.nav-link {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    height: 3rem;
+    overflow: hidden;
+    transition: all 0.5s ease-in-out;
+    width: 5rem; /* 6rem - 1rem padding */
+    justify-content: center;
+    padding: 0;
+}
+.sidebar-text {
+    transition: opacity 0.5s ease-in-out var(--stagger-delay),
+        max-width 0.5s ease-in-out var(--stagger-delay);
+    opacity: 0;
+    max-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    --stagger-delay: 0s;
+}
+
+/* TRẠNG THÁI MỞ RỘNG (EXPANDED) */
+.sidebar-expanded #sidebar {
+    width: 16rem; /* w-64 */
+}
+.sidebar-expanded #mainContent {
+    margin-left: 16rem; /* margin-left w-64 */
+}
+.sidebar-expanded .nav-link {
+    width: 100%;
+    justify-content: flex-start;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+}
+.sidebar-expanded .sidebar-text {
+    opacity: 1;
+    max-width: 150px;
+}
+
+/* FIX JSTL Grid: đảm bảo các ô trống không bị tràn hàng */
+.timetable-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}

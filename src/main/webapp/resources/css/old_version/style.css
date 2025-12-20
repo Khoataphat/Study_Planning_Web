@@ -1,0 +1,157 @@
+:root {
+    --primary-bg: #f0f0f0; /* Nền chung */
+    --secondary-bg: #e0e0e0; /* Nền các section */
+    --dark-bg: #555; /* Nền header, nút */
+    --text-color: #333;
+    --light-text-color: #fff;
+    --border-color: #aaa;
+    --border-style: dashed;
+    --border-width: 2px;
+    --border-radius: 10px;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: var(--primary-bg);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Để giữ nội dung ở trên cùng */
+    min-height: 100vh;
+    box-sizing: border-box; /* Đảm bảo padding không làm tràn */
+}
+
+.container {
+    width: 90%; /* Chiều rộng tổng thể của trang */
+    max-width: 1200px; /* Giới hạn chiều rộng tối đa */
+    background-color: #fff;
+    border: var(--border-width) var(--border-style) var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 15px; /* Khoảng cách từ viền ngoài vào các section */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Header Section */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--dark-bg);
+    padding: 10px 20px;
+    border-radius: var(--border-radius);
+    color: var(--light-text-color);
+    margin-bottom: 15px; /* Khoảng cách dưới header */
+}
+
+.logo {
+    background-color: var(--dark-bg); /* Đổi màu nền cho logo để nổi bật hơn */
+    padding: 8px 15px;
+    border-radius: var(--border-radius);
+    font-weight: bold;
+    border: 1px solid var(--light-text-color); /* Viền cho logo */
+}
+
+.btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.btn-sign-in {
+    background-color: var(--dark-bg); /* Giống màu header */
+    color: var(--light-text-color);
+    border: 1px solid var(--light-text-color);
+}
+
+.btn-sign-in:hover {
+    background-color: #666;
+}
+
+/* Main Content Area */
+.main-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr; /* Cột trái rộng gấp đôi cột phải */
+    gap: 15px; /* Khoảng cách giữa các cột */
+    border: var(--border-width) var(--border-style) var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 15px;
+    background-color: var(--primary-bg); /* Nền cho toàn bộ main-content */
+    min-height: 400px; /* Chiều cao tối thiểu cho main content */
+}
+
+.left-section {
+    background-color: var(--secondary-bg);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    border: var(--border-width) var(--border-style) var(--border-color); /* Viền đứt nét */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Căn giữa nội dung */
+    align-items: center;
+    color: var(--text-color);
+    text-align: center;
+}
+
+.right-section {
+    background-color: var(--secondary-bg);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    border: var(--border-width) var(--border-style) var(--border-color); /* Viền đứt nét */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Căn giữa form */
+    align-items: center;
+}
+
+.signup-form {
+    background-color: #fff; /* Nền trắng cho form */
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    width: 100%; /* Đảm bảo form lấp đầy right-section */
+    max-width: 280px; /* Giới hạn chiều rộng của form */
+    text-align: center;
+}
+
+.signup-form h2 {
+    color: var(--text-color);
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 1.5em;
+}
+
+.input-field {
+    width: calc(100% - 20px); /* Đảm bảo padding không làm tràn */
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: var(--border-radius);
+    font-size: 1em;
+}
+
+.btn-sign-up {
+    background-color: var(--dark-bg);
+    color: var(--light-text-color);
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1em;
+}
+
+.btn-sign-up:hover {
+    background-color: #666;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .main-content {
+        grid-template-columns: 1fr; /* Chuyển sang một cột trên màn hình nhỏ hơn */
+    }
+    .container {
+        padding: 10px;
+    }
+}

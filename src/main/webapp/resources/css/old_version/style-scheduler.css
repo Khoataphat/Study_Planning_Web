@@ -1,0 +1,179 @@
+:root {
+    --bg-light: #f4f7f9;
+    --sidebar-start: #333;
+    --sidebar-end: #666;
+    --primary-white: #fff;
+    --dark-grey: #555;
+    --light-grey: #ddd;
+    --header-bg: #888;
+    --accent-color: #4a90e2; /* Màu xanh nổi bật cho Add/Plus */
+    --border-radius: 8px;
+    --padding-card: 15px;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-light);
+    min-height: 100vh;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* --- Container & Layout (Tái sử dụng cấu trúc Dashboard) --- */
+.scheduler-container {
+    display: grid;
+    grid-template-columns: 200px 1fr; 
+    width: 95%;
+    max-width: 1400px;
+    height: 90vh;
+    background-color: var(--primary-white);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.sidebar {
+    background: linear-gradient(to bottom, var(--sidebar-start), var(--sidebar-end));
+    padding: var(--padding-card);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.profile-circle {
+    width: 80px; height: 80px; background-color: var(--light-grey); border-radius: 50%;
+    margin-bottom: 40px; border: 2px solid var(--primary-white);
+}
+.sidebar-menu { width: 100%; display: flex; flex-direction: column; gap: 15px; }
+.menu-item { background: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.4));
+    height: 40px; border-radius: var(--border-radius); }
+
+.main-area { display: flex; flex-direction: column; background-color: var(--primary-white); }
+
+.top-header { background-color: var(--header-bg); padding: 10px var(--padding-card);
+    height: 60px; display: flex; justify-content: space-between; align-items: center; }
+.search-bar { background-color: var(--light-grey); height: 30px; width: 60%; border-radius: 20px; }
+.header-actions { display: flex; align-items: center; gap: 15px; color: var(--primary-white); font-size: 1.5em; }
+
+/* --- Scheduler Content Styling --- */
+.scheduler-content-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 cột cho 2 lịch và 1 nút thêm */
+    grid-template-rows: 350px 1fr; /* Hàng 1 cho lịch, hàng 2 cho nút hành động */
+    gap: var(--padding-card);
+    padding: var(--padding-card);
+    overflow-y: auto;
+}
+
+/* Card chung cho lịch và thêm mới */
+.calendar-card, .add-new-card {
+    background-color: var(--bg-light);
+    border: 1px dashed var(--light-grey);
+    border-radius: var(--border-radius);
+    padding: 10px;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+}
+
+.calendar-header {
+    background-color: var(--dark-grey);
+    color: var(--primary-white);
+    padding: 8px 10px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    margin: -10px -10px 10px -10px; /* Kéo dài nền */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.calendar-title {
+    background-color: rgba(255, 255, 255, 0.2);
+    width: 60%;
+    height: 15px;
+    border-radius: 3px;
+}
+
+.calendar-action-dot {
+    width: 10px;
+    height: 10px;
+    background-color: var(--primary-white);
+    border-radius: 50%;
+}
+
+.calendar-grid-placeholder {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.calendar-grid-placeholder td {
+    border: 1px solid var(--light-grey);
+    height: 40px;
+    background-color: var(--primary-white);
+}
+
+.calendar-footer-line {
+    height: 5px;
+    background-color: var(--light-grey);
+    margin-top: 10px;
+    border-radius: 5px;
+}
+
+/* Add New Card Styling */
+.add-new-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    background-color: rgba(74, 144, 226, 0.1); /* Nền xanh nhạt */
+}
+
+.add-icon {
+    width: 80px;
+    height: 80px;
+    background-color: var(--accent-color);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.plus-sign {
+    color: var(--primary-white);
+    font-size: 3em;
+    font-weight: 300;
+}
+
+/* Action Buttons Row */
+.action-buttons-row {
+    grid-column: 1 / 4; /* Chiếm toàn bộ 3 cột */
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.action-button {
+    background-color: var(--light-grey);
+    height: 40px;
+    width: 150px;
+    border-radius: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .scheduler-container {
+        grid-template-columns: 100px 1fr;
+    }
+    .scheduler-content-grid {
+        grid-template-columns: 1fr; /* Chuyển sang 1 cột trên màn hình nhỏ */
+        grid-template-rows: auto;
+    }
+    .calendar-card, .add-new-card {
+        height: 300px;
+    }
+    .action-buttons-row {
+        grid-column: 1 / 2;
+    }
+}

@@ -1,0 +1,210 @@
+:root {
+    --bg-light: #f4f7f9; /* Nền ngoài cùng */
+    --sidebar-start: #333; /* Màu sidebar gradient start */
+    --sidebar-end: #666;   /* Màu sidebar gradient end */
+    --primary-white: #fff;
+    --dark-grey: #555;
+    --light-grey: #ddd;
+    --accent-color: #7b00ff; /* Màu tím nổi bật (cho border bảng) */
+    --chart-bg: #e9ecef;
+    --header-bg: #888;
+    --border-radius: 8px;
+    --padding-card: 15px;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-light);
+    min-height: 100vh;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Container chính sử dụng Grid để bố trí Sidebar và Main Area */
+.dashboard-container {
+    display: grid;
+    grid-template-columns: 200px 1fr; /* Sidebar cố định 200px, Main Area chiếm hết phần còn lại */
+    width: 95%;
+    max-width: 1400px;
+    height: 90vh;
+    background-color: var(--primary-white);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-radius: var(--border-radius);
+    overflow: hidden; /* Cắt nội dung tràn */
+}
+
+/* Sidebar Styling */
+.sidebar {
+    background: linear-gradient(to bottom, var(--sidebar-start), var(--sidebar-end));
+    color: var(--primary-white);
+    padding: var(--padding-card);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-circle {
+    width: 80px;
+    height: 80px;
+    background-color: var(--light-grey);
+    border-radius: 50%;
+    margin-bottom: 40px;
+    border: 2px solid var(--primary-white);
+}
+
+.sidebar-menu {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.menu-item {
+    background-color: rgba(255, 255, 255, 0.3);
+    height: 40px;
+    border-radius: var(--border-radius);
+    /* Tạo hiệu ứng gradient mờ như trong ảnh */
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.4));
+}
+
+/* Main Area Styling */
+.main-area {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--bg-light);
+}
+
+/* Top Header Bar */
+.top-header {
+    background-color: var(--header-bg);
+    padding: 10px var(--padding-card);
+    height: 60px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.search-bar {
+    background-color: var(--light-grey);
+    height: 30px;
+    width: 60%;
+    border-radius: 20px;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    color: var(--primary-white);
+    font-size: 1.5em;
+}
+
+/* Content Grid for Charts and Table */
+.content-grid {
+    display: grid;
+    grid-template-columns: 3fr 2fr; /* Chia 2 cột: 3 phần cho cột trái, 2 phần cho cột phải */
+    grid-template-rows: 250px 1fr; /* Cố định chiều cao hàng 1, hàng 2 chiếm hết phần còn lại */
+    gap: var(--padding-card);
+    padding: var(--padding-card);
+    overflow-y: auto;
+}
+
+.card {
+    background-color: var(--primary-white);
+    border-radius: var(--border-radius);
+    padding: var(--padding-card);
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+}
+
+.chart-title {
+    font-weight: bold;
+    color: var(--dark-grey);
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.chart-placeholder {
+    background-color: var(--chart-bg);
+    border-radius: 5px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--dark-grey);
+    font-size: 0.9em;
+}
+
+/* Vị trí của các components trong grid */
+.chart-line { grid-area: 1 / 1 / 2 / 2; } /* Hàng 1, Cột 1 */
+.chart-bar { grid-area: 1 / 2 / 2 / 3; }  /* Hàng 1, Cột 2 */
+.timetable-table { grid-area: 2 / 1 / 3 / 2; } /* Hàng 2, Cột 1 */
+.chart-pie { grid-area: 2 / 2 / 3 / 3; }    /* Hàng 2, Cột 2 */
+
+
+/* Bảng Timetable Styling */
+.table-header {
+    background-color: var(--dark-grey);
+    color: var(--primary-white);
+    padding: 10px;
+    margin: calc(-1 * var(--padding-card)) calc(-1 * var(--padding-card)) 10px calc(-1 * var(--padding-card)); /* Kéo dài nền */
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+    text-align: center;
+}
+
+.table-placeholder {
+    width: 100%;
+    border-collapse: collapse;
+    border: 2px solid var(--accent-color); /* Viền màu tím */
+}
+
+.table-placeholder td, .table-placeholder th {
+    border: 1px solid #ccc;
+    height: 40px;
+    background-color: var(--primary-white);
+}
+
+.table-head-row {
+    background-color: #eee;
+    height: 40px !important;
+}
+
+/* Biểu đồ tròn (Pie Chart) */
+.chart-pie .chart-placeholder {
+    /* Mô phỏng biểu đồ tròn */
+    height: 200px; 
+    background: conic-gradient(
+        #5ec7c4 0% 62.5%, /* Mức 1 */
+        #3b99b0 62.5% 87.5%, /* Mức 2 (25%) */
+        #2a6f8b 87.5% 100% /* Mức 3 (12.5%) */
+    );
+    border-radius: 50%;
+    width: 200px;
+    margin: 30px auto;
+}
+
+/* Điều chỉnh Responsive */
+@media (max-width: 1024px) {
+    .dashboard-container {
+        grid-template-columns: 100px 1fr; /* Sidebar nhỏ hơn */
+    }
+    .profile-circle {
+        width: 50px;
+        height: 50px;
+    }
+    .menu-item {
+        height: 30px;
+    }
+    .content-grid {
+        grid-template-columns: 1fr; /* Chuyển sang một cột */
+        grid-template-rows: repeat(4, auto); /* Chiều cao tự động */
+    }
+    .chart-line, .chart-bar, .timetable-table, .chart-pie {
+        grid-area: auto;
+        height: 300px; /* Cố định chiều cao để hiển thị đồ thị */
+    }
+}
