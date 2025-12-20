@@ -244,7 +244,7 @@ public class ScheduleCollectionController extends HttpServlet {
 
             Map<String, Object> result = new HashMap<>();
             result.put("success", success);
-            result.put("message", success ? "Collection deleted successfully" : "Cannot delete the last collection");
+            result.put("message", success ? "Collection deleted successfully" : "Failed to delete collection");
 
             PrintWriter out = response.getWriter();
             out.print(JsonUtil.toJson(result));

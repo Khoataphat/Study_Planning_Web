@@ -184,7 +184,7 @@ function deleteCollection(collectionId) {
                     alert('Đã xóa lịch thành công!');
                     location.reload();
                 } else {
-                    alert(data.message || 'Không thể xóa lịch cuối cùng!');
+                    alert(data.message || 'Không thể xóa lịch!');
                 }
             })
             .catch(error => {
