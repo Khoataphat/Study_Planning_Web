@@ -1,0 +1,32 @@
+/* Designer Page Styles */
+
+.time-slot {
+    min-height: 80px;
+    transition: all 0.2s ease;
+    border: 1px dashed transparent;
+}
+
+.time-slot:hover {
+    background-color: rgba(165, 180, 252, 0.05);
+    border-color: rgba(165, 180, 252, 0.3);
+}
+
+.task-item {
+    cursor: move;
+    transition: all 0.2s ease;
+}
+
+.task-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.event-block {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.event-block:hover {
+    transform: scale(1.02);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}

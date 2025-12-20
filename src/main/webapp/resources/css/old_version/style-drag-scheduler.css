@@ -1,0 +1,211 @@
+:root {
+    --bg-light: #f4f7f9;
+    --sidebar-start: #333;
+    --sidebar-end: #666;
+    --primary-white: #fff;
+    --dark-grey: #555;
+    --light-grey: #ddd;
+    --header-bg: #888;
+    --border-radius: 8px;
+    --padding-card: 15px;
+    /* Màu sự kiện kéo thả */
+    --color-yellow: #fdd835;
+    --color-blue: #42a5f5;
+    --color-green: #66bb6a;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-light);
+    min-height: 100vh;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* --- Container & Layout (Tái sử dụng cấu trúc) --- */
+.scheduler-container {
+    display: grid;
+    grid-template-columns: 200px 1fr; 
+    width: 95%;
+    max-width: 1400px;
+    height: 90vh;
+    background-color: var(--primary-white);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+/* Sidebar và Header Styling (Tương tự các trang trước) */
+.sidebar {
+    background: linear-gradient(to bottom, var(--sidebar-start), var(--sidebar-end));
+    padding: var(--padding-card);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.profile-circle {
+    width: 80px; height: 80px; background-color: var(--light-grey); border-radius: 50%;
+    margin-bottom: 40px; border: 2px solid var(--primary-white);
+}
+.sidebar-menu { width: 100%; display: flex; flex-direction: column; gap: 15px; }
+.menu-item { background: linear-gradient(to right, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.4));
+    height: 40px; border-radius: var(--border-radius); }
+
+.main-area { display: flex; flex-direction: column; background-color: var(--primary-white); }
+
+.top-header { background-color: var(--header-bg); padding: 10px var(--padding-card);
+    height: 60px; display: flex; justify-content: space-between; align-items: center; }
+
+.top-option {
+    background-color: var(--light-grey);
+    height: 30px;
+    width: 120px;
+    border-radius: 20px;
+    margin-right: 15px;
+}
+.top-header > .top-option:last-of-type {
+    margin-right: auto; /* Đẩy các nút actions sang phải */
+}
+
+.header-actions { display: flex; align-items: center; gap: 15px; color: var(--primary-white); font-size: 1.5em; }
+
+/* --- Scheduler Grid Area --- */
+.scheduler-grid-area {
+    padding: var(--padding-card);
+    display: grid;
+    grid-template-areas: 
+        "timetable side-panels"
+        "actions   actions";
+    grid-template-columns: 3fr 1fr; /* Bảng lịch chiếm 3 phần, Panels chiếm 1 phần */
+    grid-template-rows: auto 50px; /* Hàng 1 tự động, hàng 2 (actions) cố định */
+    gap: var(--padding-card);
+    position: relative; /* Quan trọng để định vị panel kéo thả */
+}
+
+/* Bảng Lịch (Timetable) */
+.timetable-card {
+    grid-area: timetable;
+    background-color: var(--bg-light);
+    border: 1px dashed var(--light-grey);
+    border-radius: var(--border-radius);
+    overflow: hidden;
+}
+
+.timetable-grid-placeholder {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table-head-row {
+    background-color: var(--dark-grey);
+    height: 40px;
+}
+
+.timetable-grid-placeholder td {
+    border: 1px solid var(--light-grey);
+    height: 60px; /* Chiều cao ô lịch */
+    background-color: var(--primary-white);
+}
+
+/* --- Side Panels (Right Section) --- */
+.side-panels {
+    grid-area: side-panels;
+    display: flex;
+    flex-direction: column;
+    gap: var(--padding-card);
+}
+
+/* Panel Loại Sự kiện */
+.event-types-panel {
+    background-color: var(--bg-light);
+    border: 1px dashed var(--light-grey);
+    border-radius: var(--border-radius);
+    padding: 15px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.event-type {
+    height: 60px;
+    border-radius: var(--border-radius);
+    cursor: grab;
+}
+.event-type.yellow { background-color: var(--color-yellow); }
+.event-type.blue { background-color: var(--color-blue); }
+.event-type.green { background-color: var(--color-green); }
+
+/* --- Task List Floating Panel (Vị trí độc lập) --- */
+.task-list-floating-panel {
+    /* Đây là panel nổi lên trên, thường không nằm trong luồng grid */
+    position: absolute; /* Định vị tuyệt đối */
+    left: 10px; 
+    bottom: 50px;
+    width: 250px;
+    background-color: var(--bg-light);
+    border: 1px dashed var(--dark-grey);
+    border-radius: var(--border-radius);
+    padding: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.task-list-header {
+    background-color: var(--light-grey);
+    height: 20px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.task-item {
+    background-color: var(--primary-white);
+    height: 20px;
+    border-radius: 5px;
+    margin-bottom: 8px;
+    border: 1px dashed #aaa;
+    cursor: grab;
+}
+
+/* Hàng nút hành động dưới cùng */
+.action-buttons-row {
+    grid-area: actions;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    padding-top: 10px;
+}
+
+.action-button {
+    background-color: var(--light-grey);
+    height: 40px;
+    width: 150px;
+    border-radius: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .scheduler-container {
+        grid-template-columns: 100px 1fr;
+    }
+    .scheduler-grid-area {
+        grid-template-columns: 1fr;
+        grid-template-areas: 
+            "timetable"
+            "side-panels"
+            "actions";
+    }
+    .side-panels {
+        flex-direction: column;
+    }
+    .task-list-floating-panel {
+        /* Đẩy panel nổi vào luồng chính trên màn hình nhỏ */
+        position: relative; 
+        left: 0;
+        bottom: 0;
+        width: 100%;
+        margin-bottom: 15px;
+    }
+}
