@@ -83,7 +83,7 @@ public class SetupController extends HttpServlet {
             session.setAttribute("user", user);
 
             // 5. Chuyển hướng người dùng đến Dashboard
-            resp.sendRedirect(req.getContextPath() + "/views/home.html");
+            resp.sendRedirect(req.getContextPath() + "/views/dashboard.jsp");
             // --AnNX-- nên đổi sang thành dashboard.jsp nha
 
         } catch (Exception e) {
