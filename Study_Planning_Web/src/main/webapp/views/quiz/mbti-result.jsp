@@ -4,570 +4,505 @@
     Author     : Admin
 --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+
+<c:set var="currentTheme" value="${empty theme ? 'light' : theme}" />
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="${currentTheme == 'dark' ? 'dark' : ''}">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <title>Kết quả MBTI - ${mbtiResult.mbtiType}</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&amp;display=swap" rel="stylesheet" />
+    
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        .gradient-bg {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        .result-header {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        
-        .mbti-badge {
-            font-size: 48px;
-            font-weight: bold;
-            color: #667eea;
-            margin-bottom: 20px;
-        }
-        
-        .result-header h1 {
-            color: #333;
-            font-size: 32px;
-            margin-bottom: 15px;
-        }
-        
-        .result-description {
-            color: #666;
-            font-size: 18px;
-            line-height: 1.6;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .dimensions-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-        
-        @media (max-width: 768px) {
-            .dimensions-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .dimension-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        
-        .dimension-title {
-            font-size: 18px;
-            color: #333;
-            margin-bottom: 20px;
-            text-align: center;
-            font-weight: 600;
-        }
-        
-        .dimension-bar {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 10px;
-        }
-        
-        .dimension-label {
-            width: 120px;
-            font-size: 14px;
-            color: #666;
-        }
-        
-        .dimension-progress {
-            flex: 1;
-            height: 30px;
-            background: #e9ecef;
-            border-radius: 15px;
-            overflow: hidden;
-            position: relative;
         }
         
         .dimension-fill {
-            height: 100%;
             background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-            border-radius: 15px;
+            height: 100%;
+            border-radius: 0.5rem;
             transition: width 1s ease;
         }
         
-        .dimension-value {
-            width: 60px;
-            text-align: center;
-            font-weight: 600;
-            font-size: 14px;
-            color: #333;
+        .mbti-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
-        .traits-section {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         
-        .traits-section h2 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 24px;
-            text-align: center;
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-out;
         }
         
-        .traits-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
         }
         
-        @media (max-width: 768px) {
-            .traits-grid {
-                grid-template-columns: 1fr;
-            }
+        .animate-slide-in {
+            animation: slideIn 0.4s ease-out;
         }
         
-        .trait-card {
-            background: #f8f9ff;
-            padding: 20px;
-            border-radius: 15px;
-            border-left: 4px solid #667eea;
-        }
-        
-        .trait-card.positive {
-            border-left-color: #28a745;
-        }
-        
-        .trait-card.negative {
-            border-left-color: #dc3545;
-        }
-        
-        .trait-card h3 {
-            color: #333;
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-        
-        .trait-card p {
-            color: #666;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-        
-        .action-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 40px;
-        }
-        
-        .btn {
-            padding: 15px 30px;
-            border-radius: 25px;
-            border: none;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .btn-primary {
+        .type-highlight {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-        
-        .btn-secondary {
-            background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
-        }
-        
-        .btn-secondary:hover {
-            background: #f8f9ff;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.1);
-        }
-        
-        .strengths-weaknesses {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-        
-        @media (max-width: 768px) {
-            .strengths-weaknesses {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        .sw-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        
-        .sw-card h3 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .strengths-list, .weaknesses-list {
-            list-style: none;
-        }
-        
-        .strengths-list li, .weaknesses-list li {
-            padding: 10px 0;
-            border-bottom: 1px solid #f0f0f0;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .strengths-list li:last-child, .weaknesses-list li:last-child {
-            border-bottom: none;
-        }
-        
-        .strength-icon {
-            color: #28a745;
-            font-size: 18px;
-        }
-        
-        .weakness-icon {
-            color: #dc3545;
-            font-size: 18px;
-        }
-        
-        .career-suggestions {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-        
-        .career-suggestions h2 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 24px;
-            text-align: center;
-        }
-        
-        .career-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-        }
-        
-        .career-tag {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 500;
-        }
-        
-        .compatible-types {
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-        
-        .compatible-types h2 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-        
-        .type-badges {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-            justify-content: center;
-        }
-        
-        .type-badge {
-            background: #f8f9ff;
-            color: #667eea;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 16px;
-            font-weight: 600;
-            border: 2px solid #667eea;
-        }
-        
-        .type-badge.highlight {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
-        .retake-btn {
-            background: #ff6b6b;
-            color: white;
-        }
-        
-        .retake-btn:hover {
-            background: #ff5252;
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
-        }
-        
-        .share-section {
-            text-align: center;
-            margin-top: 30px;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-        }
-        
-        .share-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: white;
-            color: #333;
-            padding: 12px 24px;
-            border-radius: 25px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            margin: 5px;
-        }
-        
-        .share-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-        }
-        
-        .share-btn.facebook {
-            background: #1877f2;
-            color: white;
-        }
-        
-        .share-btn.twitter {
-            background: #1da1f2;
-            color: white;
-        }
-        
-        .share-btn.copy {
-            background: #6c757d;
-            color: white;
+            font-weight: bold;
         }
     </style>
+    
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#4F46E5",
+                        "background-light": "#F8FAFC",
+                        "background-dark": "#0F172A",
+                        "pastel-purple": "#A5B4FC",
+                        "pastel-light-purple": "#C7D2FE",
+                        "pastel-pink": "#F9A8D4",
+                        "pastel-yellow": "#FDE68A",
+                        "text-color": "#1E293B",
+                        "surface-light": "#FFFFFF",
+                        "surface-dark": "#293548",
+                        "text-light": "#1E293B",
+                        "text-dark": "#E2E8F0",
+                        "border-light": "#E5E7EB",
+                        "border-dark": "#475569",
+                        "secondary-pink": "#F9A8D4",
+                        "secondary-indigo-light": "#C7D2FE",
+                        "secondary-yellow": "#FDE68A",
+                        "quiz-purple": "#667eea",
+                        "quiz-dark-purple": "#764ba2",
+                        "success": "#10B981",
+                        "warning": "#F59E0B",
+                        "danger": "#EF4444",
+                    },
+                    fontFamily: {
+                        display: ["Be Vietnam Pro", "Quicksand", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.75rem",
+                        "2xl": "1rem",
+                        "3xl": "1.5rem",
+                    },
+                },
+            },
+        };
+    </script>
+    <link rel="stylesheet" href="/resources/css/sidebar.css">
+    <link rel="stylesheet" href="/resources/css/setting.css">
 </head>
-<body>
-    <div class="container">
-        <!-- Result Header -->
-        <div class="result-header">
-            <div class="mbti-badge">${mbtiResult.mbtiType}</div>
-            <h1>Kết quả trắc nghiệm MBTI</h1>
-            <p class="result-description">${mbtiResult.description}</p>
-        </div>
-        
-        <!-- Dimensions Grid -->
-        <div class="dimensions-grid">
-            <div class="dimension-card">
-                <div class="dimension-title">Hướng ngoại (E) ↔ Hướng nội (I)</div>
-                <div class="dimension-bar">
-                    <span class="dimension-label">Hướng ngoại</span>
-                    <div class="dimension-progress">
+
+<body class="font-display bg-background-light dark:bg-background-dark text-text-color dark:text-slate-200">
+    <div class="flex min-h-screen">
+        <aside 
+            id="sidebar"
+            class="bg-white dark:bg-slate-900 flex flex-col py-6 space-y-8 border-r border-slate-200 dark:border-slate-800 
+            h-screen fixed top-0 left-0 transition-all duration-500 z-40 cursor-pointer"
+            >
+            <div class="w-14 h-14 bg-primary rounded-full flex items-center justify-center shrink-0 mx-auto">
+                <span class="material-icons-outlined text-white text-3xl">face</span>
+            </div>
+
+            <nav class="flex flex-col space-y-2 flex-grow w-full">
+                <a class="nav-link w-full rounded-lg transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
+                   href="/dashboard">
+                    <span class="material-icons-outlined text-3xl shrink-0">dashboard</span>
+                    <span class="ml-4 whitespace-nowrap sidebar-text">Bảng điều khiển</span>
+                </a>
+
+                <a class="nav-link w-full rounded-lg transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
+                   href="${pageContext.request.contextPath}/schedule">
+                    <span class="material-icons-outlined text-3xl shrink-0">event</span>
+                    <span class="ml-4 whitespace-nowrap sidebar-text">Lịch của tôi</span>
+                </a>
+
+                <a class="nav-link w-full rounded-lg transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
+                   href="${pageContext.request.contextPath}/tasks">
+                    <span class="material-icons-outlined text-3xl shrink-0">add_task</span>
+                    <span class="ml-4 whitespace-nowrap sidebar-text">Nhiệm vụ</span>
+                </a>
+
+                <a class="nav-link w-full rounded-lg transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300" 
+                   href="${pageContext.request.contextPath}/smart-schedule">
+                    <span class="material-icons-outlined text-3xl shrink-0">auto_awesome</span>
+                    <span class="ml-4 whitespace-nowrap sidebar-text">Tạo lịch AI</span>
+                </a>
+
+                <a class="nav-link w-full rounded-lg transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
+                   href="${pageContext.request.contextPath}/statistics">
+                    <span class="material-icons-outlined text-3xl shrink-0">interests</span>
+                    <span class="ml-4 whitespace-nowrap sidebar-text">Thống kê</span>
+                </a>
+
+                <%-- Active state for Quiz --%>
+                <a class="nav-link w-full rounded-lg transition-colors bg-primary shadow-md shadow-primary/30 text-white"
+                   href="${pageContext.request.contextPath}/QuizResultController">
+                    <span class="material-icons-outlined text-3xl shrink-0">psychology</span>
+                    <span class="ml-4 whitespace-nowrap sidebar-text">Khám phá bản thân</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main id="mainContent" class="flex-1 flex flex-col p-6 lg:p-8 ml-20 overflow-y-auto">
+            <header class="flex justify-between items-center mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-slate-900 dark:text-white flex items-center">
+                        <span class="material-symbols-outlined mr-3 text-quiz-purple dark:text-pastel-purple">sentiment_satisfied</span>
+                        Kết quả MBTI
+                    </h1>
+                    <p class="text-slate-500 dark:text-slate-400 mt-2">Khám phá tính cách thật của bạn</p>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" aria-label="Settings" onclick="loadSettingsAndOpen()">
+                        <span class="material-icons-outlined text-slate-600 dark:text-slate-300">settings</span>
+                    </button>
+                    <a href="/logout" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" aria-label="Logout">
+                        <span class="material-icons-outlined text-slate-600 dark:text-slate-300">logout</span>
+                    </a>
+                </div>
+            </header>
+
+            <!-- Main Result Card -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-8 mb-8 animate-fade-in">
+                <div class="text-center mb-8">
+                    <div class="text-7xl font-black mbti-badge mb-4">
+                        ${mbtiResult.mbtiType}
+                    </div>
+                    <h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-4">
+                        <c:choose>
+                            <c:when test="${mbtiResult.mbtiType == 'INTJ'}">Kiến trúc sư</c:when>
+                            <c:when test="${mbtiResult.mbtiType == 'INTP'}">Nhà tư duy</c:when>
+                            <c:when test="${mbtiResult.mbtiType == 'ENTJ'}">Người chỉ huy</c:when>
+                            <c:when test="${mbtiResult.mbtiType == 'ENTP'}">Người tranh luận</c:when>
+                            <c:when test="${mbtiResult.mbtiType == 'INFJ'}">Người che chở</c:when>
+                            <c:when test="${mbtiResult.mbtiType == 'INFP'}">Người hòa giải</c:when>
+                            <c:when test="${mbtiResult.mbtiType == 'ENFJ'}">Người cho đi</c:when>
+                            <c:when test="${mbtiResult.mbtiType == 'ENFP'}">Người truyền cảm hứng</c:when>
+                            <c:when test="${mbtiResult.mbtiType == 'ISTJ'}">Người có trách nhiệm</c:when>
+                            <c:when test="${mbtiResult.mbtiType == 'ISFJ'}">Người bảo vệ</c:when>
+                            <c:when test="${mbtiResult.mbtiType == 'ESTJ'}">Người quản lý</c:when>
+                            <c:when test="${mbtiResult.mbtiType == 'ESFJ'}">Người chăm sóc</c:when>
+                            <c:when test="${mbtiResult.mbtiType == 'ISTP'}">Thợ thủ công</c:when>
+                            <c:when test="${mbtiResult.mbtiType == 'ISFP'}">Người nghệ sĩ</c:when>
+                            <c:when test="${mbtiResult.mbtiType == 'ESTP'}">Doanh nhân</c:when>
+                            <c:when test="${mbtiResult.mbtiType == 'ESFP'}">Người trình diễn</c:when>
+                            <c:otherwise>Nhà phân tích</c:otherwise>
+                        </c:choose>
+                    </h2>
+                    <p class="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+                        ${mbtiResult.description}
+                    </p>
+                </div>
+            </div>
+
+            <!-- Dimensions Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- E/I Dimension -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 animate-slide-in">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Hướng ngoại (E) ↔ Hướng nội (I)</h3>
+                        <span class="font-bold text-quiz-purple dark:text-pastel-purple">
+                            ${mbtiResult.dimensionEI}
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm text-slate-500 dark:text-slate-400">Hướng ngoại</span>
+                        <span class="text-sm text-slate-500 dark:text-slate-400">Hướng nội</span>
+                    </div>
+                    <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden mb-4">
                         <div class="dimension-fill" id="ei-progress"></div>
                     </div>
-                    <span class="dimension-label">Hướng nội</span>
                 </div>
-                <div class="dimension-value">${mbtiResult.dimensionEI}</div>
-            </div>
-            
-            <div class="dimension-card">
-                <div class="dimension-title">Giác quan (S) ↔ Trực giác (N)</div>
-                <div class="dimension-bar">
-                    <span class="dimension-label">Giác quan</span>
-                    <div class="dimension-progress">
+
+                <!-- S/N Dimension -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 animate-slide-in" style="animation-delay: 0.1s">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Giác quan (S) ↔ Trực giác (N)</h3>
+                        <span class="font-bold text-quiz-purple dark:text-pastel-purple">
+                            ${mbtiResult.dimensionSN}
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm text-slate-500 dark:text-slate-400">Giác quan</span>
+                        <span class="text-sm text-slate-500 dark:text-slate-400">Trực giác</span>
+                    </div>
+                    <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden mb-4">
                         <div class="dimension-fill" id="sn-progress"></div>
                     </div>
-                    <span class="dimension-label">Trực giác</span>
                 </div>
-                <div class="dimension-value">${mbtiResult.dimensionSN}</div>
-            </div>
-            
-            <div class="dimension-card">
-                <div class="dimension-title">Lý trí (T) ↔ Cảm xúc (F)</div>
-                <div class="dimension-bar">
-                    <span class="dimension-label">Lý trí</span>
-                    <div class="dimension-progress">
+
+                <!-- T/F Dimension -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 animate-slide-in" style="animation-delay: 0.2s">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Lý trí (T) ↔ Cảm xúc (F)</h3>
+                        <span class="font-bold text-quiz-purple dark:text-pastel-purple">
+                            ${mbtiResult.dimensionTF}
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm text-slate-500 dark:text-slate-400">Lý trí</span>
+                        <span class="text-sm text-slate-500 dark:text-slate-400">Cảm xúc</span>
+                    </div>
+                    <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden mb-4">
                         <div class="dimension-fill" id="tf-progress"></div>
                     </div>
-                    <span class="dimension-label">Cảm xúc</span>
                 </div>
-                <div class="dimension-value">${mbtiResult.dimensionTF}</div>
-            </div>
-            
-            <div class="dimension-card">
-                <div class="dimension-title">Nguyên tắc (J) ↔ Linh hoạt (P)</div>
-                <div class="dimension-bar">
-                    <span class="dimension-label">Nguyên tắc</span>
-                    <div class="dimension-progress">
+
+                <!-- J/P Dimension -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 animate-slide-in" style="animation-delay: 0.3s">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white">Nguyên tắc (J) ↔ Linh hoạt (P)</h3>
+                        <span class="font-bold text-quiz-purple dark:text-pastel-purple">
+                            ${mbtiResult.dimensionJP}
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm text-slate-500 dark:text-slate-400">Nguyên tắc</span>
+                        <span class="text-sm text-slate-500 dark:text-slate-400">Linh hoạt</span>
+                    </div>
+                    <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden mb-4">
                         <div class="dimension-fill" id="jp-progress"></div>
                     </div>
-                    <span class="dimension-label">Linh hoạt</span>
                 </div>
-                <div class="dimension-value">${mbtiResult.dimensionJP}</div>
             </div>
-        </div>
-        
-        <!-- Strengths & Weaknesses -->
-        <div class="strengths-weaknesses">
-            <div class="sw-card">
-                <h3>💪 Điểm mạnh</h3>
-                <ul class="strengths-list">
-                    <c:forEach var="strength" items="${mbtiResult.strengths}">
-                        <li><span class="strength-icon">✓</span> ${strength}</li>
+
+            <!-- Strengths & Weaknesses -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <!-- Strengths -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center mr-4">
+                            <span class="material-symbols-outlined text-white text-2xl">military_tech</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Điểm mạnh</h3>
+                    </div>
+                    <div class="space-y-4">
+                        <c:forEach var="strength" items="${mbtiResult.strengths}" varStatus="status">
+                            <div class="flex items-start">
+                                <span class="material-symbols-outlined text-green-500 dark:text-green-400 mr-3 mt-1">check_circle</span>
+                                <span class="text-slate-700 dark:text-slate-300">${strength}</span>
+                            </div>
+                        </c:forEach>
+                        <c:if test="${empty mbtiResult.strengths}">
+                            <div class="flex items-start">
+                                <span class="material-symbols-outlined text-green-500 dark:text-green-400 mr-3 mt-1">check_circle</span>
+                                <span class="text-slate-700 dark:text-slate-300">Tư duy logic và phân tích</span>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="material-symbols-outlined text-green-500 dark:text-green-400 mr-3 mt-1">check_circle</span>
+                                <span class="text-slate-700 dark:text-slate-300">Khả năng lập kế hoạch chiến lược</span>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="material-symbols-outlined text-green-500 dark:text-green-400 mr-3 mt-1">check_circle</span>
+                                <span class="text-slate-700 dark:text-slate-300">Độc lập và tự chủ cao</span>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="material-symbols-outlined text-green-500 dark:text-green-400 mr-3 mt-1">check_circle</span>
+                                <span class="text-slate-700 dark:text-slate-300">Quyết tâm và kiên trì</span>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="material-symbols-outlined text-green-500 dark:text-green-400 mr-3 mt-1">check_circle</span>
+                                <span class="text-slate-700 dark:text-slate-300">Khả năng học hỏi nhanh</span>
+                            </div>
+                        </c:if>
+                    </div>
+                </div>
+
+                <!-- Weaknesses -->
+                <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6">
+                    <div class="flex items-center mb-6">
+                        <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center mr-4">
+                            <span class="material-symbols-outlined text-white text-2xl">warning</span>
+                        </div>
+                        <h3 class="text-xl font-bold text-slate-900 dark:text-white">Điểm cần cải thiện</h3>
+                    </div>
+                    <div class="space-y-4">
+                        <c:forEach var="weakness" items="${mbtiResult.weaknesses}" varStatus="status">
+                            <div class="flex items-start">
+                                <span class="material-symbols-outlined text-yellow-500 dark:text-yellow-400 mr-3 mt-1">warning</span>
+                                <span class="text-slate-700 dark:text-slate-300">${weakness}</span>
+                            </div>
+                        </c:forEach>
+                        <c:if test="${empty mbtiResult.weaknesses}">
+                            <div class="flex items-start">
+                                <span class="material-symbols-outlined text-yellow-500 dark:text-yellow-400 mr-3 mt-1">warning</span>
+                                <span class="text-slate-700 dark:text-slate-300">Đôi khi quá cầu toàn</span>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="material-symbols-outlined text-yellow-500 dark:text-yellow-400 mr-3 mt-1">warning</span>
+                                <span class="text-slate-700 dark:text-slate-300">Khó thể hiện cảm xúc</span>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="material-symbols-outlined text-yellow-500 dark:text-yellow-400 mr-3 mt-1">warning</span>
+                                <span class="text-slate-700 dark:text-slate-300">Có thể thiếu kiên nhẫn</span>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="material-symbols-outlined text-yellow-500 dark:text-yellow-400 mr-3 mt-1">warning</span>
+                                <span class="text-slate-700 dark:text-slate-300">Khó chấp nhận ý kiến trái chiều</span>
+                            </div>
+                            <div class="flex items-start">
+                                <span class="material-symbols-outlined text-yellow-500 dark:text-yellow-400 mr-3 mt-1">warning</span>
+                                <span class="text-slate-700 dark:text-slate-300">Dễ bị căng thẳng khi mất kiểm soát</span>
+                            </div>
+                        </c:if>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Career Suggestions -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 mb-8">
+                <div class="flex items-center mb-6">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center mr-4">
+                        <span class="material-symbols-outlined text-white text-2xl">work</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white">Nghề nghiệp phù hợp</h3>
+                </div>
+                <div class="flex flex-wrap gap-3">
+                    <c:forEach var="career" items="${mbtiResult.recommendedCareers}">
+                        <span class="px-4 py-2 gradient-bg text-white font-medium rounded-full text-sm">
+                            ${career}
+                        </span>
                     </c:forEach>
-                    <c:if test="${empty mbtiResult.strengths}">
-                        <li><span class="strength-icon">✓</span> Tư duy logic và phân tích</li>
-                        <li><span class="strength-icon">✓</span> Khả năng lập kế hoạch chiến lược</li>
-                        <li><span class="strength-icon">✓</span> Độc lập và tự chủ cao</li>
-                        <li><span class="strength-icon">✓</span> Quyết tâm và kiên trì</li>
-                        <li><span class="strength-icon">✓</span> Khả năng học hỏi nhanh</li>
+                    <c:if test="${empty mbtiResult.recommendedCareers}">
+                        <span class="px-4 py-2 gradient-bg text-white font-medium rounded-full text-sm">
+                            Kỹ sư phần mềm
+                        </span>
+                        <span class="px-4 py-2 gradient-bg text-white font-medium rounded-full text-sm">
+                            Data Scientist
+                        </span>
+                        <span class="px-4 py-2 gradient-bg text-white font-medium rounded-full text-sm">
+                            Quản lý dự án
+                        </span>
+                        <span class="px-4 py-2 gradient-bg text-white font-medium rounded-full text-sm">
+                            Kiến trúc sư
+                        </span>
+                        <span class="px-4 py-2 gradient-bg text-white font-medium rounded-full text-sm">
+                            Nhà nghiên cứu
+                        </span>
+                        <span class="px-4 py-2 gradient-bg text-white font-medium rounded-full text-sm">
+                            Tư vấn chiến lược
+                        </span>
+                        <span class="px-4 py-2 gradient-bg text-white font-medium rounded-full text-sm">
+                            Giảng viên đại học
+                        </span>
+                        <span class="px-4 py-2 gradient-bg text-white font-medium rounded-full text-sm">
+                            Chuyên gia phân tích
+                        </span>
                     </c:if>
-                </ul>
+                </div>
             </div>
-            
-            <div class="sw-card">
-                <h3>⚠️ Điểm cần cải thiện</h3>
-                <ul class="weaknesses-list">
-                    <c:forEach var="weakness" items="${mbtiResult.weaknesses}">
-                        <li><span class="weakness-icon">⚠️</span> ${weakness}</li>
+
+            <!-- Compatible Types -->
+            <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 mb-8">
+                <div class="flex items-center mb-6">
+                    <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-400 to-pink-600 flex items-center justify-center mr-4">
+                        <span class="material-symbols-outlined text-white text-2xl">favorite</span>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-900 dark:text-white">Tính cách phù hợp</h3>
+                </div>
+                <p class="text-slate-600 dark:text-slate-300 mb-4">
+                    Những tính cách này thường hòa hợp tốt với <span class="font-bold text-quiz-purple">${mbtiResult.mbtiType}</span>
+                </p>
+                <div class="flex flex-wrap gap-3">
+                    <c:forEach var="type" items="${mbtiResult.compatibleTypes}">
+                        <span class="px-4 py-2 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-medium rounded-full text-sm">
+                            ${type}
+                        </span>
                     </c:forEach>
-                    <c:if test="${empty mbtiResult.weaknesses}">
-                        <li><span class="weakness-icon">⚠️</span> Đôi khi quá cầu toàn</li>
-                        <li><span class="weakness-icon">⚠️</span> Khó thể hiện cảm xúc</li>
-                        <li><span class="weakness-icon">⚠️</span> Có thể thiếu kiên nhẫn</li>
-                        <li><span class="weakness-icon">⚠️</span> Khó chấp nhận ý kiến trái chiều</li>
-                        <li><span class="weakness-icon">⚠️</span> Dễ bị căng thẳng khi mất kiểm soát</li>
+                    <c:if test="${empty mbtiResult.compatibleTypes}">
+                        <span class="px-4 py-2 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-medium rounded-full text-sm">
+                            ENFP
+                        </span>
+                        <span class="px-4 py-2 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-medium rounded-full text-sm">
+                            ENTP
+                        </span>
+                        <span class="px-4 py-2 gradient-bg text-white font-bold rounded-full text-sm type-highlight">
+                            ${mbtiResult.mbtiType}
+                        </span>
+                        <span class="px-4 py-2 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-medium rounded-full text-sm">
+                            INFJ
+                        </span>
+                        <span class="px-4 py-2 bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 font-medium rounded-full text-sm">
+                            INTP
+                        </span>
                     </c:if>
-                </ul>
+                </div>
             </div>
-        </div>
-        
-        <!-- Career Suggestions -->
-        <div class="career-suggestions">
-            <h2>🎯 Nghề nghiệp phù hợp</h2>
-            <div class="career-tags">
-                <c:forEach var="career" items="${mbtiResult.recommendedCareers}">
-                    <span class="career-tag">${career}</span>
-                </c:forEach>
-                <c:if test="${empty mbtiResult.recommendedCareers}">
-                    <span class="career-tag">Kỹ sư phần mềm</span>
-                    <span class="career-tag">Data Scientist</span>
-                    <span class="career-tag">Quản lý dự án</span>
-                    <span class="career-tag">Kiến trúc sư</span>
-                    <span class="career-tag">Nhà nghiên cứu</span>
-                    <span class="career-tag">Tư vấn chiến lược</span>
-                    <span class="career-tag">Giảng viên đại học</span>
-                    <span class="career-tag">Chuyên gia phân tích</span>
-                </c:if>
+
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-8">
+                <div class="flex flex-wrap gap-3">
+                    <a href="#" class="flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+                       onclick="shareOnFacebook()">
+                        <span class="material-symbols-outlined mr-2">share</span>
+                        Chia sẻ
+                    </a>
+                    <a href="#" class="flex items-center px-4 py-2 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 font-medium rounded-lg transition-colors"
+                       onclick="copyResultToClipboard()">
+                        <span class="material-symbols-outlined mr-2">content_copy</span>
+                        Sao chép kết quả
+                    </a>
+                </div>
+                
+                <div class="flex flex-wrap gap-3">
+                    <a href="${pageContext.request.contextPath}/dashboard" 
+                       class="flex items-center px-6 py-3 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-200 font-semibold rounded-xl transition-colors">
+                        <span class="material-symbols-outlined mr-2">arrow_back</span>
+                        Quay lại Dashboard
+                    </a>
+                    <a href="${pageContext.request.contextPath}/quiz/mbti" 
+                       class="flex items-center px-6 py-3 bg-red-500 hover:bg-red-600 text-white font-semibold rounded-xl transition-colors">
+                        <span class="material-symbols-outlined mr-2">refresh</span>
+                        Làm lại quiz
+                    </a>
+                    <a href="${pageContext.request.contextPath}/quiz/work-style" 
+                       class="flex items-center px-6 py-3 gradient-bg hover:opacity-90 text-white font-semibold rounded-xl transition-opacity">
+                        Tiếp tục khám phá
+                        <span class="material-symbols-outlined ml-2">arrow_forward</span>
+                    </a>
+                </div>
             </div>
-        </div>
-        
-        <!-- Compatible Types -->
-        <div class="compatible-types">
-            <h2>❤️ Tính cách phù hợp</h2>
-            <div class="type-badges">
-                <c:forEach var="type" items="${mbtiResult.compatibleTypes}">
-                    <span class="type-badge">${type}</span>
-                </c:forEach>
-                <c:if test="${empty mbtiResult.compatibleTypes}">
-                    <span class="type-badge">ENFP</span>
-                    <span class="type-badge">ENTP</span>
-                    <span class="type-badge highlight">${mbtiResult.mbtiType}</span>
-                    <span class="type-badge">INFJ</span>
-                    <span class="type-badge">INTP</span>
-                </c:if>
+
+            <!-- Share Section -->
+            <div class="mt-8 p-6 bg-gradient-to-r from-quiz-purple to-quiz-dark-purple rounded-2xl text-white">
+                <div class="flex flex-col md:flex-row items-center justify-between">
+                    <div class="mb-4 md:mb-0">
+                        <h4 class="text-lg font-semibold mb-2">🎉 Chúc mừng bạn đã hoàn thành!</h4>
+                        <p class="text-blue-100">Khám phá thêm về bản thân với các bài quiz khác</p>
+                    </div>
+                    <a href="${pageContext.request.contextPath}/QuizResultController"
+                       class="flex items-center px-6 py-3 bg-white text-quiz-purple font-semibold rounded-xl hover:bg-blue-50 transition-colors">
+                        Xem tất cả quiz
+                        <span class="material-symbols-outlined ml-2">chevron_right</span>
+                    </a>
+                </div>
             </div>
-            <p style="color: #666; margin-top: 15px; font-size: 14px;">
-                Những tính cách này thường hòa hợp tốt với ${mbtiResult.mbtiType}
-            </p>
-        </div>
-        
-        <!-- Share Section -->
-        <div class="share-section">
-            <p style="color: white; margin-bottom: 15px; font-size: 16px;">
-                Chia sẻ kết quả của bạn với bạn bè!
-            </p>
-            <div>
-                <a href="#" class="share-btn facebook" onclick="shareOnFacebook()">
-                    📘 Facebook
-                </a>
-                <a href="#" class="share-btn twitter" onclick="shareOnTwitter()">
-                    🐦 Twitter
-                </a>
-                <a href="#" class="share-btn copy" onclick="copyResultToClipboard()">
-                    📋 Copy kết quả
-                </a>
-            </div>
-        </div>
-        
-        <!-- Action Buttons -->
-        <div class="action-buttons">
-            <a href="${pageContext.request.contextPath}/dashboard" class="btn btn-secondary">
-                ← Quay lại Dashboard
-            </a>
-            <a href="${pageContext.request.contextPath}/quiz/mbti" class="btn retake-btn">
-                🔄 Làm lại quiz
-            </a>
-            <a href="${pageContext.request.contextPath}/quiz/work-style" class="btn btn-primary">
-                Tiếp tục khám phá →
-            </a>
-        </div>
+        </main>
     </div>
+
+    <%-- Settings Overlay --%>
+    <%@ include file="../settings-overlay.jsp" %>
+
+    <script src="/resources/js/sidebar.js"></script>
+    <script src="/resources/js/setting.js"></script>
     
     <script>
         // Animate progress bars
@@ -579,37 +514,41 @@
             setTimeout(() => {
                 // E/I dimension
                 const eiProgress = document.getElementById('ei-progress');
-                eiProgress.style.width = mbtiType.charAt(0) === 'E' ? '70%' : '30%';
+                if (eiProgress) {
+                    eiProgress.style.width = mbtiType.charAt(0) === 'E' ? '70%' : '30%';
+                }
                 
                 // S/N dimension  
                 const snProgress = document.getElementById('sn-progress');
-                snProgress.style.width = mbtiType.charAt(1) === 'S' ? '70%' : '30%';
+                if (snProgress) {
+                    snProgress.style.width = mbtiType.charAt(1) === 'S' ? '70%' : '30%';
+                }
                 
                 // T/F dimension
                 const tfProgress = document.getElementById('tf-progress');
-                tfProgress.style.width = mbtiType.charAt(2) === 'T' ? '70%' : '30%';
+                if (tfProgress) {
+                    tfProgress.style.width = mbtiType.charAt(2) === 'T' ? '70%' : '30%';
+                }
                 
                 // J/P dimension
                 const jpProgress = document.getElementById('jp-progress');
-                jpProgress.style.width = mbtiType.charAt(3) === 'J' ? '70%' : '30%';
-            }, 300);
+                if (jpProgress) {
+                    jpProgress.style.width = mbtiType.charAt(3) === 'J' ? '70%' : '30%';
+                }
+            }, 500);
         });
         
         // Share functions
         function shareOnFacebook() {
             const url = encodeURIComponent(window.location.href);
-            const text = encodeURIComponent(`Tôi vừa khám phá tính cách MBTI của mình là ${mbtiType}! Khám phá ngay bạn nhé!`);
+            const text = encodeURIComponent(`Tôi vừa khám phá tính cách MBTI của mình là ${'${mbtiResult.mbtiType}'}! Khám phá ngay bạn nhé!`);
             window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}&quote=${text}`, '_blank');
         }
         
-        function shareOnTwitter() {
-            const url = encodeURIComponent(window.location.href);
-            const text = encodeURIComponent(`Tôi là ${mbtiType}! Khám phá tính cách MBTI của bạn tại:`);
-            window.open(`https://twitter.com/intent/tweet?url=${url}&text=${text}`, '_blank');
-        }
-        
         function copyResultToClipboard() {
-            const resultText = `🎭 Kết quả MBTI của tôi: ${mbtiType}\n${'${mbtiResult.description}'}\n\nKhám phá tính cách của bạn tại: ${window.location.origin}`;
+            const mbtiType = '${mbtiResult.mbtiType}';
+            const description = '${mbtiResult.description}';
+            const resultText = `🎭 Kết quả MBTI của tôi: ${mbtiType}\n${description}\n\nKhám phá tính cách của bạn tại: ${window.location.origin}`;
             
             navigator.clipboard.writeText(resultText)
                 .then(() => {
@@ -621,22 +560,18 @@
                 });
         }
         
-        // Add confetti effect
-        function celebrate() {
-            const confettiCount = 100;
-            const confettiColors = ['#667eea', '#764ba2', '#6b46c1', '#553c9a'];
+        // Confetti effect
+        function createConfetti() {
+            const colors = ['#667eea', '#764ba2', '#4F46E5', '#A5B4FC'];
+            const confettiCount = 50;
             
             for (let i = 0; i < confettiCount; i++) {
                 const confetti = document.createElement('div');
-                confetti.style.position = 'fixed';
-                confetti.style.width = '10px';
-                confetti.style.height = '10px';
-                confetti.style.backgroundColor = confettiColors[Math.floor(Math.random() * confettiColors.length)];
-                confetti.style.borderRadius = '50%';
+                confetti.className = 'fixed w-2 h-2 rounded-full z-50';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
                 confetti.style.left = Math.random() * 100 + 'vw';
                 confetti.style.top = '-10px';
                 confetti.style.opacity = '0.8';
-                confetti.style.zIndex = '9999';
                 
                 document.body.appendChild(confetti);
                 
@@ -653,8 +588,8 @@
             }
         }
         
-        // Trigger celebration on page load
-        setTimeout(celebrate, 1000);
+        // Trigger confetti on page load
+        setTimeout(createConfetti, 1000);
     </script>
 </body>
 </html>

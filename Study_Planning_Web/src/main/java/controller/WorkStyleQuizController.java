@@ -8,9 +8,9 @@ package controller;
  *
  * @author Admin
  */
-import service.CareerService;
-import model.CareerQuestion;
-import model.CareerResult;
+import service.WorkStyleService;
+import model.WorkStyleQuestion;
+import model.WorkStyleResult;
 import model.User;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -19,16 +19,16 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-@WebServlet(name = "CareerQuizController", 
-           urlPatterns = {"/quiz/career", "/quiz/career/submit"})
-public class CareerQuizController extends HttpServlet {
+@WebServlet(name = "WorkStyleQuizController", 
+           urlPatterns = {"/quiz/work-style", "/quiz/work-style/submit"})
+public class WorkStyleQuizController extends HttpServlet {
     
-    private CareerService careerService;
+    private WorkStyleService workStyleService;
     
     @Override
     public void init() throws ServletException {
         super.init();
-        this.careerService = new CareerService();
+        this.workStyleService = new WorkStyleService();
     }
     
     @Override
@@ -42,38 +42,37 @@ public class CareerQuizController extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
-        
+
         int userId = user.getUserId();
-        
+
         try {
-            request.setAttribute("userName", user.getUsername());
+            // Check if user has completed the quiz
+            if (workStyleService.hasUserCompletedQuiz(userId)) {
+                WorkStyleResult result = workStyleService.getUserResult(userId);
+                request.setAttribute("workStyleResult", result);
 
-            // Kiểm tra nếu đã hoàn thành quiz
-            if (careerService.hasUserCompletedQuiz(userId)) {
-                CareerResult result = careerService.getUserResult(userId);
-                request.setAttribute("careerResult", result);
+                // Thêm thông tin mô tả
+                Map<String, String> styleDescription = workStyleService.getStyleDescription(result.getPrimaryStyle());
+                request.setAttribute("styleDescription", styleDescription);
 
-                // Lấy career recommendations dưới dạng List<Map>
-                List<Map<String, Object>> recommendations = careerService.getCareerRecommendations(result);
-                request.setAttribute("careerRecommendations", recommendations);
-
-                // Lấy chi tiết điểm số
-                Map<String, Integer> scoreBreakdown = careerService.getScoreBreakdown(result);
+                // Thêm breakdown scores
+                Map<String, Integer> scoreBreakdown = workStyleService.getScoreBreakdown(result);
                 request.setAttribute("scoreBreakdown", scoreBreakdown);
-                
-                request.getRequestDispatcher("/views/quiz/career-result.jsp").forward(request, response);
+
+                request.getRequestDispatcher("/views/quiz/work-style-result.jsp").forward(request, response);
                 return;
             }
-            
-            // Nếu chưa làm quiz, hiển thị câu hỏi
-            List<CareerQuestion> questions = careerService.getCareerQuestions();
+
+            // Get questions
+            List<WorkStyleQuestion> questions = workStyleService.getWorkStyleQuestions();
             request.setAttribute("questions", questions);
             
-            request.getRequestDispatcher("/views/quiz/career-quiz.jsp").forward(request, response);
+            // Forward to quiz page
+            request.getRequestDispatcher("/views/quiz/work-style-quiz.jsp").forward(request, response);
             
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Lỗi khi tải bài quiz: " + e.getMessage());
+            request.setAttribute("error", "Lỗi tải quiz: " + e.getMessage());
             response.sendRedirect(request.getContextPath() + "/dashboard");
         }
     }
@@ -82,7 +81,9 @@ public class CareerQuizController extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        User user = (User) request.getSession().getAttribute("user");
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        
         if (user == null) {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
@@ -91,12 +92,14 @@ public class CareerQuizController extends HttpServlet {
         int userId = user.getUserId();
         
         try {
-            CareerResult result = careerService.submitQuiz(userId, request.getParameterMap());
+            // Submit quiz
+            WorkStyleResult result = workStyleService.submitQuiz(userId, request.getParameterMap());
             
             if (result != null) {
-                response.sendRedirect(request.getContextPath() + "/quiz/career");
+                // Redirect to results page
+                response.sendRedirect(request.getContextPath() + "/quiz/work-style");
             } else {
-                request.setAttribute("error", "Có lỗi xảy ra khi xử lý kết quả. Vui lòng thử lại.");
+                request.setAttribute("error", "Có lỗi xảy ra khi xử lý kết quả.");
                 doGet(request, response);
             }
             
@@ -106,4 +109,6 @@ public class CareerQuizController extends HttpServlet {
             doGet(request, response);
         }
     }
+    
+    
 }
