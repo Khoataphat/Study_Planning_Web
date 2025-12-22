@@ -41,7 +41,7 @@ public class WorkStyleResultDAO {
             stmt.setInt(6, result.getCommunicationScore());
             stmt.setInt(7, result.getTeamworkScore());
             stmt.setInt(8, result.getCreativityScore());
-            stmt.setTimestamp(8, new Timestamp(new java.util.Date().getTime()));
+            stmt.setTimestamp(9, new Timestamp(new java.util.Date().getTime()));
             
             int rowsAffected = stmt.executeUpdate();
             logger.info("Saved Work Style result for user {}: {}", 

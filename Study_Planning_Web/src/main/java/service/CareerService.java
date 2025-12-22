@@ -8,6 +8,7 @@ package service;
  *
  * @author Admin
  */
+import com.fasterxml.jackson.databind.JsonNode;
 import dao.CareerQuestionDAO;
 import dao.CareerResultDAO;
 import dao.QuizProgressDAO;
@@ -252,4 +253,142 @@ public class CareerService {
         }
         return deleted;
     }
+    
+    // Thêm phương thức này vào CareerService.java
+public List<Map<String, Object>> getCareerRecommendations(CareerResult result) {
+    List<Map<String, Object>> recommendations = new ArrayList<>();
+    
+    try {
+        // Kiểm tra nếu có dữ liệu JSON trong topCareers
+        if (result.getTopCareers() != null && !result.getTopCareers().isEmpty()) {
+            // Phân tích JSON và chuyển thành List<Map>
+            JsonNode rootNode = objectMapper.readTree(result.getTopCareers());
+            
+            for (JsonNode categoryNode : rootNode) {
+                Map<String, Object> categoryMap = new HashMap<>();
+                String category = categoryNode.get("category").asText();
+                int score = categoryNode.get("score").asInt();
+                
+                categoryMap.put("categoryName", category);
+                categoryMap.put("score", score);
+                
+                List<String> careers = new ArrayList<>();
+                JsonNode careersNode = categoryNode.get("careers");
+                if (careersNode.isArray()) {
+                    for (JsonNode careerNode : careersNode) {
+                        careers.add(careerNode.asText());
+                    }
+                }
+                categoryMap.put("careers", careers);
+                
+                recommendations.add(categoryMap);
+            }
+        } else {
+            // Nếu không có dữ liệu, tạo recommendations dựa trên điểm số
+            recommendations = createFallbackRecommendations(result);
+        }
+        
+    } catch (Exception e) {
+        e.printStackTrace();
+        // Nếu có lỗi, tạo recommendations dựa trên điểm số
+        recommendations = createFallbackRecommendations(result);
+    }
+    
+    return recommendations;
+}
+
+private List<Map<String, Object>> createFallbackRecommendations(CareerResult result) {
+    List<Map<String, Object>> recommendations = new ArrayList<>();
+    
+    // Tạo danh sách tất cả categories với điểm số
+    List<Map<String, Object>> allCategories = new ArrayList<>();
+    
+    // Technology
+    if (result.getTechnologyScore() > 0) {
+        Map<String, Object> techMap = new HashMap<>();
+        techMap.put("categoryName", "TECHNOLOGY");
+        techMap.put("score", result.getTechnologyScore());
+        techMap.put("careers", Arrays.asList(
+            "Lập trình viên Full-stack", 
+            "Data Scientist", 
+            "Chuyên gia bảo mật"
+        ));
+        allCategories.add(techMap);
+    }
+    
+    // Business
+    if (result.getBusinessScore() > 0) {
+        Map<String, Object> businessMap = new HashMap<>();
+        businessMap.put("categoryName", "BUSINESS");
+        businessMap.put("score", result.getBusinessScore());
+        businessMap.put("careers", Arrays.asList(
+            "Business Analyst", 
+            "Digital Marketing", 
+            "Quản lý dự án"
+        ));
+        allCategories.add(businessMap);
+    }
+    
+    // Creative
+    if (result.getCreativeScore() > 0) {
+        Map<String, Object> creativeMap = new HashMap<>();
+        creativeMap.put("categoryName", "CREATIVE");
+        creativeMap.put("score", result.getCreativeScore());
+        creativeMap.put("careers", Arrays.asList(
+            "UI/UX Designer", 
+            "Content Creator", 
+            "Kiến trúc sư"
+        ));
+        allCategories.add(creativeMap);
+    }
+    
+    // Science
+    if (result.getScienceScore() > 0) {
+        Map<String, Object> scienceMap = new HashMap<>();
+        scienceMap.put("categoryName", "SCIENCE");
+        scienceMap.put("score", result.getScienceScore());
+        scienceMap.put("careers", Arrays.asList(
+            "Nhà nghiên cứu", 
+            "Kỹ sư y sinh", 
+            "Chuyên gia môi trường"
+        ));
+        allCategories.add(scienceMap);
+    }
+    
+    // Education
+    if (result.getEducationScore() > 0) {
+        Map<String, Object> educationMap = new HashMap<>();
+        educationMap.put("categoryName", "EDUCATION");
+        educationMap.put("score", result.getEducationScore());
+        educationMap.put("careers", Arrays.asList(
+            "Giáo viên", 
+            "Giảng viên đại học", 
+            "Chuyên gia đào tạo"
+        ));
+        allCategories.add(educationMap);
+    }
+    
+    // Social
+    if (result.getSocialScore() > 0) {
+        Map<String, Object> socialMap = new HashMap<>();
+        socialMap.put("categoryName", "SOCIAL");
+        socialMap.put("score", result.getSocialScore());
+        socialMap.put("careers", Arrays.asList(
+            "Chuyên viên tâm lý", 
+            "Công tác xã hội", 
+            "Chuyên viên nhân sự"
+        ));
+        allCategories.add(socialMap);
+    }
+    
+    // Sắp xếp theo điểm số giảm dần
+    allCategories.sort((a, b) -> {
+        int scoreA = (int) b.get("score");
+        int scoreB = (int) a.get("score");
+        return Integer.compare(scoreA, scoreB);
+    });
+    
+    // Lấy top 3
+    return allCategories.subList(0, Math.min(3, allCategories.size()));
+}
 }
