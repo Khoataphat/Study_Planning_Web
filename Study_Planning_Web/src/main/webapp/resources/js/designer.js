@@ -7,6 +7,7 @@ let currentDragData = null;
 let selectedDay = null;
 let selectedEventElement = null;
 let currentEventKey = null; // startTime of the selected event
+let currentDragElement = null; // Element being dragged from the grid
 
 // Initialize
 document.addEventListener('DOMContentLoaded', function () {
@@ -221,10 +222,29 @@ function dropTask(ev) {
     const time = cell.getAttribute('data-time');
     const day = cell.getAttribute('data-day');
 
-    // Calculate default end time (1 hour later)
-    const hour = parseInt(time.split(':')[0]);
-    const endHour = (hour + 1).toString().padStart(2, '0');
-    const endTime = endHour + ':00';
+    // Check if moving to the same slot
+    if (currentDragData.isMove &&
+        currentDragData.originalDay === day &&
+        currentDragData.originalStartTime === time) {
+        return;
+    }
+
+    // Calculate end time
+    let endTime;
+    const startHour = parseInt(time.split(':')[0]);
+    const startMinute = parseInt(time.split(':')[1] || '0');
+
+    if (currentDragData.durationHours) {
+        // Persist duration for moved events
+        const totalHours = startHour + (startMinute / 60) + currentDragData.durationHours;
+        const endH = Math.floor(totalHours);
+        const endM = Math.round((totalHours - endH) * 60);
+        endTime = endH + ':' + endM.toString().padStart(2, '0');
+    } else {
+        // Default 1 hour for new tasks
+        const endHour = (startHour + 1).toString().padStart(2, '0');
+        endTime = endHour + ':00';
+    }
 
     createEventElement(cell, {
         type: currentDragData.type,
@@ -232,11 +252,25 @@ function dropTask(ev) {
         color: currentDragData.color,
         startTime: time,
         endTime: endTime,
-        description: '',
+        description: currentDragData.description || '',
         day: day
     });
 
+    // If this was a move, delete the old event
+    if (currentDragData.isMove) {
+        // Remove from DOM
+        if (currentDragElement) {
+            currentDragElement.remove();
+        }
+        // Remove from Data Model
+        if (scheduleData[currentDragData.originalDay] &&
+            scheduleData[currentDragData.originalDay][currentDragData.originalStartTime]) {
+            delete scheduleData[currentDragData.originalDay][currentDragData.originalStartTime];
+        }
+    }
+
     currentDragData = null;
+    currentDragElement = null;
 }
 
 function createEventElement(cell, data) {
@@ -253,7 +287,31 @@ function createEventElement(cell, data) {
 
     // Create event block
     const eventBlock = document.createElement('div');
-    eventBlock.className = 'event-block p-2 rounded-lg text-white text-xs font-semibold cursor-pointer hover:opacity-90 transition-opacity';
+    eventBlock.className = 'event-block p-2 rounded-lg text-white text-xs font-semibold cursor-move hover:opacity-90 transition-opacity';
+    eventBlock.setAttribute('draggable', 'true');
+
+    // Drag Handlers
+    eventBlock.addEventListener('dragstart', function (e) {
+        e.stopPropagation();
+        currentDragElement = eventBlock;
+        currentDragData = {
+            type: data.type,
+            name: data.name,
+            color: data.color,
+            description: data.description,
+            isMove: true,
+            originalDay: data.day,
+            originalStartTime: data.startTime,
+            durationHours: duration
+        };
+        e.dataTransfer.effectAllowed = 'move';
+        setTimeout(() => eventBlock.classList.add('opacity-50'), 0);
+    });
+
+    eventBlock.addEventListener('dragend', function (e) {
+        eventBlock.classList.remove('opacity-50');
+        currentDragElement = null;
+    });
     eventBlock.style.backgroundColor = data.color;
     eventBlock.style.position = 'absolute';
     eventBlock.style.top = '0';
