@@ -135,23 +135,35 @@ function renderScheduleFromServer(weeklyData) {
         const schedules = weeklyData[serverDay];
 
         schedules.forEach(function (schedule) {
-            // Normalize time format: "09:00:00" -> "9:00"
-            let timeStr = schedule.startTime.substring(0, 5); // "09:00"
-            timeStr = parseInt(timeStr.split(':')[0]) + ':' + timeStr.split(':')[1]; // "9:00"
+            // Normalize time format to get Hour for grid placement
+            // e.g. "01:30:00" -> Hour: 1, Minute: 30
+            const parts = schedule.startTime.split(':');
+            const hour = parseInt(parts[0]);
+            const minute = parseInt(parts[1]);
 
-            let endTimeStr = schedule.endTime.substring(0, 5); // "09:00"
-            endTimeStr = parseInt(endTimeStr.split(':')[0]) + ':' + endTimeStr.split(':')[1]; // "9:00"
+            // Grid uses "1:00", "2:00" format
+            const gridTime = hour + ':00';
 
-            const cell = document.querySelector('[data-day="' + clientDay + '"][data-time="' + timeStr + '"]');
+            const cell = document.querySelector('[data-day="' + clientDay + '"][data-time="' + gridTime + '"]');
 
             if (cell) {
+                // Ensure format "1:30" or "01:30" depending on requirement, usually we want "1:30" for display?
+                // But createEventElement splits it.
+                // Let's pass the raw HH:mm string
+                const formattedStart = hour + ':' + (minute < 10 ? '0' + minute : minute);
+
+                const endParts = schedule.endTime.split(':');
+                const endHour = parseInt(endParts[0]);
+                const endMinute = parseInt(endParts[1]);
+                const formattedEnd = endHour + ':' + (endMinute < 10 ? '0' + endMinute : endMinute);
+
                 createEventElement(cell, {
                     type: schedule.type,
                     name: schedule.subject,
                     color: getColorForType(schedule.type),
-                    startTime: timeStr,
-                    endTime: endTimeStr,
-                    description: '', // Server currently doesn't send description
+                    startTime: formattedStart,
+                    endTime: formattedEnd,
+                    description: '',
                     day: clientDay
                 });
             }
@@ -185,7 +197,7 @@ function generateTimeSlots() {
 
         let cellsHtml = '';
         days.forEach(function (day) {
-            cellsHtml += '<td class="time-slot p-2 border-b border-l border-slate-100 align-top" ' +
+            cellsHtml += '<td class="time-slot p-2 border-b border-l border-slate-100 align-top h-12" ' + // Added h-12 for consistent height base
                 'data-time="' + time + '" ' +
                 'data-day="' + day + '" ' +
                 'ondrop="dropTask(event)" ' +
@@ -200,80 +212,88 @@ function generateTimeSlots() {
     });
 }
 
-function dragTask(ev) {
-    const target = ev.target.closest('.task-item');
-    currentDragData = {
-        type: target.getAttribute('data-task-type'),
-        name: target.getAttribute('data-task-name'),
-        color: target.getAttribute('data-task-color')
-    };
-}
-
 function allowDrop(ev) {
     ev.preventDefault();
 }
 
+function dragTask(ev) {
+    const target = ev.target.closest('.task-item');
+    if (target) {
+        currentDragData = {
+            isMoving: false,
+            type: target.getAttribute('data-task-type'),
+            name: target.getAttribute('data-task-name'),
+            color: target.getAttribute('data-task-color')
+        };
+        ev.dataTransfer.effectAllowed = 'copy';
+    }
+}
+
 function dropTask(ev) {
     ev.preventDefault();
+    const cell = ev.currentTarget;
+    const day = cell.getAttribute('data-day');
+    const time = cell.getAttribute('data-time');
+
     if (!currentDragData) return;
 
-    const cell = ev.currentTarget;
-    const time = cell.getAttribute('data-time'); // e.g., "9:00"
-    const day = cell.getAttribute('data-day');
-
-    let endTime;
-
+    // Check if new task or moving existing
     if (currentDragData.isMoving) {
-        // Calculate duration from original event
-        const startParts = currentDragData.startTime.split(':');
-        const endParts = currentDragData.endTime.split(':');
+        // Remove old event
+        if (currentDragData.element) currentDragData.element.remove();
 
-        const startMinutes = parseInt(startParts[0]) * 60 + parseInt(startParts[1]);
-        const endMinutes = parseInt(endParts[0]) * 60 + parseInt(endParts[1]);
-        const durationMinutes = endMinutes - startMinutes;
-
-        // Calculate new end time based on drop time + duration
-        const newStartParts = time.split(':');
-        const newStartMinutes = parseInt(newStartParts[0]) * 60 + parseInt(newStartParts[1]);
-        const newEndMinutes = newStartMinutes + durationMinutes;
-
-        const endHour = Math.floor(newEndMinutes / 60);
-        const endMinute = newEndMinutes % 60;
-        endTime = endHour + ':' + (endMinute < 10 ? '0' + endMinute : endMinute);
-
-        // Remove old event data
+        // Remove from data structure
         if (scheduleData[currentDragData.originalDay] && scheduleData[currentDragData.originalDay][currentDragData.originalStartTime]) {
             delete scheduleData[currentDragData.originalDay][currentDragData.originalStartTime];
         }
 
-        // Remove old element from DOM
-        if (currentDragData.element) {
-            currentDragData.element.remove();
+        // Calculate new times (preserve duration)
+        let durationMin = 60; // Default 1 hour
+        if (currentDragData.startTime && currentDragData.endTime) {
+            const s = currentDragData.startTime.split(':');
+            const e = currentDragData.endTime.split(':');
+            const sm = parseInt(s[0]) * 60 + parseInt(s[1] || 0);
+            const em = parseInt(e[0]) * 60 + parseInt(e[1] || 0);
+            durationMin = em - sm;
         }
 
-        // Reset selection if we moved the selected event
-        if (selectedEventElement === currentDragData.element) {
-            clearForm();
-        }
+        const startH = parseInt(time.split(':')[0]);
+        const startM = 0; // Dropping on grid always starts at :00 (unless we implemented pixel precision drop which we haven't)
+
+        const endTotal = (startH * 60 + startM) + durationMin;
+        const endH = Math.floor(endTotal / 60);
+        const endM = endTotal % 60;
+
+        const newStart = startH + ':' + (startM < 10 ? '0' + startM : startM);
+        const newEnd = endH + ':' + (endM < 10 ? '0' + endM : endM);
+
+        createEventElement(cell, {
+            type: currentDragData.type,
+            name: currentDragData.name,
+            color: currentDragData.color,
+            startTime: newStart,
+            endTime: newEnd,
+            description: currentDragData.description,
+            day: day
+        });
 
     } else {
-        // Default behavior (drag from toolbar)
-        const hour = parseInt(time.split(':')[0]);
-        const endHour = (hour + 1).toString().padStart(2, '0');
-        endTime = endHour + ':00';
+        // New Task from Toolbox
+        const startH = parseInt(time.split(':')[0]);
+        const endH = startH + 1;
+
+        createEventElement(cell, {
+            type: currentDragData.type,
+            name: currentDragData.name,
+            color: currentDragData.color,
+            startTime: startH + ":00",
+            endTime: endH + ":00",
+            description: '',
+            day: day
+        });
     }
 
-    createEventElement(cell, {
-        type: currentDragData.type,
-        name: currentDragData.name,
-        color: currentDragData.color,
-        startTime: time,
-        endTime: endTime,
-        description: currentDragData.description || '',
-        day: day
-    });
-
-    currentDragData = null;
+    currentDragData = null; // Reset
 }
 
 function createEventElement(cell, data) {
@@ -284,8 +304,13 @@ function createEventElement(cell, data) {
     const endHours = parseInt(endParts[0]) + parseInt(endParts[1]) / 60;
     const duration = endHours - startHours;
 
-    // Each hour cell is approximately 48px in height (adjust based on your CSS)
-    const cellHeight = cell.offsetHeight; // Get actual cell height
+    // Calculate Top Offset (Minutes)
+    const startMinutes = parseInt(startParts[1]);
+
+    // Get cell height
+    const cellHeight = cell.offsetHeight || 48; // Fallback to 48 if 0 (hidden)
+
+    const topOffset = (startMinutes / 60) * cellHeight;
     const eventHeight = duration * cellHeight;
 
     // Create event block
@@ -293,7 +318,7 @@ function createEventElement(cell, data) {
     eventBlock.className = 'event-block p-2 rounded-lg text-white text-xs font-semibold cursor-pointer hover:opacity-90 transition-opacity';
     eventBlock.style.backgroundColor = data.color;
     eventBlock.style.position = 'absolute';
-    eventBlock.style.top = '0';
+    eventBlock.style.top = topOffset + 'px'; // Apply offset
     eventBlock.style.left = '2px';
     eventBlock.style.right = '2px';
     eventBlock.style.height = (eventHeight - 4) + 'px'; // Subtract margin

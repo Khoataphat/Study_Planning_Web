@@ -28,8 +28,98 @@ public class SmartScheduleService {
      * Calculates the smart schedule without saving it to the database.
      * Useful for previewing the schedule.
      */
+    /**
+     * Calculates the smart schedule.
+     * Tries to call the Python AI Service first. If it fails, falls back to the
+     * local greedy algorithm.
+     */
     public List<UserSchedule> calculateSchedule(int userId, int collectionId, String startTimeStr, String endTimeStr,
             boolean includeWeekends) {
+
+        // 1. Try Python AI Service
+        String lastError = null;
+        try {
+            return callPythonAIService(userId, collectionId, startTimeStr, endTimeStr, includeWeekends);
+        } catch (Exception e) {
+            lastError = e.getMessage() + " (" + e.getClass().getSimpleName() + ")";
+            System.err.println(
+                    "Python AI Service failed. Error: " + lastError);
+        }
+
+        // 2. Fallback to Local Java Logic
+        return calculateScheduleFallback(userId, collectionId, startTimeStr, endTimeStr, includeWeekends, lastError);
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<UserSchedule> callPythonAIService(int userId, int collectionId, String startTimeStr, String endTimeStr,
+            boolean includeWeekends) throws Exception {
+        // Use 127.0.0.1 to avoid localhost resolution issues (IPv6 vs IPv4)
+        java.net.URL url = new java.net.URL("http://127.0.0.1:5000/generate-schedule");
+        java.net.HttpURLConnection conn = (java.net.HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type", "application/json");
+        conn.setConnectTimeout(5000); // 5s timeout
+        conn.setReadTimeout(15000); // 15s read timeout
+        conn.setDoOutput(true);
+
+        System.out.println("[SmartSchedule] Connecting to AI Service at " + url);
+
+        // Construct JSON Payload
+        // Use Simple JSON construction
+        com.google.gson.JsonObject json = new com.google.gson.JsonObject();
+        json.addProperty("user_id", userId);
+        json.addProperty("collection_id", collectionId);
+        json.addProperty("start_time", startTimeStr);
+        json.addProperty("end_time", endTimeStr);
+        json.addProperty("include_weekends", includeWeekends);
+
+        System.out.println("[SmartSchedule] Sending payload: " + json.toString());
+
+        try (java.io.OutputStream os = conn.getOutputStream()) {
+            byte[] input = new com.google.gson.Gson().toJson(json).getBytes("utf-8");
+            os.write(input, 0, input.length);
+        } catch (Exception e) {
+            System.err.println("[SmartSchedule] Failed to send data to AI: " + e.getMessage());
+            throw e;
+        }
+
+        int responseCode = conn.getResponseCode();
+        System.out.println("[SmartSchedule] Response Code: " + responseCode);
+
+        if (responseCode != 200) {
+            throw new RuntimeException("AI Service returned HTTP " + responseCode);
+        }
+
+        // Read Response
+        try (java.io.BufferedReader br = new java.io.BufferedReader(
+                new java.io.InputStreamReader(conn.getInputStream(), "utf-8"))) {
+            StringBuilder response = new StringBuilder();
+            String responseLine = null;
+            while ((responseLine = br.readLine()) != null) {
+                response.append(responseLine.trim());
+            }
+
+            System.out.println("[SmartSchedule] AI Response: " + response.toString());
+
+            // Parse Response to List<UserSchedule>
+            java.lang.reflect.Type listType = new com.google.gson.reflect.TypeToken<ArrayList<UserSchedule>>() {
+            }.getType();
+            List<UserSchedule> generatedSchedules = new com.google.gson.Gson().fromJson(response.toString(), listType);
+
+            // Fix any missing fields if necessary (like collectionId if Python didn't set
+            // it)
+            for (UserSchedule s : generatedSchedules) {
+                if (s.getCollectionId() == 0)
+                    s.setCollectionId(collectionId);
+            }
+
+            return generatedSchedules;
+        }
+    }
+
+    private List<UserSchedule> calculateScheduleFallback(int userId, int collectionId, String startTimeStr,
+            String endTimeStr,
+            boolean includeWeekends, String errorMessage) {
         try {
             // 1. Fetch existing schedules (from Designer/Manual)
             List<UserSchedule> existingSchedules = scheduleDAO.getAllByCollectionId(collectionId);
@@ -39,6 +129,7 @@ public class SmartScheduleService {
 
             // 2. Fetch pending tasks
             List<Task> pendingTasks = taskDAO.getByUserIdAndStatus(userId, "pending");
+
             if (pendingTasks.isEmpty()) {
                 return finalSchedule;
             }

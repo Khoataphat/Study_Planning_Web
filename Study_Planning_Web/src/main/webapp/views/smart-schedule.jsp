@@ -137,7 +137,7 @@
                                 <div>
                                     <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Chọn Lịch Áp Dụng</label>
                                     <div class="relative">
-                                        <select id="scheduleSelect" class="w-full pl-4 pr-10 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-shadow appearance-none cursor-pointer">
+                                        <select id="scheduleSelect" onchange="tryAutoRefresh()" class="w-full pl-4 pr-10 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-shadow appearance-none cursor-pointer">
                                             <option value="">Đang tải...</option>
                                         </select>
                                         <div class="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-slate-500">
@@ -151,7 +151,7 @@
                                 <div>
                                     <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Ưu tiên hàng đầu</label>
                                     <div class="relative">
-                                        <select id="aiPriority" class="w-full pl-4 pr-10 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-shadow appearance-none cursor-pointer">
+                                        <select id="aiPriority" onchange="tryAutoRefresh()" class="w-full pl-4 pr-10 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-shadow appearance-none cursor-pointer">
                                             <option value="balanced">Cân bằng</option>
                                             <option value="work">Tập trung Học tập/Làm việc</option>
                                             <option value="deadline">Chạy Deadline</option>
@@ -167,11 +167,11 @@
                                     <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Khung giờ rảnh</label>
                                     <div class="flex items-center gap-3">
                                         <div class="relative flex-1">
-                                            <input type="time" id="aiStartTime" value="09:00" class="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-indigo-500">
+                                            <input type="time" id="aiStartTime" value="09:00" onchange="tryAutoRefresh()" class="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-indigo-500">
                                         </div>
                                         <span class="text-slate-400 font-bold">-</span>
                                         <div class="relative flex-1">
-                                            <input type="time" id="aiEndTime" value="17:00" class="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-indigo-500">
+                                            <input type="time" id="aiEndTime" value="17:00" onchange="tryAutoRefresh()" class="w-full px-4 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-indigo-500">
                                         </div>
                                     </div>
                                 </div>
@@ -181,7 +181,7 @@
                                     <label class="flex items-center justify-between cursor-pointer group hover:bg-slate-100 dark:hover:bg-slate-700 p-2 rounded-lg transition-colors">
                                         <span class="text-slate-700 dark:text-slate-300 font-medium">Bao gồm cuối tuần</span>
                                         <div class="relative">
-                                            <input type="checkbox" id="aiWeekends" class="sr-only peer">
+                                            <input type="checkbox" id="aiWeekends" onchange="tryAutoRefresh()" class="sr-only peer">
                                             <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 dark:peer-focus:ring-indigo-800 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
                                         </div>
                                     </label>
@@ -207,7 +207,7 @@
                             <div id="aiPreviewState" class="text-center space-y-8 z-10 max-w-lg">
                                 <div class="w-72 h-auto mx-auto transform hover:scale-105 transition-transform duration-500">
                                     <!-- Use a nice placehoder image or illustration -->
-                                    <img src="https://cdni.iconscout.com/illustration/premium/thumb/business-planning-4440059-3683050.png" alt="AI Planning" class="w-full drop-shadow-2xl">
+                                    <img src="../resources/images/ai-planning.png" alt="AI Planning" class="w-full drop-shadow-2xl">
                                 </div>
 
                                 <div>
@@ -231,7 +231,7 @@
         <%-- 1. THÊM LỚP PHỦ CÀI ĐẶT TẠI ĐÂY --%>
         <%-- Đảm bảo toàn bộ HTML của lớp phủ được tải vào DOM trước khi JS chạy --%>
         <%@ include file="settings-overlay.jsp" %>   
-        <script src="../resources/js/smart-schedule.js"></script>
+        <script src="../resources/js/smart-schedule.js?v=<%=System.currentTimeMillis()%>"></script>
         <script src="/resources/js/sidebar.js"></script>
         <!-- khoa -->
         <script src="/resources/js/setting.js"></script>

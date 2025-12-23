@@ -42,8 +42,8 @@ function renderScheduleCard(container, collection) {
             card.innerHTML =
                 '<div class="flex items-start justify-between mb-4">' +
                 '<div class="flex items-center gap-3 flex-1">' +
-                '<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-pinky to-primary flex items-center justify-center shadow-lg">' +
-                '<i class="fa-solid fa-calendar-alt text-white text-xl"></i>' +
+                '<div class="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center shadow-sm">' +
+                '<i class="fa-solid fa-calendar-alt text-indigo-600 text-xl"></i>' +
                 '</div>' +
                 '<div class="flex-1">' +
                 '<h3 class="text-lg font-bold text-slate-dark group-hover:text-primary transition-colors cursor-pointer" onclick="openDesigner(' + collection.collectionId + ')">' + escapeHtml(collection.collectionName) + '</h3>' +

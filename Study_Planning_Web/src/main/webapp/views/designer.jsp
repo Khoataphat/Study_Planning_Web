@@ -241,7 +241,7 @@
         </aside>
     </div>
 
-    <script src="../resources/js/designer.js"></script>
+    <script src="../resources/js/designer.js?v=<%=System.currentTimeMillis()%>"></script>
     <script src="/resources/js/sidebar.js"></script>
 
 </body>

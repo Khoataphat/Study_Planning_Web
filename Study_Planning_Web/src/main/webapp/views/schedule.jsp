@@ -174,7 +174,7 @@
         <%-- Đảm bảo toàn bộ HTML của lớp phủ được tải vào DOM trước khi JS chạy --%>
         <%@ include file="settings-overlay.jsp" %>
 
-        <script src="../resources/js/schedule.js"></script>
+        <script src="../resources/js/schedule.js?v=<%=System.currentTimeMillis()%>"></script>
         <!-- khoa -->
         <script src="/resources/js/sidebar.js"></script>
         <!-- khoa -->

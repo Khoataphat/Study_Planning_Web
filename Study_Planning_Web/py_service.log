@@ -1,0 +1,336 @@
+2025-12-22 00:38:13,503 - WARNING -  * Debugger is active!
+2025-12-22 00:38:13,509 - INFO -  * Debugger PIN: 997-965-045
+2025-12-22 00:38:13,510 - INFO -  * Debugger PIN: 997-965-045
+2025-12-22 00:39:52,611 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.16.153:5000
+2025-12-22 00:39:52,611 - INFO - [33mPress CTRL+C to quit[0m
+2025-12-22 00:39:52,613 - INFO -  * Restarting with stat
+2025-12-22 00:39:52,911 - WARNING -  * Debugger is active!
+2025-12-22 00:39:52,917 - INFO -  * Debugger PIN: 997-965-045
+2025-12-22 00:40:02,923 - INFO - package: mysql.connector.plugins
+2025-12-22 00:40:02,923 - INFO - plugin_name: caching_sha2_password
+2025-12-22 00:40:02,923 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2025-12-22 00:40:02,927 - ERROR - Error generating schedule: 1054 (42S22): Unknown column 'due_date' in 'field list'
+Traceback (most recent call last):
+  File "C:\Users\5530\Documents\GitHub\Study_Planning_Web\Study_Planning_Web\app.py", line 314, in generate_schedule
+    tasks = fetch_pending_tasks(conn, user_id)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\5530\Documents\GitHub\Study_Planning_Web\Study_Planning_Web\app.py", line 71, in fetch_pending_tasks
+    cursor.execute(query, (user_id,))
+  File "C:\Users\5530\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\mysql\connector\cursor.py", line 416, in execute
+    self._connection.cmd_query(
+  File "C:\Users\5530\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\mysql\connector\opentelemetry\context_propagation.py", line 97, in wrapper
+    return method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\5530\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\mysql\connector\_decorating.py", line 89, in handle_cnx_method
+    raise err
+  File "C:\Users\5530\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\mysql\connector\_decorating.py", line 85, in handle_cnx_method
+    return cnx_method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\5530\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\mysql\connector\connection.py", line 984, in cmd_query
+    result = self._handle_result(
+             ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\5530\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\mysql\connector\_decorating.py", line 89, in handle_cnx_method
+    raise err
+  File "C:\Users\5530\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\mysql\connector\_decorating.py", line 85, in handle_cnx_method
+    return cnx_method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\5530\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\mysql\connector\connection.py", line 745, in _handle_result
+    raise get_exception(packet)
+mysql.connector.errors.ProgrammingError: 1054 (42S22): Unknown column 'due_date' in 'field list'
+2025-12-22 00:40:02,932 - INFO - 127.0.0.1 - - [22/Dec/2025 00:40:02] "[35m[1mPOST /generate-schedule HTTP/1.1[0m" 500 -
+2025-12-22 00:40:54,476 - ERROR - Error generating schedule: 1054 (42S22): Unknown column 'due_date' in 'field list'
+Traceback (most recent call last):
+  File "C:\Users\5530\Documents\GitHub\Study_Planning_Web\Study_Planning_Web\app.py", line 314, in generate_schedule
+    tasks = fetch_pending_tasks(conn, user_id)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\5530\Documents\GitHub\Study_Planning_Web\Study_Planning_Web\app.py", line 71, in fetch_pending_tasks
+    cursor.execute(query, (user_id,))
+  File "C:\Users\5530\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\mysql\connector\cursor.py", line 416, in execute
+    self._connection.cmd_query(
+  File "C:\Users\5530\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\mysql\connector\opentelemetry\context_propagation.py", line 97, in wrapper
+    return method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\5530\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\mysql\connector\_decorating.py", line 89, in handle_cnx_method
+    raise err
+  File "C:\Users\5530\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\mysql\connector\_decorating.py", line 85, in handle_cnx_method
+    return cnx_method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\5530\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\mysql\connector\connection.py", line 984, in cmd_query
+    result = self._handle_result(
+             ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\5530\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\mysql\connector\_decorating.py", line 89, in handle_cnx_method
+    raise err
+  File "C:\Users\5530\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\mysql\connector\_decorating.py", line 85, in handle_cnx_method
+    return cnx_method(cnx, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\5530\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\LocalCache\local-packages\Python311\site-packages\mysql\connector\connection.py", line 745, in _handle_result
+    raise get_exception(packet)
+mysql.connector.errors.ProgrammingError: 1054 (42S22): Unknown column 'due_date' in 'field list'
+2025-12-22 00:40:54,479 - INFO - 127.0.0.1 - - [22/Dec/2025 00:40:54] "[35m[1mPOST /generate-schedule HTTP/1.1[0m" 500 -
+2025-12-22 00:41:30,528 - INFO -  * Detected change in 'C:\\Users\\5530\\Documents\\GitHub\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-22 00:41:30,575 - INFO -  * Detected change in 'C:\\Users\\5530\\Documents\\GitHub\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-22 00:41:30,646 - INFO -  * Restarting with stat
+2025-12-22 00:41:30,981 - WARNING -  * Debugger is active!
+2025-12-22 00:41:30,987 - INFO -  * Debugger PIN: 997-965-045
+2025-12-22 00:41:31,006 - WARNING -  * Debugger is active!
+2025-12-22 00:41:31,012 - INFO -  * Debugger PIN: 997-965-045
+2025-12-22 00:43:13,561 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.16.153:5000
+2025-12-22 00:43:13,561 - INFO - [33mPress CTRL+C to quit[0m
+2025-12-22 00:43:13,561 - INFO -  * Restarting with stat
+2025-12-22 00:43:13,863 - WARNING -  * Debugger is active!
+2025-12-22 00:43:13,868 - INFO -  * Debugger PIN: 997-965-045
+2025-12-22 00:44:36,752 - INFO - package: mysql.connector.plugins
+2025-12-22 00:44:36,752 - INFO - plugin_name: caching_sha2_password
+2025-12-22 00:44:36,752 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2025-12-22 00:44:36,761 - INFO - 127.0.0.1 - - [22/Dec/2025 00:44:36] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-22 00:44:50,378 - INFO - 127.0.0.1 - - [22/Dec/2025 00:44:50] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-22 00:45:32,678 - INFO -  * Detected change in 'C:\\Users\\5530\\Documents\\GitHub\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-22 00:45:32,751 - INFO -  * Detected change in 'C:\\Users\\5530\\Documents\\GitHub\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-22 00:45:32,803 - INFO -  * Restarting with stat
+2025-12-22 00:45:33,085 - WARNING -  * Debugger is active!
+2025-12-22 00:45:33,090 - INFO -  * Debugger PIN: 997-965-045
+2025-12-22 00:45:33,159 - WARNING -  * Debugger is active!
+2025-12-22 00:45:33,168 - INFO -  * Debugger PIN: 997-965-045
+2025-12-22 00:46:08,240 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.16.153:5000
+2025-12-22 00:46:08,240 - INFO - [33mPress CTRL+C to quit[0m
+2025-12-22 00:46:08,241 - INFO -  * Restarting with stat
+2025-12-22 00:46:08,606 - WARNING -  * Debugger is active!
+2025-12-22 00:46:08,612 - INFO -  * Debugger PIN: 997-965-045
+2025-12-22 00:46:17,156 - INFO - package: mysql.connector.plugins
+2025-12-22 00:46:17,156 - INFO - plugin_name: caching_sha2_password
+2025-12-22 00:46:17,156 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2025-12-22 00:46:17,162 - INFO - Fetching pending tasks for user_id=34. Found: 0
+2025-12-22 00:46:17,165 - INFO - 127.0.0.1 - - [22/Dec/2025 00:46:17] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-22 00:47:10,234 - INFO -  * Detected change in 'C:\\Users\\5530\\Documents\\GitHub\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-22 00:47:10,273 - INFO -  * Restarting with stat
+2025-12-22 00:47:10,442 - INFO -  * Detected change in 'C:\\Users\\5530\\Documents\\GitHub\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-22 00:47:10,614 - WARNING -  * Debugger is active!
+2025-12-22 00:47:10,619 - INFO -  * Debugger PIN: 997-965-045
+2025-12-22 00:47:10,803 - WARNING -  * Debugger is active!
+2025-12-22 00:47:10,808 - INFO -  * Debugger PIN: 997-965-045
+2025-12-22 00:47:49,485 - INFO - package: mysql.connector.plugins
+2025-12-22 00:47:49,486 - INFO - plugin_name: caching_sha2_password
+2025-12-22 00:47:49,486 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2025-12-22 00:47:49,491 - INFO - Task Status Distribution for User 34: []
+2025-12-22 00:47:49,491 - INFO - Fetching pending tasks for user_id=34. Found: 0
+2025-12-22 00:47:49,494 - INFO - 127.0.0.1 - - [22/Dec/2025 00:47:49] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-22 00:47:53,942 - INFO - Task Status Distribution for User 34: []
+2025-12-22 00:47:53,943 - INFO - Fetching pending tasks for user_id=34. Found: 0
+2025-12-22 00:47:53,946 - INFO - 127.0.0.1 - - [22/Dec/2025 00:47:53] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-22 00:49:12,918 - INFO -  * Detected change in 'C:\\Users\\5530\\Documents\\GitHub\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-22 00:49:12,951 - INFO -  * Restarting with stat
+2025-12-22 00:49:13,290 - WARNING -  * Debugger is active!
+2025-12-22 00:49:13,295 - INFO -  * Debugger PIN: 997-965-045
+2025-12-22 00:49:13,374 - INFO -  * Detected change in 'C:\\Users\\5530\\Documents\\GitHub\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-22 00:49:13,737 - WARNING -  * Debugger is active!
+2025-12-22 00:49:13,741 - INFO -  * Debugger PIN: 997-965-045
+2025-12-22 00:51:20,598 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.16.153:5000
+2025-12-22 00:51:20,598 - INFO - [33mPress CTRL+C to quit[0m
+2025-12-22 00:51:20,599 - INFO -  * Restarting with stat
+2025-12-22 00:51:20,907 - WARNING -  * Debugger is active!
+2025-12-22 00:51:20,911 - INFO -  * Debugger PIN: 997-965-045
+2025-12-22 00:52:52,877 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.16.153:5000
+2025-12-22 00:52:52,877 - INFO - [33mPress CTRL+C to quit[0m
+2025-12-22 00:52:52,879 - INFO -  * Restarting with stat
+2025-12-22 00:52:53,229 - WARNING -  * Debugger is active!
+2025-12-22 00:52:53,234 - INFO -  * Debugger PIN: 997-965-045
+2025-12-22 00:53:03,418 - INFO - package: mysql.connector.plugins
+2025-12-22 00:53:03,418 - INFO - plugin_name: caching_sha2_password
+2025-12-22 00:53:03,418 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2025-12-22 00:53:03,422 - INFO - GLOBAL CHECK - First 5 tasks in DB: [{'task_id': 1, 'user_id': None, 'title': 'Finish Calculus HW', 'status': 'pending'}, {'task_id': 2, 'user_id': None, 'title': 'Quiz prep', 'status': 'pending'}, {'task_id': 3, 'user_id': None, 'title': 'Essay draft', 'status': 'in_progress'}, {'task_id': 4, 'user_id': None, 'title': 'ML project', 'status': 'pending'}, {'task_id': 5, 'user_id': None, 'title': 'Network lab', 'status': 'done'}]
+2025-12-22 00:53:03,423 - INFO - Task Status Distribution for User 34: []
+2025-12-22 00:53:03,423 - INFO - Fetching pending tasks for user_id=34. Found: 0
+2025-12-22 00:53:03,426 - INFO - 127.0.0.1 - - [22/Dec/2025 00:53:03] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-22 00:54:01,275 - INFO -  * Detected change in 'C:\\Users\\5530\\Documents\\GitHub\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-22 00:54:01,370 - INFO -  * Restarting with stat
+2025-12-22 00:54:01,880 - WARNING -  * Debugger is active!
+2025-12-22 00:54:01,885 - INFO -  * Debugger PIN: 997-965-045
+2025-12-22 00:54:01,959 - INFO -  * Detected change in 'C:\\Users\\5530\\Documents\\GitHub\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-22 00:54:02,447 - WARNING -  * Debugger is active!
+2025-12-22 00:54:02,452 - INFO -  * Debugger PIN: 997-965-045
+2025-12-22 00:58:31,253 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.16.153:5000
+2025-12-22 00:58:31,253 - INFO - [33mPress CTRL+C to quit[0m
+2025-12-22 00:58:31,254 - INFO -  * Restarting with stat
+2025-12-22 00:58:31,571 - WARNING -  * Debugger is active!
+2025-12-22 00:58:31,577 - INFO -  * Debugger PIN: 997-965-045
+2025-12-22 00:59:05,610 - INFO - package: mysql.connector.plugins
+2025-12-22 00:59:05,610 - INFO - plugin_name: caching_sha2_password
+2025-12-22 00:59:05,610 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2025-12-22 00:59:05,615 - INFO - GLOBAL CHECK - First 5 tasks in DB: [{'task_id': 1, 'user_id': None, 'title': 'Finish Calculus HW', 'status': 'pending'}, {'task_id': 2, 'user_id': None, 'title': 'Quiz prep', 'status': 'pending'}, {'task_id': 3, 'user_id': None, 'title': 'Essay draft', 'status': 'in_progress'}, {'task_id': 4, 'user_id': None, 'title': 'ML project', 'status': 'pending'}, {'task_id': 5, 'user_id': None, 'title': 'Network lab', 'status': 'done'}]
+2025-12-22 00:59:05,616 - INFO - Task Status Distribution for User 34: []
+2025-12-22 00:59:05,617 - INFO - Fetching pending tasks for user_id=34. Found: 44
+2025-12-22 00:59:05,622 - INFO - Generating schedule. Start: 09:00:00, End: 17:00:00, Weekends: False
+2025-12-22 00:59:05,622 - INFO - Tasks to schedule: 44
+2025-12-22 00:59:05,622 - INFO - Placed task 'Finish Calculus HW' on Mon at 09:00:00
+2025-12-22 00:59:05,623 - ERROR - Error generating schedule: combine() argument 2 must be datetime.time, not str
+Traceback (most recent call last):
+  File "C:\Users\5530\Documents\GitHub\Study_Planning_Web\Study_Planning_Web\app.py", line 334, in generate_schedule
+    generated_schedule = scheduler.generate_schedule(tasks, existing_schedules)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\5530\Documents\GitHub\Study_Planning_Web\Study_Planning_Web\app.py", line 230, in generate_schedule
+    i_start_dt = datetime.combine(dummy_date, i_start)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: combine() argument 2 must be datetime.time, not str
+2025-12-22 00:59:05,626 - INFO - 127.0.0.1 - - [22/Dec/2025 00:59:05] "[35m[1mPOST /generate-schedule HTTP/1.1[0m" 500 -
+2025-12-22 00:59:19,176 - INFO - GLOBAL CHECK - First 5 tasks in DB: [{'task_id': 1, 'user_id': None, 'title': 'Finish Calculus HW', 'status': 'pending'}, {'task_id': 2, 'user_id': None, 'title': 'Quiz prep', 'status': 'pending'}, {'task_id': 3, 'user_id': None, 'title': 'Essay draft', 'status': 'in_progress'}, {'task_id': 4, 'user_id': None, 'title': 'ML project', 'status': 'pending'}, {'task_id': 5, 'user_id': None, 'title': 'Network lab', 'status': 'done'}]
+2025-12-22 00:59:19,178 - INFO - Task Status Distribution for User 34: []
+2025-12-22 00:59:19,180 - INFO - Fetching pending tasks for user_id=34. Found: 44
+2025-12-22 00:59:19,180 - INFO - Generating schedule. Start: 09:00:00, End: 17:00:00, Weekends: False
+2025-12-22 00:59:19,180 - INFO - Tasks to schedule: 44
+2025-12-22 00:59:19,180 - INFO - Placed task 'Finish Calculus HW' on Mon at 09:00:00
+2025-12-22 00:59:19,180 - ERROR - Error generating schedule: combine() argument 2 must be datetime.time, not str
+Traceback (most recent call last):
+  File "C:\Users\5530\Documents\GitHub\Study_Planning_Web\Study_Planning_Web\app.py", line 334, in generate_schedule
+    generated_schedule = scheduler.generate_schedule(tasks, existing_schedules)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\5530\Documents\GitHub\Study_Planning_Web\Study_Planning_Web\app.py", line 230, in generate_schedule
+    i_start_dt = datetime.combine(dummy_date, i_start)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: combine() argument 2 must be datetime.time, not str
+2025-12-22 00:59:19,183 - INFO - 127.0.0.1 - - [22/Dec/2025 00:59:19] "[35m[1mPOST /generate-schedule HTTP/1.1[0m" 500 -
+2025-12-22 01:00:03,030 - INFO -  * Detected change in 'C:\\Users\\5530\\Documents\\GitHub\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-22 01:00:03,237 - INFO -  * Restarting with stat
+2025-12-22 01:00:03,291 - INFO -  * Detected change in 'C:\\Users\\5530\\Documents\\GitHub\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-22 01:00:03,802 - WARNING -  * Debugger is active!
+2025-12-22 01:00:03,812 - INFO -  * Debugger PIN: 997-965-045
+2025-12-22 01:00:03,903 - WARNING -  * Debugger is active!
+2025-12-22 01:00:03,908 - INFO -  * Debugger PIN: 997-965-045
+2025-12-22 01:01:03,016 - INFO - package: mysql.connector.plugins
+2025-12-22 01:01:03,017 - INFO - plugin_name: caching_sha2_password
+2025-12-22 01:01:03,017 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2025-12-22 01:01:03,021 - INFO - GLOBAL CHECK - First 5 tasks in DB: [{'task_id': 1, 'user_id': None, 'title': 'Finish Calculus HW', 'status': 'pending'}, {'task_id': 2, 'user_id': None, 'title': 'Quiz prep', 'status': 'pending'}, {'task_id': 3, 'user_id': None, 'title': 'Essay draft', 'status': 'in_progress'}, {'task_id': 4, 'user_id': None, 'title': 'ML project', 'status': 'pending'}, {'task_id': 5, 'user_id': None, 'title': 'Network lab', 'status': 'done'}]
+2025-12-22 01:01:03,021 - INFO - Task Status Distribution for User 34: []
+2025-12-22 01:01:03,023 - INFO - Fetching pending tasks for user_id=34. Found: 44
+2025-12-22 01:01:03,026 - INFO - Generating schedule. Start: 09:00:00, End: 17:00:00, Weekends: True
+2025-12-22 01:01:03,026 - INFO - Tasks to schedule: 44
+2025-12-22 01:01:03,026 - INFO - Placed task 'Finish Calculus HW' on Mon at 09:00:00
+2025-12-22 01:01:03,026 - INFO - Placed task 'ML project' on Mon at 10:30:00
+2025-12-22 01:01:03,027 - INFO - Placed task 'Research outline' on Mon at 13:30:00
+2025-12-22 01:01:03,027 - INFO - Placed task 'Solve problems' on Tue at 09:00:00
+2025-12-22 01:01:03,027 - INFO - Placed task 'Dataset creation' on Tue at 11:00:00
+2025-12-22 01:01:03,039 - INFO - Placed task 'Quiz prep' on Wed at 16:00:00
+2025-12-22 01:01:03,039 - INFO - Placed task 'Design poster' on Thu at 09:00:00
+2025-12-22 01:01:03,040 - INFO - Placed task 'Read AI paper' on Thu at 11:00:00
+2025-12-22 01:01:03,040 - INFO - Placed task 'Marketing survey' on Thu at 12:30:00
+2025-12-22 01:01:03,040 - INFO - Placed task 'Project plan' on Thu at 14:30:00
+2025-12-22 01:01:03,040 - INFO - Placed task 'Paper search' on Fri at 09:00:00
+2025-12-22 01:01:03,040 - INFO - Placed task 'Startup idea' on Fri at 11:00:00
+2025-12-22 01:01:03,045 - INFO - Placed task 'ABCDE' on Sat at 14:30:00
+2025-12-22 01:01:03,046 - INFO - Placed task 'ABCDEF' on Sat at 15:30:00
+2025-12-22 01:01:03,046 - INFO - Placed task 'ABCD123' on Sun at 09:00:00
+2025-12-22 01:01:03,046 - INFO - Placed task 'ABCD' on Sun at 11:00:00
+2025-12-22 01:01:03,046 - INFO - Placed task 'ABCDE' on Sun at 12:00:00
+2025-12-22 01:01:03,046 - INFO - Placed task 'ABCD' on Sun at 14:15:00
+2025-12-22 01:01:03,046 - INFO - Placed task 'ABCD' on Sun at 15:15:00
+2025-12-22 01:01:03,048 - WARNING - Could not place task: ABCD within limits.
+2025-12-22 01:01:03,048 - WARNING - Could not place task: 123456 within limits.
+2025-12-22 01:01:03,048 - WARNING - Could not place task: ABCD within limits.
+2025-12-22 01:01:03,048 - WARNING - Could not place task: ahihihihi within limits.
+2025-12-22 01:01:03,049 - WARNING - Could not place task: aaaaaaaa within limits.
+2025-12-22 01:01:03,049 - WARNING - Could not place task: ahihihi within limits.
+2025-12-22 01:01:03,049 - WARNING - Could not place task: aaaaaa within limits.
+2025-12-22 01:01:03,050 - WARNING - Could not place task: Physics exercise within limits.
+2025-12-22 01:01:03,050 - INFO - Placed task 'Lecture summary' on Sun at 16:15:00
+2025-12-22 01:01:03,050 - WARNING - Could not place task: Read docs within limits.
+2025-12-22 01:01:03,050 - WARNING - Could not place task: Grammar review within limits.
+2025-12-22 01:01:03,050 - WARNING - Could not place task: Volunteer report within limits.
+2025-12-22 01:01:03,050 - WARNING - Could not place task: Group study session within limits.
+2025-12-22 01:01:03,057 - INFO - 127.0.0.1 - - [22/Dec/2025 01:01:03] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-22 01:01:17,346 - INFO - GLOBAL CHECK - First 5 tasks in DB: [{'task_id': 1, 'user_id': None, 'title': 'Finish Calculus HW', 'status': 'pending'}, {'task_id': 2, 'user_id': None, 'title': 'Quiz prep', 'status': 'pending'}, {'task_id': 3, 'user_id': None, 'title': 'Essay draft', 'status': 'in_progress'}, {'task_id': 4, 'user_id': None, 'title': 'ML project', 'status': 'pending'}, {'task_id': 5, 'user_id': None, 'title': 'Network lab', 'status': 'done'}]
+2025-12-22 01:01:17,347 - INFO - Task Status Distribution for User 34: []
+2025-12-22 01:01:17,348 - INFO - Fetching pending tasks for user_id=34. Found: 44
+2025-12-22 01:01:17,348 - INFO - Generating schedule. Start: 09:00:00, End: 17:00:00, Weekends: False
+2025-12-22 01:01:17,348 - INFO - Tasks to schedule: 44
+2025-12-22 01:01:17,348 - INFO - Placed task 'Finish Calculus HW' on Mon at 09:00:00
+2025-12-22 01:01:17,348 - INFO - Placed task 'ML project' on Mon at 10:30:00
+2025-12-22 01:01:17,348 - INFO - Placed task 'Research outline' on Mon at 13:30:00
+2025-12-22 01:01:17,348 - INFO - Placed task 'Solve problems' on Tue at 09:00:00
+2025-12-22 01:01:17,348 - INFO - Placed task 'Dataset creation' on Tue at 11:00:00
+2025-12-22 01:01:17,354 - INFO - Placed task 'Quiz prep' on Wed at 16:00:00
+2025-12-22 01:01:17,354 - INFO - Placed task 'Design poster' on Thu at 09:00:00
+2025-12-22 01:01:17,355 - INFO - Placed task 'Read AI paper' on Thu at 11:00:00
+2025-12-22 01:01:17,355 - INFO - Placed task 'Marketing survey' on Thu at 12:30:00
+2025-12-22 01:01:17,355 - INFO - Placed task 'Project plan' on Thu at 14:30:00
+2025-12-22 01:01:17,355 - INFO - Placed task 'Paper search' on Fri at 09:00:00
+2025-12-22 01:01:17,355 - INFO - Placed task 'Startup idea' on Fri at 11:00:00
+2025-12-22 01:01:17,359 - WARNING - Could not place task: ABCDE within limits.
+2025-12-22 01:01:17,359 - WARNING - Could not place task: ABCDEF within limits.
+2025-12-22 01:01:17,359 - WARNING - Could not place task: ABCD123 within limits.
+2025-12-22 01:01:17,359 - WARNING - Could not place task: ABCD within limits.
+2025-12-22 01:01:17,359 - WARNING - Could not place task: ABCDE within limits.
+2025-12-22 01:01:17,359 - WARNING - Could not place task: ABCD within limits.
+2025-12-22 01:01:17,360 - WARNING - Could not place task: ABCD within limits.
+2025-12-22 01:01:17,360 - WARNING - Could not place task: ABCD within limits.
+2025-12-22 01:01:17,360 - WARNING - Could not place task: 123456 within limits.
+2025-12-22 01:01:17,360 - WARNING - Could not place task: ABCD within limits.
+2025-12-22 01:01:17,360 - WARNING - Could not place task: ahihihihi within limits.
+2025-12-22 01:01:17,361 - WARNING - Could not place task: aaaaaaaa within limits.
+2025-12-22 01:01:17,361 - WARNING - Could not place task: ahihihi within limits.
+2025-12-22 01:01:17,361 - WARNING - Could not place task: aaaaaa within limits.
+2025-12-22 01:01:17,361 - WARNING - Could not place task: Physics exercise within limits.
+2025-12-22 01:01:17,361 - WARNING - Could not place task: Lecture summary within limits.
+2025-12-22 01:01:17,361 - WARNING - Could not place task: Read docs within limits.
+2025-12-22 01:01:17,361 - WARNING - Could not place task: Grammar review within limits.
+2025-12-22 01:01:17,361 - WARNING - Could not place task: Volunteer report within limits.
+2025-12-22 01:01:17,362 - WARNING - Could not place task: Group study session within limits.
+2025-12-22 01:01:17,367 - INFO - 127.0.0.1 - - [22/Dec/2025 01:01:17] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-22 01:02:57,820 - INFO -  * Detected change in 'C:\\Users\\5530\\Documents\\GitHub\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-22 01:02:57,843 - INFO -  * Detected change in 'C:\\Users\\5530\\Documents\\GitHub\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-22 01:02:57,989 - INFO -  * Restarting with stat
+2025-12-22 01:02:58,691 - WARNING -  * Debugger is active!
+2025-12-22 01:02:58,691 - WARNING -  * Debugger is active!
+2025-12-22 01:02:58,706 - INFO -  * Debugger PIN: 997-965-045
+2025-12-22 01:02:58,716 - INFO -  * Debugger PIN: 997-965-045
+2025-12-22 01:04:08,091 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.16.16.153:5000
+2025-12-22 01:04:08,091 - INFO - [33mPress CTRL+C to quit[0m
+2025-12-22 01:04:08,093 - INFO -  * Restarting with stat
+2025-12-22 01:04:08,535 - WARNING -  * Debugger is active!
+2025-12-22 01:04:08,539 - INFO -  * Debugger PIN: 997-965-045
+2025-12-22 01:04:31,922 - INFO - package: mysql.connector.plugins
+2025-12-22 01:04:31,922 - INFO - plugin_name: caching_sha2_password
+2025-12-22 01:04:31,922 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2025-12-22 01:04:31,926 - INFO - GLOBAL CHECK - First 5 tasks in DB: [{'task_id': 1, 'user_id': None, 'title': 'Finish Calculus HW', 'status': 'pending'}, {'task_id': 2, 'user_id': None, 'title': 'Quiz prep', 'status': 'pending'}, {'task_id': 3, 'user_id': None, 'title': 'Essay draft', 'status': 'in_progress'}, {'task_id': 4, 'user_id': None, 'title': 'ML project', 'status': 'pending'}, {'task_id': 5, 'user_id': None, 'title': 'Network lab', 'status': 'done'}]
+2025-12-22 01:04:31,928 - INFO - Task Status Distribution for User 34: []
+2025-12-22 01:04:31,929 - INFO - Fetching pending tasks for user_id=34. Found: 0
+2025-12-22 01:04:31,933 - INFO - 127.0.0.1 - - [22/Dec/2025 01:04:31] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-22 01:04:42,990 - INFO - GLOBAL CHECK - First 5 tasks in DB: [{'task_id': 1, 'user_id': None, 'title': 'Finish Calculus HW', 'status': 'pending'}, {'task_id': 2, 'user_id': None, 'title': 'Quiz prep', 'status': 'pending'}, {'task_id': 3, 'user_id': None, 'title': 'Essay draft', 'status': 'in_progress'}, {'task_id': 4, 'user_id': None, 'title': 'ML project', 'status': 'pending'}, {'task_id': 5, 'user_id': None, 'title': 'Network lab', 'status': 'done'}]
+2025-12-22 01:04:42,993 - INFO - Task Status Distribution for User 34: []
+2025-12-22 01:04:42,993 - INFO - Fetching pending tasks for user_id=34. Found: 0
+2025-12-22 01:04:42,998 - INFO - 127.0.0.1 - - [22/Dec/2025 01:04:42] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-22 01:19:50,569 - INFO - GLOBAL CHECK - First 5 tasks in DB: [{'task_id': 1, 'user_id': None, 'title': 'Finish Calculus HW', 'status': 'pending'}, {'task_id': 2, 'user_id': None, 'title': 'Quiz prep', 'status': 'pending'}, {'task_id': 3, 'user_id': None, 'title': 'Essay draft', 'status': 'in_progress'}, {'task_id': 4, 'user_id': None, 'title': 'ML project', 'status': 'pending'}, {'task_id': 5, 'user_id': None, 'title': 'Network lab', 'status': 'done'}]
+2025-12-22 01:19:50,570 - INFO - Task Status Distribution for User 34: []
+2025-12-22 01:19:50,571 - INFO - Fetching pending tasks for user_id=34. Found: 0
+2025-12-22 01:19:50,574 - INFO - 127.0.0.1 - - [22/Dec/2025 01:19:50] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-22 01:20:22,802 - INFO - GLOBAL CHECK - First 5 tasks in DB: [{'task_id': 1, 'user_id': None, 'title': 'Finish Calculus HW', 'status': 'pending'}, {'task_id': 2, 'user_id': None, 'title': 'Quiz prep', 'status': 'pending'}, {'task_id': 3, 'user_id': None, 'title': 'Essay draft', 'status': 'in_progress'}, {'task_id': 4, 'user_id': None, 'title': 'ML project', 'status': 'pending'}, {'task_id': 5, 'user_id': None, 'title': 'Network lab', 'status': 'done'}]
+2025-12-22 01:20:22,803 - INFO - Task Status Distribution for User 34: []
+2025-12-22 01:20:22,804 - INFO - Fetching pending tasks for user_id=34. Found: 0
+2025-12-22 01:20:22,807 - INFO - 127.0.0.1 - - [22/Dec/2025 01:20:22] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-22 01:20:27,382 - INFO - GLOBAL CHECK - First 5 tasks in DB: [{'task_id': 1, 'user_id': None, 'title': 'Finish Calculus HW', 'status': 'pending'}, {'task_id': 2, 'user_id': None, 'title': 'Quiz prep', 'status': 'pending'}, {'task_id': 3, 'user_id': None, 'title': 'Essay draft', 'status': 'in_progress'}, {'task_id': 4, 'user_id': None, 'title': 'ML project', 'status': 'pending'}, {'task_id': 5, 'user_id': None, 'title': 'Network lab', 'status': 'done'}]
+2025-12-22 01:20:27,382 - INFO - Task Status Distribution for User 34: []
+2025-12-22 01:20:27,384 - INFO - Fetching pending tasks for user_id=34. Found: 0
+2025-12-22 01:20:27,385 - INFO - 127.0.0.1 - - [22/Dec/2025 01:20:27] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-22 02:41:24,933 - INFO - GLOBAL CHECK - First 5 tasks in DB: [{'task_id': 1, 'user_id': None, 'title': 'Finish Calculus HW', 'status': 'pending'}, {'task_id': 2, 'user_id': None, 'title': 'Quiz prep', 'status': 'pending'}, {'task_id': 3, 'user_id': None, 'title': 'Essay draft', 'status': 'in_progress'}, {'task_id': 4, 'user_id': None, 'title': 'ML project', 'status': 'pending'}, {'task_id': 5, 'user_id': None, 'title': 'Network lab', 'status': 'done'}]
+2025-12-22 02:41:24,934 - INFO - Task Status Distribution for User 34: []
+2025-12-22 02:41:24,935 - INFO - Fetching pending tasks for user_id=34. Found: 0
+2025-12-22 02:41:24,941 - INFO - 127.0.0.1 - - [22/Dec/2025 02:41:24] "POST /generate-schedule HTTP/1.1" 200 -

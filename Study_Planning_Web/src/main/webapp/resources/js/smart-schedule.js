@@ -6,8 +6,18 @@
 let currentPreviewData = null; // Store preview data
 
 async function generateSmartSchedule() {
-    // currentCollectionId set in the inline script of smart-schedule.jsp
-    if (typeof window.currentCollectionId === 'undefined' || !window.currentCollectionId) {
+    // Try to get from DOM first to ensure latest value
+    const selectEl = document.getElementById('scheduleSelect');
+    let collId = selectEl ? selectEl.value : null;
+
+    if (!collId && window.currentCollectionId) {
+        collId = window.currentCollectionId;
+    }
+
+    // Update global just in case
+    if (collId) window.currentCollectionId = collId;
+
+    if (!collId) {
         alert("Vui lòng chọn một lịch để áp dụng.");
         return;
     }
@@ -43,7 +53,9 @@ async function generateSmartSchedule() {
 
         if (result.success) {
             currentPreviewData = result.previewData;
-            renderPreview(result.previewData);
+
+            // Render preview
+            renderPreview(currentPreviewData);
         } else {
             alert("Lỗi: " + (result.error || result.message));
         }
@@ -71,7 +83,11 @@ function renderPreview(scheduleData) {
         previewDiv.innerHTML = `
             <div class="text-center p-8">
                 <span class="material-icons-outlined text-4xl text-slate-400">event_busy</span>
-                <p class="text-slate-500 mt-2">Không tìm thấy task nào để sắp xếp.</p>
+                <p class="text-slate-500 mt-2 mb-4">Không tìm thấy nhiệm vụ (Pending Tasks) nào để sắp xếp.</p>
+                <a href="/tasks" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                    <span class="material-icons-outlined text-sm">add_task</span>
+                    Tạo Nhiệm Vụ Ngay
+                </a>
             </div>`;
         return;
     }
@@ -101,7 +117,7 @@ function renderPreview(scheduleData) {
 
     // Time Slots 7 AM to 10 PM (22:00)
     for (let hour = 7; hour <= 22; hour++) {
-        html += `<tr class="h-16 border-b border-slate-100 dark:border-slate-800">`;
+        html += `<tr class="h-8 border-b border-slate-100 dark:border-slate-800">`;
 
         // Time Column
         html += `<td class="sticky left-0 z-10 bg-white dark:bg-slate-900 text-xs text-slate-400 text-center align-top p-1 border-r border-slate-100 dark:border-slate-800">${hour}:00</td>`;
@@ -212,3 +228,17 @@ async function confirmSaveSchedule() {
         alert("Lỗi kết nối khi lưu.");
     }
 }
+// --- Auto Refresh Logic ---
+function tryAutoRefresh() {
+    // Only refresh if we have data (meaning user has pressed Generate at least once)
+    // We check this by seeing if the preview container has the table
+    const previewDiv = document.getElementById('aiPreviewState');
+    if (previewDiv && previewDiv.querySelector('table')) {
+        console.log('Auto-refreshing...');
+        generateSmartSchedule();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function () {
+    // Legacy listener setup removed or kept as backup
+});
