@@ -74,10 +74,11 @@ public class ScheduleCollectionService {
      */
     public boolean deleteCollection(int collectionId, int userId) {
         // Check if this is the last collection
-        int totalCollections = collectionDAO.countByUserId(userId);
-        if (totalCollections <= 1) {
-            return false; // Cannot delete the last collection
-        }
+        // Check was removed to allow deleting the last collection
+        // int totalCollections = collectionDAO.countByUserId(userId);
+        // if (totalCollections <= 1) {
+        // return false; // Cannot delete the last collection
+        // }
 
         return collectionDAO.delete(collectionId);
     }
