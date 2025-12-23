@@ -334,3 +334,161 @@ TypeError: combine() argument 2 must be datetime.time, not str
 2025-12-22 02:41:24,934 - INFO - Task Status Distribution for User 34: []
 2025-12-22 02:41:24,935 - INFO - Fetching pending tasks for user_id=34. Found: 0
 2025-12-22 02:41:24,941 - INFO - 127.0.0.1 - - [22/Dec/2025 02:41:24] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-23 13:24:27,356 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.236.6.202:5000
+2025-12-23 13:24:27,356 - INFO - [33mPress CTRL+C to quit[0m
+2025-12-23 13:24:27,359 - INFO -  * Restarting with stat
+2025-12-23 13:24:27,662 - WARNING -  * Debugger is active!
+2025-12-23 13:24:27,667 - INFO -  * Debugger PIN: 997-965-045
+2025-12-23 13:24:54,150 - INFO - package: mysql.connector.plugins
+2025-12-23 13:24:54,150 - INFO - plugin_name: caching_sha2_password
+2025-12-23 13:24:54,150 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2025-12-23 13:24:54,162 - INFO - GLOBAL CHECK - First 5 tasks in DB: [{'task_id': 1, 'user_id': None, 'title': 'Finish Calculus HW', 'status': 'pending'}, {'task_id': 2, 'user_id': None, 'title': 'Quiz prep', 'status': 'pending'}, {'task_id': 3, 'user_id': None, 'title': 'Essay draft', 'status': 'in_progress'}, {'task_id': 4, 'user_id': None, 'title': 'ML project', 'status': 'pending'}, {'task_id': 5, 'user_id': None, 'title': 'Network lab', 'status': 'done'}]
+2025-12-23 13:24:54,166 - INFO - Task Status Distribution for User 34: []
+2025-12-23 13:24:54,168 - INFO - Fetching pending tasks for user_id=34. Found: 0
+2025-12-23 13:24:54,171 - INFO - 127.0.0.1 - - [23/Dec/2025 13:24:54] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-23 13:25:00,973 - INFO - GLOBAL CHECK - First 5 tasks in DB: [{'task_id': 1, 'user_id': None, 'title': 'Finish Calculus HW', 'status': 'pending'}, {'task_id': 2, 'user_id': None, 'title': 'Quiz prep', 'status': 'pending'}, {'task_id': 3, 'user_id': None, 'title': 'Essay draft', 'status': 'in_progress'}, {'task_id': 4, 'user_id': None, 'title': 'ML project', 'status': 'pending'}, {'task_id': 5, 'user_id': None, 'title': 'Network lab', 'status': 'done'}]
+2025-12-23 13:25:00,973 - INFO - Task Status Distribution for User 34: []
+2025-12-23 13:25:00,978 - INFO - Fetching pending tasks for user_id=34. Found: 0
+2025-12-23 13:25:00,981 - INFO - 127.0.0.1 - - [23/Dec/2025 13:25:00] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-23 13:26:26,827 - INFO - GLOBAL CHECK - First 5 tasks in DB: [{'task_id': 1, 'user_id': None, 'title': 'Finish Calculus HW', 'status': 'pending'}, {'task_id': 2, 'user_id': None, 'title': 'Quiz prep', 'status': 'pending'}, {'task_id': 3, 'user_id': None, 'title': 'Essay draft', 'status': 'in_progress'}, {'task_id': 4, 'user_id': None, 'title': 'ML project', 'status': 'pending'}, {'task_id': 5, 'user_id': None, 'title': 'Network lab', 'status': 'done'}]
+2025-12-23 13:26:26,828 - INFO - Task Status Distribution for User 34: []
+2025-12-23 13:26:26,829 - INFO - Fetching pending tasks for user_id=34. Found: 0
+2025-12-23 13:26:26,833 - INFO - 127.0.0.1 - - [23/Dec/2025 13:26:26] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-23 13:27:10,936 - INFO - GLOBAL CHECK - First 5 tasks in DB: [{'task_id': 1, 'user_id': None, 'title': 'Finish Calculus HW', 'status': 'pending'}, {'task_id': 2, 'user_id': None, 'title': 'Quiz prep', 'status': 'pending'}, {'task_id': 3, 'user_id': None, 'title': 'Essay draft', 'status': 'in_progress'}, {'task_id': 4, 'user_id': None, 'title': 'ML project', 'status': 'pending'}, {'task_id': 5, 'user_id': None, 'title': 'Network lab', 'status': 'done'}]
+2025-12-23 13:27:10,938 - INFO - Task Status Distribution for User 34: []
+2025-12-23 13:27:10,938 - INFO - Fetching pending tasks for user_id=34. Found: 0
+2025-12-23 13:27:10,944 - INFO - 127.0.0.1 - - [23/Dec/2025 13:27:10] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-23 13:46:46,382 - INFO -  * Detected change in 'C:\\Users\\5530\\Documents\\GitHub\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-23 13:46:46,434 - INFO -  * Restarting with stat
+2025-12-23 13:46:46,770 - WARNING -  * Debugger is active!
+2025-12-23 13:46:46,776 - INFO -  * Debugger PIN: 997-965-045
+2025-12-23 13:46:49,987 - INFO -  * Detected change in 'C:\\Users\\5530\\Documents\\GitHub\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-23 13:46:50,020 - INFO -  * Restarting with stat
+2025-12-23 13:46:50,330 - WARNING -  * Debugger is active!
+2025-12-23 13:46:50,335 - INFO -  * Debugger PIN: 997-965-045
+2025-12-23 13:52:28,778 - INFO -  * Detected change in 'C:\\Users\\5530\\Documents\\GitHub\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-23 13:52:28,813 - INFO -  * Restarting with stat
+2025-12-23 13:52:29,124 - WARNING -  * Debugger is active!
+2025-12-23 13:52:29,129 - INFO -  * Debugger PIN: 997-965-045
+2025-12-23 13:52:30,254 - INFO -  * Detected change in 'C:\\Users\\5530\\Documents\\GitHub\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-23 13:52:30,287 - INFO -  * Restarting with stat
+2025-12-23 13:52:30,598 - WARNING -  * Debugger is active!
+2025-12-23 13:52:30,603 - INFO -  * Debugger PIN: 997-965-045
+2025-12-23 14:02:32,170 - INFO - package: mysql.connector.plugins
+2025-12-23 14:02:32,170 - INFO - plugin_name: caching_sha2_password
+2025-12-23 14:02:32,171 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2025-12-23 14:02:32,176 - INFO - GLOBAL CHECK - First 5 tasks in DB: [{'task_id': 1, 'user_id': None, 'title': 'Finish Calculus HW', 'status': 'pending'}, {'task_id': 2, 'user_id': None, 'title': 'Quiz prep', 'status': 'pending'}, {'task_id': 3, 'user_id': None, 'title': 'Essay draft', 'status': 'in_progress'}, {'task_id': 4, 'user_id': None, 'title': 'ML project', 'status': 'pending'}, {'task_id': 5, 'user_id': None, 'title': 'Network lab', 'status': 'done'}]
+2025-12-23 14:02:32,177 - INFO - Task Status Distribution for User 34: []
+2025-12-23 14:02:32,177 - INFO - Fetching pending tasks for user_id=34. Found: 0
+2025-12-23 14:02:32,181 - INFO - 127.0.0.1 - - [23/Dec/2025 14:02:32] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-23 14:20:28,406 - INFO -  * Detected change in 'C:\\Users\\5530\\Documents\\GitHub\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-23 14:20:28,455 - INFO -  * Restarting with stat
+2025-12-23 14:20:28,782 - WARNING -  * Debugger is active!
+2025-12-23 14:20:28,788 - INFO -  * Debugger PIN: 997-965-045
+2025-12-23 14:21:00,599 - INFO - package: mysql.connector.plugins
+2025-12-23 14:21:00,599 - INFO - plugin_name: caching_sha2_password
+2025-12-23 14:21:00,599 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2025-12-23 14:21:00,603 - INFO - Fetching pending tasks for user_id=34. Found: 2
+2025-12-23 14:21:00,606 - INFO - Generating schedule. Start: 09:00:00, End: 17:00:00, Weekends: False
+2025-12-23 14:21:00,606 - INFO - Inferred User Productive Slots: [(8, 12), (13, 17)]
+2025-12-23 14:21:00,607 - INFO - Tasks to schedule: 2
+2025-12-23 14:21:00,608 - INFO - Placed 'Web' on Mon at 09:00:00 (Score: 1.50)
+2025-12-23 14:21:00,609 - INFO - Placed 'Cal3' on Mon at 10:00:00 (Score: 1.50)
+2025-12-23 14:21:00,612 - INFO - 127.0.0.1 - - [23/Dec/2025 14:21:00] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-23 14:21:16,359 - INFO - Fetching pending tasks for user_id=34. Found: 2
+2025-12-23 14:21:16,360 - INFO - Generating schedule. Start: 09:00:00, End: 17:00:00, Weekends: False
+2025-12-23 14:21:16,360 - INFO - Inferred User Productive Slots: [(8, 12), (13, 17)]
+2025-12-23 14:21:16,361 - INFO - Tasks to schedule: 2
+2025-12-23 14:21:16,361 - INFO - Placed 'Web' on Mon at 09:00:00 (Score: 1.50)
+2025-12-23 14:21:16,362 - INFO - Placed 'Cal3' on Mon at 10:00:00 (Score: 1.50)
+2025-12-23 14:21:16,365 - INFO - 127.0.0.1 - - [23/Dec/2025 14:21:16] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-23 14:21:39,115 - INFO - Fetching pending tasks for user_id=34. Found: 2
+2025-12-23 14:21:39,117 - INFO - Generating schedule. Start: 09:00:00, End: 17:00:00, Weekends: False
+2025-12-23 14:21:39,117 - INFO - Inferred User Productive Slots: [(8, 12), (13, 17)]
+2025-12-23 14:21:39,117 - INFO - Tasks to schedule: 2
+2025-12-23 14:21:39,119 - INFO - Placed 'Web' on Mon at 09:00:00 (Score: 1.50)
+2025-12-23 14:21:39,120 - INFO - Placed 'Cal3' on Mon at 10:00:00 (Score: 1.50)
+2025-12-23 14:21:39,123 - INFO - 127.0.0.1 - - [23/Dec/2025 14:21:39] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-23 14:23:22,194 - INFO -  * Detected change in 'C:\\Users\\5530\\Documents\\GitHub\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-23 14:23:22,241 - INFO -  * Restarting with stat
+2025-12-23 14:23:22,631 - WARNING -  * Debugger is active!
+2025-12-23 14:23:22,636 - INFO -  * Debugger PIN: 997-965-045
+2025-12-23 14:26:52,826 - INFO - package: mysql.connector.plugins
+2025-12-23 14:26:52,826 - INFO - plugin_name: caching_sha2_password
+2025-12-23 14:26:52,826 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2025-12-23 14:26:52,831 - INFO - Fetching pending tasks for user_id=34. Found: 2
+2025-12-23 14:26:52,834 - INFO - Generating schedule. Start: 09:00:00, End: 17:00:00, Weekends: False
+2025-12-23 14:26:52,834 - INFO - Inferred User Productive Slots: [(8, 12), (13, 17)]
+2025-12-23 14:26:52,835 - INFO - Tasks to schedule: 2
+2025-12-23 14:26:52,836 - INFO - Placed 'Web' on Mon at 09:00:00 (Score: 1.50)
+2025-12-23 14:26:52,837 - INFO - Placed 'Cal3' on Mon at 10:00:00 (Score: 1.50)
+2025-12-23 14:26:52,840 - INFO - 127.0.0.1 - - [23/Dec/2025 14:26:52] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-23 14:28:39,352 - INFO - Fetching pending tasks for user_id=34. Found: 2
+2025-12-23 14:28:39,353 - INFO - Generating schedule. Start: 09:00:00, End: 17:00:00, Weekends: False
+2025-12-23 14:28:39,353 - INFO - Inferred User Productive Slots: [(8, 12), (13, 17)]
+2025-12-23 14:28:39,354 - INFO - Tasks to schedule: 2
+2025-12-23 14:28:39,382 - INFO - 127.0.0.1 - - [23/Dec/2025 14:28:39] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-23 14:29:34,002 - INFO -  * Detected change in 'C:\\Users\\5530\\Documents\\GitHub\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-23 14:29:34,035 - INFO -  * Restarting with stat
+2025-12-23 14:29:34,372 - WARNING -  * Debugger is active!
+2025-12-23 14:29:34,378 - INFO -  * Debugger PIN: 997-965-045
+2025-12-23 14:29:58,247 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://10.236.6.202:5000
+2025-12-23 14:29:58,249 - INFO - [33mPress CTRL+C to quit[0m
+2025-12-23 14:29:58,249 - INFO -  * Restarting with stat
+2025-12-23 14:29:58,583 - WARNING -  * Debugger is active!
+2025-12-23 14:29:58,588 - INFO -  * Debugger PIN: 997-965-045
+2025-12-23 14:30:07,439 - INFO - package: mysql.connector.plugins
+2025-12-23 14:30:07,439 - INFO - plugin_name: caching_sha2_password
+2025-12-23 14:30:07,440 - INFO - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2025-12-23 14:30:07,444 - INFO - Fetching pending tasks for user_id=34. Found: 2
+2025-12-23 14:30:07,446 - INFO - Generating schedule. Start: 09:00:00, End: 17:00:00, Weekends: False
+2025-12-23 14:30:07,446 - INFO - Inferred User Productive Slots: [(8, 12), (13, 17)]
+2025-12-23 14:30:07,446 - INFO - Tasks to schedule: 2
+2025-12-23 14:30:07,479 - INFO - 127.0.0.1 - - [23/Dec/2025 14:30:07] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-23 14:54:19,441 - INFO - Fetching pending tasks for user_id=34. Found: 2
+2025-12-23 14:54:19,442 - INFO - Generating schedule. Start: 09:00:00, End: 17:00:00, Weekends: True
+2025-12-23 14:54:19,443 - INFO - Inferred User Productive Slots: [(8, 12), (13, 17)]
+2025-12-23 14:54:19,443 - INFO - Tasks to schedule: 2
+2025-12-23 14:54:19,481 - INFO - 127.0.0.1 - - [23/Dec/2025 14:54:19] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-23 14:56:40,142 - INFO - Fetching pending tasks for user_id=34. Found: 0
+2025-12-23 14:56:40,150 - INFO - 127.0.0.1 - - [23/Dec/2025 14:56:40] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-23 14:57:15,646 - INFO - Fetching pending tasks for user_id=34. Found: 1
+2025-12-23 14:57:15,647 - INFO - Generating schedule. Start: 09:00:00, End: 17:00:00, Weekends: False
+2025-12-23 14:57:15,648 - INFO - Inferred User Productive Slots: [(8, 12), (13, 17)]
+2025-12-23 14:57:15,650 - INFO - Tasks to schedule: 1
+2025-12-23 14:57:15,651 - INFO - Placed 'DM' on Mon at 09:00:00 (Score: 1.50)
+2025-12-23 14:57:15,653 - INFO - 127.0.0.1 - - [23/Dec/2025 14:57:15] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-23 14:57:35,664 - INFO - Fetching pending tasks for user_id=34. Found: 2
+2025-12-23 14:57:35,665 - INFO - Generating schedule. Start: 09:00:00, End: 17:00:00, Weekends: False
+2025-12-23 14:57:35,665 - INFO - Inferred User Productive Slots: [(8, 12), (13, 17)]
+2025-12-23 14:57:35,666 - INFO - Tasks to schedule: 2
+2025-12-23 14:57:35,671 - INFO - Placed 'DM' on Mon at 09:00:00 (Score: 1.50)
+2025-12-23 14:57:35,672 - INFO - Placed 'ahihihihi' on Mon at 10:00:00 (Score: 1.50)
+2025-12-23 14:57:35,674 - INFO - 127.0.0.1 - - [23/Dec/2025 14:57:35] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-23 14:57:46,185 - INFO - Fetching pending tasks for user_id=34. Found: 2
+2025-12-23 14:57:46,186 - INFO - Generating schedule. Start: 09:00:00, End: 17:00:00, Weekends: False
+2025-12-23 14:57:46,186 - INFO - Inferred User Productive Slots: [(8, 12), (13, 17)]
+2025-12-23 14:57:46,187 - INFO - Tasks to schedule: 2
+2025-12-23 14:57:46,190 - INFO - Placed 'DM' on Mon at 09:00:00 (Score: 1.50)
+2025-12-23 14:57:46,191 - INFO - Placed 'ahihihihi' on Mon at 10:00:00 (Score: 1.50)
+2025-12-23 14:57:46,193 - INFO - 127.0.0.1 - - [23/Dec/2025 14:57:46] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-23 14:58:07,844 - INFO - Fetching pending tasks for user_id=34. Found: 2
+2025-12-23 14:58:07,845 - INFO - Generating schedule. Start: 09:00:00, End: 17:00:00, Weekends: False
+2025-12-23 14:58:07,845 - INFO - Inferred User Productive Slots: [(8, 12), (13, 17)]
+2025-12-23 14:58:07,846 - INFO - Tasks to schedule: 2
+2025-12-23 14:58:07,849 - INFO - Placed 'ahihi' on Mon at 09:00:00 (Score: 1.50)
+2025-12-23 14:58:07,850 - INFO - Placed 'DM' on Mon at 10:00:00 (Score: 1.50)
+2025-12-23 14:58:07,853 - INFO - 127.0.0.1 - - [23/Dec/2025 14:58:07] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-23 14:58:15,148 - INFO - Fetching pending tasks for user_id=34. Found: 2
+2025-12-23 14:58:15,151 - INFO - Generating schedule. Start: 09:00:00, End: 17:00:00, Weekends: False
+2025-12-23 14:58:15,154 - INFO - Inferred User Productive Slots: [(8, 12), (13, 17)]
+2025-12-23 14:58:15,154 - INFO - Tasks to schedule: 2
+2025-12-23 14:58:15,156 - INFO - Placed 'ahihi' on Mon at 09:00:00 (Score: 1.50)
+2025-12-23 14:58:15,157 - INFO - Placed 'DM' on Mon at 10:00:00 (Score: 1.50)
+2025-12-23 14:58:15,160 - INFO - 127.0.0.1 - - [23/Dec/2025 14:58:15] "POST /generate-schedule HTTP/1.1" 200 -
