@@ -99,8 +99,8 @@ function renderPreview(scheduleData) {
                     <tbody>
     `;
 
-    // Time Slots 7 AM to 10 PM (22:00)
-    for (let hour = 7; hour <= 22; hour++) {
+    // Time Slots 0 AM to 11 PM (23:00)
+    for (let hour = 0; hour <= 23; hour++) {
         html += `<tr class="h-16 border-b border-slate-100 dark:border-slate-800">`;
 
         // Time Column
