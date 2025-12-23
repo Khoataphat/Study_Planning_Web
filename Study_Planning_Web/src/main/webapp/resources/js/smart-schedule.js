@@ -23,14 +23,41 @@ async function generateSmartSchedule() {
     btn.disabled = true;
     btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-xl"></i> Đang tính toán...';
 
+    // ⭐️ NORMALIZE TIME TO 24H FORMAT (HH:mm)
+    // Input could be "09:00 SA", "2:00 CH", or "14:00"
+    function to24h(timeStr) {
+        if (!timeStr) return "08:00"; // Default
+
+        // Remove whitespace
+        timeStr = timeStr.trim();
+
+        // Check for SA/CH/AM/PM
+        const isPM = timeStr.toUpperCase().includes('CH') || timeStr.toUpperCase().includes('PM');
+        const isAM = timeStr.toUpperCase().includes('SA') || timeStr.toUpperCase().includes('AM');
+
+        // Extract numbers
+        const parts = timeStr.replace(/[^0-9:]/g, '').split(':');
+        let hours = parseInt(parts[0]);
+        let minutes = parts.length > 1 ? parseInt(parts[1]) : 0;
+
+        if (isNaN(hours)) return "08:00";
+
+        if (isPM && hours < 12) hours += 12;
+        if (isAM && hours === 12) hours = 0;
+
+        return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+    }
+
     const payload = {
         action: 'preview', // Step 1: Preview
         collectionId: parseInt(window.currentCollectionId),
-        startTime: startTime,
-        endTime: endTime,
+        startTime: to24h(startTime),
+        endTime: to24h(endTime),
         priorityFocus: priority,
         includeWeekends: includeWeekends
     };
+
+    console.log("📤 SmartSchedule Payload:", payload);
 
     try {
         const response = await fetch('/api/smart-schedule/generate', {

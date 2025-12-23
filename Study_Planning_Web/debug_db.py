@@ -38,8 +38,9 @@ try:
             if s_seconds >= e_seconds:
                 sanity_marker = "🟥 INVALID TIME (Start >= End)"
 
+            task_id = r.get('task_id')
             subject = r.get('subject', b'').decode('utf-8', 'ignore') if isinstance(r.get('subject'), bytes) else r.get('subject')
-            print(f"{sanity_marker} Coll: {coll_id:<4} | Day: {day:<3} | Time: {start} - {end} | Sub: {subject} | ID: {r.get('schedule_id')}")
+            print(f"{sanity_marker} Coll: {coll_id:<4} | Day: {day:<3} | Time: {start} - {end} | Sub: {subject} | ID: {r.get('schedule_id')} | TaskID: {task_id}")
         except Exception as e:
             print(f"Error printing row: {r.get('schedule_id')} -> {e}")
         except Exception as e:
