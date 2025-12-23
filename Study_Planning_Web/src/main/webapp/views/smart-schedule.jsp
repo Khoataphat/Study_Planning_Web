@@ -165,7 +165,7 @@
                                     <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Ưu tiên hàng đầu</label>
                                     <div class="relative">
                                         <select id="aiPriority" class="w-full pl-4 pr-10 py-3 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-shadow appearance-none cursor-pointer">
-                                            <option value="balanced">Cân bằng</option>
+                                            <option value="relax">Thư giãn (Có nghỉ ngơi)</option>
                                             <option value="work">Tập trung Học tập/Làm việc</option>
                                             <option value="deadline">Chạy Deadline</option>
                                         </select>

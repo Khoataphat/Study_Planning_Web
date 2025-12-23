@@ -66,7 +66,7 @@ def fetch_pending_tasks(conn, user_id):
     # Fix: 'tasks' table has NULL user_id. We must find tasks via user_schedule -> schedule_collection.
     # We select tasks that are 'pending'.
     query = """
-        SELECT DISTINCT t.task_id, t.title, t.description, t.priority, t.duration, t.deadline 
+        SELECT DISTINCT t.task_id, t.title, t.description, t.priority, t.duration, t.deadline, us.type
         FROM tasks t
         JOIN user_schedule us ON t.task_id = us.task_id
         JOIN schedule_collection sc ON us.collection_id = sc.collection_id
@@ -96,21 +96,29 @@ def fetch_existing_schedules(conn, collection_id):
     query = """
         SELECT * FROM user_schedule 
         WHERE collection_id = %s 
-        AND (task_id IS NULL OR task_id = 0)
     """
     cursor.execute(query, (collection_id,))
-    schedules = cursor.fetchall()
+    all_schedules = cursor.fetchall()
+    
+    valid_existing = []
+    for s in all_schedules:
+        # Only treat as fixed if it has a valid time
+        if s.get('start_time'):
+            valid_existing.append(s)
+
+    logging.info(f"Collection {collection_id}: Found {len(all_schedules)} items. Treating {len(valid_existing)} valid-time items as FIXED constraints.")
     cursor.close()
-    return schedules
+    return valid_existing
 
 # --- Smart Scheduling Logic ---
 
 class SmartScheduler:
-    def __init__(self, start_time_str, end_time_str, include_weekends, profile):
+    def __init__(self, start_time_str, end_time_str, include_weekends, profile, priority_focus='balance'):
         self.start_time = datetime.strptime(start_time_str, "%H:%M").time()
         self.end_time = datetime.strptime(end_time_str, "%H:%M").time()
         self.include_weekends = include_weekends
         self.profile = profile
+        self.priority_focus = priority_focus.lower() if priority_focus else 'balance'
         
         self.days = ["Mon", "Tue", "Wed", "Thu", "Fri"]
         if self.include_weekends:
@@ -139,6 +147,27 @@ class SmartScheduler:
         # Assuming task has 'deadline'
         # if task.get('deadline') ... (logic can be added here)
         
+        # --- PRIORITY FOCUS ADJUSTMENT ---
+        if self.priority_focus == 'deadline':
+            # "Chạy Deadline": Massive boost for HIGH priority
+            if p == 'high':
+                base_score += 50
+            if p == 'medium':
+                base_score += 20
+                
+        elif self.priority_focus in ['focus', 'learning', 'work', 'study']:  # "Tập trung Học tập/Làm việc"
+            # Boost detailed "Study/Work" related tasks
+            # Check type or infer from title
+            title = task.get('title', '').lower()
+            desc = task.get('description', '').lower()
+            t_type = task.get('type', '').lower()
+            
+            # Simple heuristic + Type check
+            if 'học' in title or 'study' in title or 'work' in title or 'làm' in title:
+                base_score += 40
+            elif t_type in ['class', 'self-study', 'work', 'study']:
+                 base_score += 40
+
         return base_score
 
     def _determine_productive_period(self):
@@ -300,11 +329,41 @@ class SmartScheduler:
                     # 2. Calculate Fitness Score
                     time_fitness = self._get_time_fitness_score(proposed_start.time(), preferred_slots)
                     
+                    # --- RELAX MODE: PENALIZE ADJACENCY (Re-applied) ---
+                    adjacency_penalty = 0
+                    if self.priority_focus == 'relax':
+                        # Check if this slot is immediately adjacent (0 minutes gap) to any other task
+                        is_adjacent = False
+                        # Check vs Existing (manual)
+                        for ex in existing_schedules:
+                             # Convert ex string time to time obj if needed
+                             ex_st = datetime.strptime(ex['start_time'], "%H:%M:%S").time() if isinstance(ex['start_time'], str) else ex['start_time']
+                             ex_end = datetime.strptime(ex['end_time'], "%H:%M:%S").time() if isinstance(ex['end_time'], str) else ex['end_time']
+                             
+                             if ex['day_of_week'] == day_name:
+                                 # End touches Start?
+                                 if abs((datetime.combine(datetime.min, proposed_end) - datetime.combine(datetime.min, ex_st)).total_seconds()) < 60: is_adjacent = True
+                                 # Start touches End?
+                                 if abs((datetime.combine(datetime.min, proposed_start) - datetime.combine(datetime.min, ex_end)).total_seconds()) < 60: is_adjacent = True
+                        
+                        # Check vs New
+                        if not is_adjacent:
+                            for new_t in new_schedule:
+                                if new_t['day_of_week'] == day_name:
+                                     n_st = datetime.strptime(new_t['start_time'], "%H:%M:%S").time()
+                                     n_end = datetime.strptime(new_t['end_time'], "%H:%M:%S").time()
+                                     if abs((datetime.combine(datetime.min, proposed_end) - datetime.combine(datetime.min, n_st)).total_seconds()) < 60: is_adjacent = True
+                                     if abs((datetime.combine(datetime.min, proposed_start) - datetime.combine(datetime.min, n_end)).total_seconds()) < 60: is_adjacent = True
+                        
+                        if is_adjacent:
+                            adjacency_penalty = 5.0 # Significant penalty (base score is around 10-30), so 5 is relevant but not blocking. Let's make it bigger.
+                            adjacency_penalty = 20.0 
+
                     # Base priority is already handled by sorting tasks, but we can add minor factors
                     # e.g. Prefer earlier days?
                     day_penalty = self.days.index(day_name) * 0.1 # Slight penalization for later in the week
                     
-                    final_score = time_fitness - day_penalty
+                    final_score = time_fitness - day_penalty - adjacency_penalty
                     
                     if final_score > best_score:
                         best_score = final_score
@@ -406,6 +465,7 @@ def generate_schedule():
     start_time_str = data.get('start_time', '08:00')
     end_time_str = data.get('end_time', '22:00')
     include_weekends = data.get('include_weekends', False)
+    priority_focus = data.get('priorityFocus', 'balance') # Get priority
     
     if not user_id or not collection_id:
         return jsonify({'error': 'Missing user_id or collection_id'}), 400
@@ -417,18 +477,61 @@ def generate_schedule():
     try:
         # 1. Fetch Context
         profile = fetch_user_profile(conn, user_id)
-        tasks = fetch_pending_tasks(conn, user_id)
         existing_schedules = fetch_existing_schedules(conn, collection_id)
+        all_tasks = fetch_pending_tasks(conn, user_id)
         
-        if not tasks:
-            return jsonify([]) # No tasks to schedule
+        # LOGIC: "Reschedule Everything" (Overwrite Mode)
+        # 1. Identify Manual Items (Meetings, Breaks) that have NO task_id. Keep these as Constraints.
+        manual_constraints = []
+        for ex in existing_schedules:
+            tid = ex.get('task_id')
+            if not tid or tid == 0:
+                manual_constraints.append(ex)
+                
+        # 2. Identify Tasks to Schedule.
+        # We take ALL pending tasks, ignoring their current position on the calendar.
+        tasks_to_schedule = all_tasks
+
+        logging.info(f"Generating schedule. Start: {start_time_str}, End: {end_time_str}, Weekends: {include_weekends}")
+        logging.info(f"Rescheduling Mode. Keeping {len(manual_constraints)} manual items fixed. Rescheduling {len(tasks_to_schedule)} tasks.")
             
-        # 2. Run Scheduler
-        scheduler = SmartScheduler(start_time_str, end_time_str, include_weekends, profile)
-        generated_schedule = scheduler.generate_schedule(tasks, existing_schedules)
+        # 3. Run Scheduler
+        # We pass ONLY the manual constraints as 'locked'.
+        scheduler = SmartScheduler(start_time_str, end_time_str, include_weekends, profile, priority_focus)
+        new_schedule = scheduler.generate_schedule(tasks_to_schedule, manual_constraints)
         
-        return jsonify(generated_schedule)
+        # 4. Format Output
+        final_output = []
         
+        # Helper stringify
+        def fmt_time(t):
+            if isinstance(t, timedelta):
+                return (datetime.min + t).time().strftime("%H:%M:%S")
+            if isinstance(t, str): return t
+            if hasattr(t, 'strftime'): return t.strftime("%H:%M:%S")
+            return str(t)
+
+        # Add Manual Constraints (Fixed)
+        for ex in manual_constraints:
+            item = {
+                'taskId': ex.get('task_id'),
+                'subject': ex.get('subject') or ex.get('title') or 'No Title',
+                'description': ex.get('description', ''),
+                'type': ex.get('type', 'self-study'),
+                'dayOfWeek': ex.get('day_of_week'),
+                'startTime': fmt_time(ex.get('start_time')),
+                'endTime': fmt_time(ex.get('end_time')),
+                'collectionId': ex.get('collection_id', 0),
+                'isFixed': True
+            }
+            final_output.append(item)
+
+        # Add New (Scheduled) Tasks
+        for task_item in new_schedule:
+            final_output.append(task_item)
+
+        return jsonify(final_output)
+
     except Exception as e:
         logging.error(f"Error generating schedule: {e}", exc_info=True)
         return jsonify({'error': str(e)}), 500
