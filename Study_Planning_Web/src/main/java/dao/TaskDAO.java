@@ -107,8 +107,8 @@ public class TaskDAO {
                     int taskId = rs.getInt(1);
                     System.out.println("[TaskDAO.insert] Generated taskId: " + taskId);
 
-                    // QUAN TRỌNG: Cần tạo record trong user_schedule để liên kết task với user
-                    linkTaskToUser(taskId, task.getUserId(), task);
+//                    // QUAN TRỌNG: Cần tạo record trong user_schedule để liên kết task với user
+//                    linkTaskToUser(taskId, task.getUserId(), task);
 
                     return taskId;
                 }
