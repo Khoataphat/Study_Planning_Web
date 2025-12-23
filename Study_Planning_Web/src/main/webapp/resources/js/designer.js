@@ -143,7 +143,9 @@ function renderScheduleFromServer(weeklyData) {
             let endTimeStr = schedule.endTime.substring(0, 5); // "09:00"
             endTimeStr = parseInt(endTimeStr.split(':')[0]) + ':' + endTimeStr.split(':')[1]; // "9:00"
 
-            const cell = document.querySelector('[data-day="' + clientDay + '"][data-time="' + timeStr + '"]');
+            // Find the cell corresponding to the hour
+            const hourStr = parseInt(timeStr.split(':')[0]) + ':00';
+            const cell = document.querySelector('[data-day="' + clientDay + '"][data-time="' + hourStr + '"]');
 
             if (cell) {
                 createEventElement(cell, {
@@ -219,7 +221,7 @@ function dropTask(ev) {
     if (!currentDragData) return;
 
     const cell = ev.currentTarget;
-    const time = cell.getAttribute('data-time');
+    let time = cell.getAttribute('data-time'); // e.g. "8:00"
     const day = cell.getAttribute('data-day');
 
     // Check if moving to the same slot
@@ -229,40 +231,57 @@ function dropTask(ev) {
         return;
     }
 
-    // Calculate end time
-    let endTime;
-    const startHour = parseInt(time.split(':')[0]);
-    const startMinute = parseInt(time.split(':')[1] || '0');
+    // Try to find a valid slot within this hour (every 5 mins)
+    const baseHour = parseInt(time.split(':')[0]);
+    let foundTime = null;
+    let foundEndTime = null;
 
-    if (currentDragData.durationHours) {
-        // Persist duration for moved events
-        const totalHours = startHour + (startMinute / 60) + currentDragData.durationHours;
+    // Helper to calculate end time based on duration
+    const getEndTime = (startH, startM) => {
+        let durationH = 1;
+        if (currentDragData.durationHours) {
+            durationH = currentDragData.durationHours;
+        }
+
+        const totalHours = startH + (startM / 60) + durationH;
         const endH = Math.floor(totalHours);
         const endM = Math.round((totalHours - endH) * 60);
-        endTime = endH + ':' + endM.toString().padStart(2, '0');
-    } else {
-        // Default 1 hour for new tasks
-        const endHour = (startHour + 1).toString().padStart(2, '0');
-        endTime = endHour + ':00';
+        return endH + ':' + endM.toString().padStart(2, '0');
+    };
+
+    // Try offsets: 0, 5, 10, ..., 55
+    for (let offset = 0; offset < 60; offset += 5) {
+        const checkTime = baseHour + ':' + offset.toString().padStart(2, '0');
+        const checkEndTime = getEndTime(baseHour, offset);
+
+        if (!checkConflict(day, checkTime, checkEndTime, currentDragData.isMove ? currentDragData.originalStartTime : null)) {
+            foundTime = checkTime;
+            foundEndTime = checkEndTime;
+            break; // Found a valid slot!
+        }
+    }
+
+    if (!foundTime) {
+        alert('Không tìm thấy khoảng trống nào trong giờ này (' + baseHour + ':00 - ' + (baseHour + 1) + ':00) cho sự kiện này!');
+        if (currentDragElement) currentDragElement.classList.remove('opacity-50');
+        currentDragData = null;
+        currentDragElement = null;
+        return;
     }
 
     createEventElement(cell, {
         type: currentDragData.type,
         name: currentDragData.name,
         color: currentDragData.color,
-        startTime: time,
-        endTime: endTime,
+        startTime: foundTime,
+        endTime: foundEndTime,
         description: currentDragData.description || '',
         day: day
     });
 
     // If this was a move, delete the old event
     if (currentDragData.isMove) {
-        // Remove from DOM
-        if (currentDragElement) {
-            currentDragElement.remove();
-        }
-        // Remove from Data Model
+        if (currentDragElement) currentDragElement.remove();
         if (scheduleData[currentDragData.originalDay] &&
             scheduleData[currentDragData.originalDay][currentDragData.originalStartTime]) {
             delete scheduleData[currentDragData.originalDay][currentDragData.originalStartTime];
@@ -271,6 +290,38 @@ function dropTask(ev) {
 
     currentDragData = null;
     currentDragElement = null;
+}
+
+/**
+ * Check if the new time slot overlaps with any existing event
+ */
+function checkConflict(day, newStartStr, newEndStr, excludeStartTime) {
+    if (!scheduleData[day]) return false;
+
+    // Helper to convert "HH:mm" to minutes
+    const toMinutes = (str) => {
+        const parts = str.split(':');
+        return parseInt(parts[0]) * 60 + parseInt(parts[1] || 0);
+    };
+
+    const newStart = toMinutes(newStartStr);
+    const newEnd = toMinutes(newEndStr);
+
+    for (const key in scheduleData[day]) {
+        // Skip the event being moved (self-comparison)
+        if (key === excludeStartTime) continue;
+
+        const event = scheduleData[day][key];
+        const existingStart = toMinutes(key);
+        // Ensure event.endTime exists, if not default to start + 60
+        const existingEnd = event.endTime ? toMinutes(event.endTime) : existingStart + 60;
+
+        // Overlap condition: StartA < EndB && EndA > StartB
+        if (newStart < existingEnd && newEnd > existingStart) {
+            return true;
+        }
+    }
+    return false;
 }
 
 function createEventElement(cell, data) {
@@ -312,9 +363,13 @@ function createEventElement(cell, data) {
         eventBlock.classList.remove('opacity-50');
         currentDragElement = null;
     });
+    // Calculate top offset based on minutes
+    const startMinutes = parseInt(startParts[1]);
+    const topOffset = (startMinutes / 60) * cellHeight;
+
     eventBlock.style.backgroundColor = data.color;
     eventBlock.style.position = 'absolute';
-    eventBlock.style.top = '0';
+    eventBlock.style.top = topOffset + 'px';
     eventBlock.style.left = '2px';
     eventBlock.style.right = '2px';
     eventBlock.style.height = (eventHeight - 4) + 'px'; // Subtract margin
