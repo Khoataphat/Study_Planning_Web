@@ -187,12 +187,13 @@
                     <span class="material-icons-outlined text-3xl shrink-0">psychology</span>
                     <span class="ml-4 whitespace-nowrap sidebar-text">Khám phá bản thân</span>
                 </a>
-
-                <a class="nav-link w-full rounded-lg transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
-                   href="${pageContext.request.contextPath}/profile-settings">
-                    <span class="material-icons-outlined text-3xl shrink-0">manage_accounts</span>
-                    <span class="ml-4 whitespace-nowrap sidebar-text">Thiết lập hồ sơ</span>
-                </a>
+                    
+                                    <%-- Timer --%>
+                    <a class="nav-link w-full rounded-lg transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
+                       href="${pageContext.request.contextPath}/timer">
+                        <span class="material-icons-outlined text-3xl shrink-0">timer</span>
+                        <span class="ml-4 whitespace-nowrap sidebar-text">Bộ hẹn giờ</span>
+                    </a>
             </nav>
         </aside>
 

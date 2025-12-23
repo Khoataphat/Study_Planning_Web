@@ -52,4 +52,13 @@
         <url-pattern>/QuizResultController</url-pattern>
     </filter-mapping>
 
+    <servlet>
+        <servlet-name>TimerController</servlet-name>
+        <servlet-class>controller.TimerController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TimerController</servlet-name>
+        <url-pattern>/timer/*</url-pattern>
+    </servlet-mapping>
+
 </web-app>
