@@ -72,6 +72,7 @@ async function generateSmartSchedule() {
 }
 
 function renderPreview(scheduleData) {
+    console.log('DEBUG AI DATA:', scheduleData);
     const previewDiv = document.getElementById('aiPreviewState');
     const includeWeekends = document.getElementById('aiWeekends').checked;
 

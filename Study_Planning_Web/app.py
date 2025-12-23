@@ -341,9 +341,17 @@ class SmartScheduler:
                         new_item['description'] += " [Practice/Do]"
 
                 new_schedule.append(new_item)
-                logging.info(f"Placed '{task['title']}' on {best_slot['day']} at {new_item['start_time']} (Score: {best_score:.2f})")
+                try:
+                    safe_title = task['title'].encode('ascii', 'replace').decode('ascii')
+                    logging.info(f"Placed '{safe_title}' on {best_slot['day']} at {new_item['start_time']} (Score: {best_score:.2f})")
+                except Exception:
+                    logging.info(f"Placed task (ID: {task.get('task_id')}) at {new_item['start_time']}")
             else:
-                logging.warning(f"Could not fit task '{task['title']}' anywhere.")
+                try:
+                    safe_title = task['title'].encode('ascii', 'replace').decode('ascii')
+                    logging.warning(f"Could not fit task '{safe_title}' anywhere.")
+                except:
+                    logging.warning(f"Could not fit task ID {task.get('task_id')} anywhere.")
 
         # MERGE: return both Existing (Fixed) + New (Tasks) for a comprehensive Preview
         # We need to ensure existing_schedules are formatted correctly for JSON (str times)

@@ -104,7 +104,8 @@ public class SmartScheduleService {
             // Parse Response to List<UserSchedule>
             java.lang.reflect.Type listType = new com.google.gson.reflect.TypeToken<ArrayList<UserSchedule>>() {
             }.getType();
-            List<UserSchedule> generatedSchedules = new com.google.gson.Gson().fromJson(response.toString(), listType);
+            List<UserSchedule> generatedSchedules = new com.google.gson.GsonBuilder().setDateFormat("HH:mm:ss").create()
+                    .fromJson(response.toString(), listType);
 
             // Fix any missing fields if necessary (like collectionId if Python didn't set
             // it)
