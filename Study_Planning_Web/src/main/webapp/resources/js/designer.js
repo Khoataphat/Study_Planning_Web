@@ -218,13 +218,50 @@ function dropTask(ev) {
     if (!currentDragData) return;
 
     const cell = ev.currentTarget;
-    const time = cell.getAttribute('data-time');
+    const time = cell.getAttribute('data-time'); // e.g., "9:00"
     const day = cell.getAttribute('data-day');
 
-    // Calculate default end time (1 hour later)
-    const hour = parseInt(time.split(':')[0]);
-    const endHour = (hour + 1).toString().padStart(2, '0');
-    const endTime = endHour + ':00';
+    let endTime;
+
+    if (currentDragData.isMoving) {
+        // Calculate duration from original event
+        const startParts = currentDragData.startTime.split(':');
+        const endParts = currentDragData.endTime.split(':');
+
+        const startMinutes = parseInt(startParts[0]) * 60 + parseInt(startParts[1]);
+        const endMinutes = parseInt(endParts[0]) * 60 + parseInt(endParts[1]);
+        const durationMinutes = endMinutes - startMinutes;
+
+        // Calculate new end time based on drop time + duration
+        const newStartParts = time.split(':');
+        const newStartMinutes = parseInt(newStartParts[0]) * 60 + parseInt(newStartParts[1]);
+        const newEndMinutes = newStartMinutes + durationMinutes;
+
+        const endHour = Math.floor(newEndMinutes / 60);
+        const endMinute = newEndMinutes % 60;
+        endTime = endHour + ':' + (endMinute < 10 ? '0' + endMinute : endMinute);
+
+        // Remove old event data
+        if (scheduleData[currentDragData.originalDay] && scheduleData[currentDragData.originalDay][currentDragData.originalStartTime]) {
+            delete scheduleData[currentDragData.originalDay][currentDragData.originalStartTime];
+        }
+
+        // Remove old element from DOM
+        if (currentDragData.element) {
+            currentDragData.element.remove();
+        }
+
+        // Reset selection if we moved the selected event
+        if (selectedEventElement === currentDragData.element) {
+            clearForm();
+        }
+
+    } else {
+        // Default behavior (drag from toolbar)
+        const hour = parseInt(time.split(':')[0]);
+        const endHour = (hour + 1).toString().padStart(2, '0');
+        endTime = endHour + ':00';
+    }
 
     createEventElement(cell, {
         type: currentDragData.type,
@@ -232,7 +269,7 @@ function dropTask(ev) {
         color: currentDragData.color,
         startTime: time,
         endTime: endTime,
-        description: '',
+        description: currentDragData.description || '',
         day: day
     });
 
@@ -267,6 +304,13 @@ function createEventElement(cell, data) {
     eventBlock.style.zIndex = '10';
     eventBlock.style.overflow = 'hidden';
 
+    // Make event draggable
+    eventBlock.setAttribute('draggable', 'true');
+    eventBlock.addEventListener('dragstart', function (e) {
+        e.stopPropagation();
+        dragExistingEvent(e, data, eventBlock);
+    });
+
     // Display name and time
     eventBlock.innerHTML = '<div>' + escapeHtml(data.name) + '</div>' +
         '<div style="font-size: 10px; opacity: 0.9;">' +
@@ -291,6 +335,23 @@ function createEventElement(cell, data) {
         endTime: data.endTime,
         description: data.description
     };
+}
+
+// New function to handle dragging existing events
+function dragExistingEvent(ev, data, element) {
+    currentDragData = {
+        isMoving: true,
+        type: data.type,
+        name: data.name,
+        color: data.color,
+        startTime: data.startTime,
+        endTime: data.endTime,
+        description: data.description,
+        originalDay: data.day,
+        originalStartTime: data.startTime,
+        element: element
+    };
+    ev.dataTransfer.effectAllowed = 'move';
 }
 
 function selectSlot(ev) {
