@@ -211,6 +211,21 @@ class SmartScheduler:
         Returns a multiplier (e.g. 1.0 to 2.0).
         """
         hour = slot_start_time.hour
+        if self.priority_focus == 'deadline':
+            # Deadline Mode: Ignore "productive time" preferences.
+            # We want to schedule tasks AS EARLY AS POSSIBLE.
+            # Since the scheduler scans chronologically and picks the FIRST best slot,
+            # returning a flat score ensures the earliest available slot is chosen.
+            # We add a tiny decay based on hour to break ties explicitly in favor of earlier times.
+            return 1.0 + (24 - hour) * 0.01
+
+        if self.priority_focus == 'focus' or self.priority_focus == 'study':
+             # Focus Mode: Strongly prioritize Productive Hours (Deep Work)
+             for (start_h, end_h) in preferred_slots:
+                if start_h <= hour < end_h:
+                    return 2.5 # Massive boost (was 1.5)
+             return 1.0
+
         for (start_h, end_h) in preferred_slots:
             if start_h <= hour < end_h:
                 return 1.5 # 50% boost for preferred time
@@ -329,22 +344,23 @@ class SmartScheduler:
                     # 2. Calculate Fitness Score
                     time_fitness = self._get_time_fitness_score(proposed_start.time(), preferred_slots)
                     
-                    # --- RELAX MODE: PENALIZE ADJACENCY (Re-applied) ---
+                    # --- RELAX MODE: PENALIZE ADJACENCY ---
                     adjacency_penalty = 0
                     if self.priority_focus == 'relax':
-                        # Check if this slot is immediately adjacent (0 minutes gap) to any other task
+                        # Relax Mode: Enforce 20-minute (1200s) gaps
                         is_adjacent = False
+                        GAP_SECONDS = 1200 # 20 minutes
+
                         # Check vs Existing (manual)
                         for ex in existing_schedules:
-                             # Convert ex string time to time obj if needed
                              ex_st = datetime.strptime(ex['start_time'], "%H:%M:%S").time() if isinstance(ex['start_time'], str) else ex['start_time']
                              ex_end = datetime.strptime(ex['end_time'], "%H:%M:%S").time() if isinstance(ex['end_time'], str) else ex['end_time']
                              
                              if ex['day_of_week'] == day_name:
                                  # End touches Start?
-                                 if abs((datetime.combine(datetime.min, proposed_end.time()) - datetime.combine(datetime.min, ex_st)).total_seconds()) < 60: is_adjacent = True
+                                 if abs((datetime.combine(datetime.min, proposed_end.time()) - datetime.combine(datetime.min, ex_st)).total_seconds()) < GAP_SECONDS: is_adjacent = True
                                  # Start touches End?
-                                 if abs((datetime.combine(datetime.min, proposed_start.time()) - datetime.combine(datetime.min, ex_end)).total_seconds()) < 60: is_adjacent = True
+                                 if abs((datetime.combine(datetime.min, proposed_start.time()) - datetime.combine(datetime.min, ex_end)).total_seconds()) < GAP_SECONDS: is_adjacent = True
                         
                         # Check vs New
                         if not is_adjacent:
@@ -352,12 +368,12 @@ class SmartScheduler:
                                 if new_t['day_of_week'] == day_name:
                                      n_st = datetime.strptime(new_t['start_time'], "%H:%M:%S").time()
                                      n_end = datetime.strptime(new_t['end_time'], "%H:%M:%S").time()
-                                     if abs((datetime.combine(datetime.min, proposed_end.time()) - datetime.combine(datetime.min, n_st)).total_seconds()) < 60: is_adjacent = True
-                                     if abs((datetime.combine(datetime.min, proposed_start.time()) - datetime.combine(datetime.min, n_end)).total_seconds()) < 60: is_adjacent = True
+                                     if abs((datetime.combine(datetime.min, proposed_end.time()) - datetime.combine(datetime.min, n_st)).total_seconds()) < GAP_SECONDS: is_adjacent = True
+                                     if abs((datetime.combine(datetime.min, proposed_start.time()) - datetime.combine(datetime.min, n_end)).total_seconds()) < GAP_SECONDS: is_adjacent = True
                         
                         if is_adjacent:
-                            # Massive penalty to force gaps in Relax mode
-                            adjacency_penalty = 100.0 
+                            adjacency_penalty = 50.0 
+ 
 
                     # Base priority is already handled by sorting tasks, but we can add minor factors
                     # e.g. Prefer earlier days?

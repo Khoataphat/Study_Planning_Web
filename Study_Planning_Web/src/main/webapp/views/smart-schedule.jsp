@@ -280,5 +280,44 @@
                                         });
                                     });
         </script>
+
+        <!-- Feedback Modal -->
+        <div id="feedbackModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="closeFeedbackModal()"></div>
+            <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+                <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                    <div class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+                        <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                            <div class="sm:flex sm:items-start">
+                                <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
+                                    <h3 class="text-xl font-bold leading-6 text-gray-900 mb-4" id="modal-title">Góp ý về Thời khóa biểu của bạn</h3>
+                                    
+                                    <p class="text-sm text-gray-500 mb-4">Mức độ hài lòng của bạn?</p>
+                                    
+                                    <div class="flex justify-center gap-4 mb-6" id="ratingContainer">
+                                        <button onclick="selectRating(1)" class="rating-btn text-3xl opacity-50 hover:opacity-100 hover:scale-110 transition-all filter grayscale hover:grayscale-0" data-rating="1">😫</button>
+                                        <button onclick="selectRating(2)" class="rating-btn text-3xl opacity-50 hover:opacity-100 hover:scale-110 transition-all filter grayscale hover:grayscale-0" data-rating="2">😟</button>
+                                        <button onclick="selectRating(3)" class="rating-btn text-3xl opacity-50 hover:opacity-100 hover:scale-110 transition-all filter grayscale hover:grayscale-0" data-rating="3">😐</button>
+                                        <button onclick="selectRating(4)" class="rating-btn text-3xl opacity-50 hover:opacity-100 hover:scale-110 transition-all filter grayscale hover:grayscale-0" data-rating="4">🙂</button>
+                                        <button onclick="selectRating(5)" class="rating-btn text-3xl opacity-50 hover:opacity-100 hover:scale-110 transition-all filter grayscale hover:grayscale-0" data-rating="5">🤩</button>
+                                    </div>
+                                    <input type="hidden" id="feedbackRating" value="0">
+
+                                    <div class="mt-2">
+                                        <textarea id="feedbackComment" rows="4" class="w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 p-2" placeholder="Hãy chia sẻ cảm nhận của bạn để chúng tôi có thể cải thiện tốt hơn nhé..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                            <button type="button" onclick="submitFeedback()" class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto">Gửi Góp Ý</button>
+                            <button type="button" onclick="closeFeedbackModal()" class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">Để sau</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </body>
+
 </html>

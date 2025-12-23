@@ -220,14 +220,18 @@ async function confirmSaveSchedule() {
                     <h3 class="text-3xl font-bold text-slate-800 dark:text-white mb-2">Đã Lưu Thành Công!</h3>
                     <p class="text-lg text-slate-500 dark:text-slate-400 mb-8">Lịch trình đã được cập nhật vào bộ sưu tập của bạn.</p>
                     
-                    <div class="flex gap-4">
-                        <a href="/schedule" class="px-8 py-3 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-50 transition-colors shadow-sm">
-                            Xem Lịch
-                        </a>
-                        <button onclick="window.location.reload()" class="px-8 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200">
-                            Tạo Lại
-                        </button>
-                    </div>
+                        <div class="flex gap-4">
+                            <a href="/schedule" class="px-8 py-3 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-50 transition-colors shadow-sm">
+                                Xem Lịch
+                            </a>
+                            <button onclick="showFeedbackModal()" class="px-8 py-3 bg-yellow-400 text-white font-bold rounded-xl hover:bg-yellow-500 transition-colors shadow-lg shadow-yellow-200 flex items-center gap-2">
+                                <span class="material-icons-outlined">rate_review</span>
+                                Gửi Phản Hồi
+                            </button>
+                            <button onclick="window.location.reload()" class="px-8 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-200">
+                                Tạo Lại
+                            </button>
+                        </div>
                 </div>
             `;
         } else {
@@ -237,5 +241,91 @@ async function confirmSaveSchedule() {
     } catch (e) {
         console.error(e);
         alert("Lỗi kết nối khi lưu.");
+    }
+}
+
+
+// Feedback Logic
+let selectedRating = 0;
+
+function selectRating(rating) {
+    selectedRating = rating;
+    document.getElementById('feedbackRating').value = rating;
+
+    // Update UI
+    document.querySelectorAll('.rating-btn').forEach(btn => {
+        btn.classList.add('opacity-50', 'filter', 'grayscale');
+        btn.classList.remove('opacity-100', 'scale-125', 'grayscale-0');
+    });
+
+    const activeBtn = document.querySelector(`.rating-btn[data-rating="${rating}"]`);
+    if (activeBtn) {
+        activeBtn.classList.remove('opacity-50', 'filter', 'grayscale');
+        activeBtn.classList.add('opacity-100', 'scale-125', 'grayscale-0');
+    }
+}
+
+function showFeedbackModal() {
+    const modal = document.getElementById('feedbackModal');
+    if (modal) {
+        modal.classList.remove('hidden');
+        // Reset state
+        selectRating(0);
+        document.getElementById('feedbackComment').value = '';
+    }
+}
+
+function closeFeedbackModal() {
+    const modal = document.getElementById('feedbackModal');
+    if (modal) {
+        modal.classList.add('hidden');
+    }
+}
+
+async function submitFeedback() {
+    if (selectedRating === 0) {
+        alert("Vui lòng chọn mức độ hài lòng của bạn!");
+        return;
+    }
+
+    const comment = document.getElementById('feedbackComment').value;
+    const collectionId = window.currentCollectionId ? parseInt(window.currentCollectionId) : -1;
+
+    const payload = {
+        rating: selectedRating,
+        comment: comment,
+        collectionId: collectionId
+    };
+
+    try {
+        const btn = document.querySelector('button[onclick="submitFeedback()"]');
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang gửi...';
+
+        const response = await fetch('/api/feedback/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+            alert("Cảm ơn bạn đã đóng góp ý kiến!");
+            closeFeedbackModal();
+        } else {
+            alert("Lỗi: " + result.message);
+        }
+
+    } catch (e) {
+        console.error(e);
+        alert("Có lỗi xảy ra khi gửi phản hồi.");
+    } finally {
+        const btn = document.querySelector('button[onclick="submitFeedback()"]');
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = "Gửi Góp Ý";
+        }
     }
 }
