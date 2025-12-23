@@ -5,29 +5,56 @@
 package model;
 
 import java.util.List;
-
+import java.util.Map;
 /**
  *
  * @author Admin
  */
 public class DashboardData {
-// Đã đổi tên thuộc tính thành timetableList cho rõ ràng hơn
-    private List<TimetableSlot> timetableList; 
-
-    // Constructor (Tùy chọn)
-    public DashboardData() {
-        
+    private List<TimetableSlot> timetableList;
+    private int totalTasks;
+    private int completedTasks;
+    private double studyHours;
+    private double weeklyChange;
+    private int upcomingEventCount;
+    private Map<String, Double> timeAllocation;
+    private List<Task> upcomingTasks;
+    
+    // Getters và Setters
+    public List<TimetableSlot> getTimetableList() { return timetableList; }
+    public void setTimetableList(List<TimetableSlot> timetableList) { 
+        this.timetableList = timetableList; 
     }
-
-    // Setter: Đã sửa lỗi UnsupportedOperationException
-    public void setTimetableList(List<TimetableSlot> userTimetable) {
-        this.timetableList = userTimetable;
+    
+    public int getTotalTasks() { return totalTasks; }
+    public void setTotalTasks(int totalTasks) { this.totalTasks = totalTasks; }
+    
+    public int getCompletedTasks() { return completedTasks; }
+    public void setCompletedTasks(int completedTasks) { this.completedTasks = completedTasks; }
+    
+    public double getStudyHours() { return studyHours; }
+    public void setStudyHours(double studyHours) { this.studyHours = studyHours; }
+    
+    public double getWeeklyChange() { return weeklyChange; }
+    public void setWeeklyChange(double weeklyChange) { this.weeklyChange = weeklyChange; }
+    
+    public int getUpcomingEventCount() { return upcomingEventCount; }
+    public void setUpcomingEventCount(int upcomingEventCount) { 
+        this.upcomingEventCount = upcomingEventCount; 
     }
-
-    // **********************************************
-    // PHƯƠNG THỨC GETTER CẦN THIẾT CHO JSP/EL
-    // **********************************************
-    public List<TimetableSlot> getTimetableList() {
-        return timetableList;
+    
+    public Map<String, Double> getTimeAllocation() { return timeAllocation; }
+    public void setTimeAllocation(Map<String, Double> timeAllocation) { 
+        this.timeAllocation = timeAllocation; 
+    }
+    
+    public List<Task> getUpcomingTasks() { return upcomingTasks; }
+    public void setUpcomingTasks(List<Task> upcomingTasks) { 
+        this.upcomingTasks = upcomingTasks; 
+    }
+    
+    // Helper methods
+    public double getCompletionRate() {
+        return totalTasks > 0 ? Math.round((completedTasks * 100.0 / totalTasks) * 10.0) / 10.0 : 0;
     }
 }

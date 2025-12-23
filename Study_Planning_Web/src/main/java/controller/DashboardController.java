@@ -4,6 +4,7 @@
  */
 package controller;
 
+import dao.TaskDAO;
 import dao.TimetableDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -36,32 +37,29 @@ public class DashboardController extends HttpServlet {
             }
 
             Connection conn = DBUtil.getConnection();
-            if (conn != null && !conn.isClosed()) {
-                System.out.println("DEBUG: Kết nối DB thành công!");
-            } else {
-                System.err.println("DEBUG: LỖI KẾT NỐI DB. Connection là null hoặc đã đóng.");
-                return; // Dừng lại ở đây nếu kết nối thất bại
-            }
-            DashboardService dash = new DashboardService(
-                    //                    new UserActivityDAO(conn),
-                    //                    new TaskDAO(conn)
-                    new TimetableDAO(conn)
+            
+            // Khởi tạo DAO
+            TimetableDAO timetableDAO = new TimetableDAO(conn);
+            TaskDAO taskDAO = new TaskDAO();
+            
+            // Tạo DashboardService
+            DashboardService dashService = new DashboardService(
+                timetableDAO, taskDAO
             );
-            // TẠM THỜI GHI ĐÈ USER ID ĐỂ TEST
-            //int userIdToQuery = 25; // ID này có dữ liệu trong DB
-
-            DashboardData dashboardData = dash.loadDashboard(user.getUserId());
-            //DashboardData dashboardData = dash.loadDashboard(userIdToQuery); // Dùng ID 25 đã hardcode
-
+            
+            DashboardData dashboardData = dashService.loadDashboard(user.getUserId());
+            
+            // Thêm các thuộc tính cần thiết cho JSP
             req.setAttribute("dash", dashboardData);
-
+            req.setAttribute("timeAllocation", dashboardData.getTimeAllocation());
+            req.setAttribute("upcomingTasks", dashboardData.getUpcomingTasks());
+            
             req.getRequestDispatcher("views/dashboard.jsp").forward(req, resp);
 
         } catch (Exception e) {
-            // Nếu có bất kỳ lỗi nào xảy ra (SQL, Mapping,...)
-            // LỖI NÀY CẦN PHẢI ĐƯỢC IN RA CONSOLE ĐỂ PHÁT HIỆN!
             e.printStackTrace();
-            // Sau đó Controller vẫn forward, nhưng đối tượng 'data' có thể null hoặc thiếu dữ liệu.
+            req.setAttribute("error", "Có lỗi xảy ra khi tải dashboard: " + e.getMessage());
+            req.getRequestDispatcher("views/dashboard.jsp").forward(req, resp);
         }
     }
 }
