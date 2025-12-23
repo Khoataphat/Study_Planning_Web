@@ -147,4 +147,21 @@ public class UserProfiles {
                 ", createdAt=" + createdAt +
                 '}';
     }
+    
+    //vy
+    // Thêm phương thức để kiểm tra profile có hợp lệ không (có đủ thông tin)
+    public boolean isValid() {
+        return userId != null && 
+               personalityType != null && !personalityType.trim().isEmpty() &&
+               preferredStudyTime != null && !preferredStudyTime.trim().isEmpty() &&
+               learningStyle != null && !learningStyle.trim().isEmpty();
+    }
+    
+    // Thêm phương thức để kiểm tra profile đã hoàn chỉnh cả 2 bước chưa
+    public boolean isComplete() {
+        return isValid() && 
+               focusDuration != null && 
+               goal != null && !goal.trim().isEmpty();
+    }
+    
 }

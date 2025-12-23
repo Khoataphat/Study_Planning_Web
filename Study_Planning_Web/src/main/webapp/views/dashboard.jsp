@@ -113,6 +113,13 @@
                         <span class="material-icons-outlined text-3xl shrink-0">interests</span>
                         <span class="ml-4 whitespace-nowrap sidebar-text">Thống kê</span>
                     </a>
+
+                    <%-- Active state for Quiz --%>
+                    <a class="nav-link w-full rounded-lg transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
+                       href="${pageContext.request.contextPath}/QuizResultController">
+                        <span class="material-icons-outlined text-3xl shrink-0">psychology</span>
+                        <span class="ml-4 whitespace-nowrap sidebar-text">Khám phá bản thân</span>
+                    </a>
                 </nav>
             </aside>
 
@@ -130,7 +137,7 @@
                             <span class="material-icons-outlined text-slate-600 dark:text-slate-300">logout</span>
                         </a>
                     </div>
-                </header>
+                </header>  
                 <div class="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="lg:col-span-2 flex flex-col gap-6">
 

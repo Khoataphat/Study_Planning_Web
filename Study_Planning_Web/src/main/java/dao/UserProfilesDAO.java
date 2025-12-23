@@ -24,40 +24,33 @@ public class UserProfilesDAO {
      * @throws Exception nếu có lỗi kết nối hoặc truy vấn SQL.
      */
     public void saveSetup(UserProfiles info) throws Exception {
-        // Cập nhật tên bảng thành 'user_profiles' và thêm các cột còn thiếu
         String sql = "INSERT INTO user_profiles ("
                 + "user_id, year_of_study, personality_type, preferred_study_time, "
                 + "learning_style, focus_duration, goal, created_at"
-                + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                + ") VALUES (?, ?, ?, ?, ?, ?, ?, ?) "
+                + "ON DUPLICATE KEY UPDATE "
+                + "year_of_study = VALUES(year_of_study), "
+                + "personality_type = VALUES(personality_type), "
+                + "preferred_study_time = VALUES(preferred_study_time), "
+                + "learning_style = VALUES(learning_style), "
+                + "focus_duration = VALUES(focus_duration), "
+                + "goal = VALUES(goal)";
         
         try (Connection con = DBUtil.getConnection(); 
              PreparedStatement ps = con.prepareStatement(sql)) {
             
-            // Đảm bảo rằng bạn đã có các giá trị mặc định cho các trường chưa được cung cấp từ form
-            
             ps.setInt(1, info.getUserId());
-            
-            // Sử dụng các Getter mới (year_of_study, learning_style, preferred_study_time, goal)
-            // Cần xử lý giá trị null/mặc định nếu các trường này không được lấy từ form
-            ps.setInt(2, info.getYearOfStudy() != null ? info.getYearOfStudy() : 1); // Ví dụ: sử dụng 0 nếu null
+            ps.setInt(2, info.getYearOfStudy() != null ? info.getYearOfStudy() : 1);
             ps.setString(3, info.getPersonalityType());
             ps.setString(4, info.getPreferredStudyTime());
             ps.setString(5, info.getLearningStyle());
-            
-            // Giả sử focusDuration được tính toán hoặc là giá trị mặc định
-            ps.setInt(6, info.getFocusDuration() != null ? info.getFocusDuration() : 0); // Ví dụ: sử dụng 0 nếu null
+            ps.setInt(6, info.getFocusDuration() != null ? info.getFocusDuration() : 0);
             ps.setString(7, info.getGoal());
             
-            // Xử lý created_at
             LocalDateTime now = info.getCreatedAt() != null ? info.getCreatedAt() : LocalDateTime.now();
             ps.setTimestamp(8, Timestamp.valueOf(now)); 
             
             ps.executeUpdate();
-            
-        } catch (Exception e) {
-            System.err.println("Lỗi khi lưu UserProfiles: " + e.getMessage());
-            e.printStackTrace();
-            throw e; // Ném lại ngoại lệ để lớp dịch vụ/controller xử lý
         }
     }
 
@@ -102,5 +95,49 @@ public class UserProfilesDAO {
             throw e; // Ném lại ngoại lệ để lớp dịch vụ/controller xử lý
         }
         return null;
+    }
+    
+    
+    //vy
+    public void updateSetup(UserProfiles info) throws Exception {
+        String sql = "UPDATE user_profiles SET "
+                + "year_of_study = ?, personality_type = ?, preferred_study_time = ?, "
+                + "learning_style = ?, focus_duration = ?, goal = ? "
+                + "WHERE user_id = ?";
+        
+        try (Connection con = DBUtil.getConnection(); 
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            
+            ps.setInt(1, info.getYearOfStudy() != null ? info.getYearOfStudy() : 1);
+            ps.setString(2, info.getPersonalityType());
+            ps.setString(3, info.getPreferredStudyTime());
+            ps.setString(4, info.getLearningStyle());
+            ps.setInt(5, info.getFocusDuration() != null ? info.getFocusDuration() : 0);
+            ps.setString(6, info.getGoal());
+            ps.setInt(7, info.getUserId());
+            
+            if (ps.executeUpdate() == 0) {
+                saveSetup(info); // Nếu chưa có thì chèn mới luôn
+            }
+        }
+    }
+    
+    public boolean profileExists(int userId) throws Exception {
+        String sql = "SELECT COUNT(*) FROM user_profiles WHERE user_id = ?";
+        try (Connection con = DBUtil.getConnection(); 
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            return rs.next() && rs.getInt(1) > 0;
+        }
+    }
+
+    public void deleteProfile(int userId) throws Exception {
+        String sql = "DELETE FROM user_profiles WHERE user_id = ?";
+        try (Connection con = DBUtil.getConnection(); 
+             PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setInt(1, userId);
+            ps.executeUpdate();
+        }
     }
 }

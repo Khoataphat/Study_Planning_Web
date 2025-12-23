@@ -48,6 +48,8 @@
         <url-pattern>/schedule</url-pattern>
         <url-pattern>/tasks</url-pattern>
         <url-pattern>/statistics</url-pattern>
+        <url-pattern>/user/profiles</url-pattern>
+        <url-pattern>/QuizResultController</url-pattern>
     </filter-mapping>
 
 </web-app>
