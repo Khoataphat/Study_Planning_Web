@@ -29,6 +29,11 @@ public class RegisterController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
+        
+        System.out.println("========== REGISTER CONTROLLER CALLED ==========");
+        System.out.println("Method: " + req.getMethod());
+        System.out.println("Request URI: " + req.getRequestURI());
+        System.out.println("Context Path: " + req.getContextPath());
 
         try {
             // 1. Lấy dữ liệu
@@ -66,7 +71,7 @@ public class RegisterController extends HttpServlet {
 
             // Chuyển hướng đến Controller /login (hoặc file JSP)
             // Redirect là bắt buộc khi thành công để ngăn chặn việc submit lại form
-            resp.sendRedirect(req.getContextPath() + "/login");
+            resp.sendRedirect(req.getContextPath() + "/views/login.jsp");
 
         } catch (Exception e) {
             // Xử lý lỗi hệ thống/DB (Lỗi 500)
@@ -93,5 +98,15 @@ public class RegisterController extends HttpServlet {
             return "password";
         }
         return null; // Lỗi chung
+    }
+    
+        @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) 
+            throws ServletException, IOException {
+        // Log để debug
+        System.out.println("GET request to /register");
+        
+        // Chuyển hướng về trang login
+        resp.sendRedirect(req.getContextPath() + "/login.jsp");
     }
 }
