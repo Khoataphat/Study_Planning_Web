@@ -42,6 +42,7 @@
                             "pastel-purple": "#A5B4FC",
                             "pastel-light-purple": "#C7D2FE",
                             "pastel-pink": "#F9A8D4",
+                            "pinky": "#F9A8D4",
                             "pastel-yellow": "#FDE68A",
                             "text-color": "#1E293B",
 

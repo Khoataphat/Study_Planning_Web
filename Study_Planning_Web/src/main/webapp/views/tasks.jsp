@@ -173,9 +173,7 @@
 
                             <!-- Add New Task Button -->
 
-                            <button onclick="showTaskForm()" id="addTaskBtn" class="w-full btn-add-task">
-                                <i class="fa-solid fa-plus"></i>
-                                <span>Add New Task</span>
+                            <button onclick="showTaskForm()" id="addTaskBtn">
                             </button>
 
                         </div>
@@ -183,12 +181,12 @@
                         <!-- Add/Edit Task Form - Collapsible -->
                         <div id="taskFormContainer" class="hidden bg-white border-t-2 border-slate-200 shadow-2xl">
                             <div class="px-6 py-5">
-                                <div class="flex items-center justify-between mb-4">
+<!--                                <div class="flex items-center justify-between mb-4">
                                     <h3 class="text-base font-bold text-slate-700" id="formTitle">Add New Task</h3>
                                     <button onclick="hideTaskForm()" class="text-slate-400 hover:text-slate-600 transition-colors">
                                         <i class="fa-solid fa-times text-xl"></i>
                                     </button>
-                                </div>
+                                </div>-->
 
                                 <form id="taskForm" class="space-y-3">
                                     <input type="hidden" id="taskId" value="">
