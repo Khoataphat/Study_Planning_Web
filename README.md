@@ -6,15 +6,11 @@ Hệ thống lập kế hoạch và sắp xếp task cá nhân hóa sử dụng 
 
 🏗️ Kiến trúc hệ thống
 
-text
-
 Client (Browser) → Java Web Server (MVC) → REST API → Python AI Server → Machine Learning Model
 
 📁 Cấu trúc dự án
 
 Java Web Application
-
-text
 
 src/
 
@@ -33,8 +29,6 @@ src/
 └── view/          # JSP giao diện
 
 Python AI Server
-
-text
 
 ai-server/
 
