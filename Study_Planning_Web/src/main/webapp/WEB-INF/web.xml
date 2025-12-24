@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
+         version="6.0">
+    <session-config>
+        <session-timeout>
+            30
+        </session-timeout>
+    </session-config>
+    <welcome-file-list>
+        <welcome-file>views/login.jsp</welcome-file>
+    </welcome-file-list>
+
+
+
+    <filter>
+        <filter-name>AuthFilter</filter-name>
+        <filter-class>filters.AuthFilter</filter-class>
+    </filter>
+
+
+    <filter>
+        <filter-name>ThemeFilter</filter-name>
+        <filter-class>filters.ThemeFilter</filter-class> 
+    </filter>
+
+    <filter-mapping>
+        <filter-name>ThemeFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>AuthFilter</filter-name>
+        <url-pattern>/views/designer.html</url-pattern>
+        <url-pattern>/views/home.html</url-pattern>
+        <url-pattern>/views/schedules.html</url-pattern>
+        <url-pattern>/views/survey.html</url-pattern>
+        <url-pattern>/views/tasks.html</url-pattern>
+
+        <url-pattern>/dashboard</url-pattern>
+        <url-pattern>/basic-setup-save</url-pattern>
+        <url-pattern>/user/collections</url-pattern>
+        <url-pattern>/user/schedule</url-pattern>
+        <url-pattern>/setting</url-pattern>
+        <url-pattern>/update-settings</url-pattern>
+        <url-pattern>/settings/theme</url-pattern>
+        <url-pattern>/schedule</url-pattern>
+        <url-pattern>/tasks</url-pattern>
+        <url-pattern>/statistics</url-pattern>
+        <url-pattern>/user/profiles</url-pattern>
+        <url-pattern>/QuizResultController</url-pattern>
+    </filter-mapping>
+
+    <servlet>
+        <servlet-name>TimerController</servlet-name>
+        <servlet-class>controller.TimerController</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>TimerController</servlet-name>
+        <url-pattern>/timer/*</url-pattern>
+    </servlet-mapping>
+
+</web-app>

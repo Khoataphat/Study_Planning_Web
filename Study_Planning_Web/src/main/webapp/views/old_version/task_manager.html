@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản lý Task & Lập lịch</title>
+    <link rel="stylesheet" href="/resources/css/style-task-manager.css">
+</head>
+<body>
+    <div class="task-manager-container">
+        <aside class="sidebar">
+            <div class="profile-circle"></div>
+            <div class="sidebar-menu">
+                    <a class="menu-item" href="/views/user_dashboard.html">
+                        1
+                    </a>
+
+                    <a class="menu-item" href="/views/timetable_creator.html">
+                        2
+                    </a>
+                    <a class="menu-item" href="/views/task_manager.html">
+                        3
+                    </a>
+                <div class="menu-item"></div>
+                <div class="menu-item"></div>
+            </div>
+        </aside>
+
+        <main class="main-area">
+            <header class="top-header">
+                <div class="header-content"></div> <div class="header-actions">
+                    <div class="settings-icon">⚙️</div>
+                    <div class="arrow-icon">➡️</div>
+                </div>
+            </header>
+
+            <section class="task-management-grid">
+                
+                <div class="task-list-panel">
+                    <div class="task-list-header">TASK</div>
+                    
+                    <div class="task-item">TASK #1</div>
+                    <div class="task-item">TASK #2</div>
+                    <div class="task-item">TASK #3</div>
+
+                    <div class="task-actions-row">
+                        <div class="action-button-small"></div>
+                        <div class="action-button-small"></div>
+                    </div>
+                    
+                    <div class="calendar-preview">
+                        <table class="calendar-grid-placeholder">
+                            <tbody>
+                                <tr><td></td><td></td><td></td><td></td></tr>
+                                <tr><td></td><td></td><td></td><td></td></tr>
+                                <tr><td></td><td></td><td></td><td></td></tr>
+                                <tr><td></td><td></td><td></td><td></td></tr>
+                            </tbody>
+                        </table>
+                        <div class="event-circle event-1"></div>
+                        <div class="event-circle event-2"></div>
+                    </div>
+                </div>
+
+                <div class="task-form-panel">
+                    <form class="task-form">
+                        <input type="text" class="input-field" placeholder="Tên Task/Tiêu đề">
+                        <textarea class="input-field" placeholder="Mô tả / Chi tiết"></textarea>
+                        <div class="form-actions">
+                            <button type="button" class="form-btn btn-cancel"></button>
+                            <button type="submit" class="form-btn btn-save"></button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
