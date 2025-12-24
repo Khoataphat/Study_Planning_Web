@@ -28,7 +28,7 @@ import service.TaskService;
 /**
  * Controller for handling schedule-related HTTP requests
  */
-@WebServlet(name = "ScheduleController", urlPatterns = {"/user/schedule"})
+@WebServlet(name = "ScheduleController", urlPatterns = { "/user/schedule" })
 public class ScheduleController extends HttpServlet {
 
     private final ScheduleService scheduleService = new ScheduleService();
@@ -123,7 +123,7 @@ public class ScheduleController extends HttpServlet {
 
             // Define Gson for all operations (Sử dụng tên đầy đủ trong khi khai báo)
             Gson gson = new com.google.gson.GsonBuilder()
-                    .registerTypeAdapter(java.sql.Time.class, new utils.SqlTimeDeserializer())
+                    .registerTypeAdapter(java.sql.Time.class, new utils.SqlTimeAdapter())
                     .create();
 
             // 2. Đọc JSON body từ request
@@ -151,7 +151,8 @@ public class ScheduleController extends HttpServlet {
                 Map<String, Object> result = new HashMap<>();
                 result.put("success", success);
                 result.put("message",
-                        success ? "Schedule updated successfully" : "Failed to update schedule (Time conflict or DB error)");
+                        success ? "Schedule updated successfully"
+                                : "Failed to update schedule (Time conflict or DB error)");
 
                 try (PrintWriter out = response.getWriter()) {
                     out.print(JsonUtil.toJson(result));
@@ -313,25 +314,25 @@ public class ScheduleController extends HttpServlet {
     /**
      * Handle get weekly schedule
      */
-private void handleWeeklySchedule(int collectionId, PrintWriter out) {
-    System.out.println("[ScheduleController] Getting weekly schedule for collection: " + collectionId);
-    
-    Map<String, List<UserSchedule>> weeklySchedule = scheduleService.getWeeklySchedule(collectionId);
-    
-    // Debug log
-    System.out.println("[ScheduleController] Weekly schedule data:");
-    for (Map.Entry<String, List<UserSchedule>> entry : weeklySchedule.entrySet()) {
-        System.out.println("  " + entry.getKey() + ": " + entry.getValue().size() + " events");
-        for (UserSchedule schedule : entry.getValue()) {
-            System.out.println("    - ID:" + schedule.getScheduleId() + 
-                             ", TaskID:" + schedule.getTaskId() + 
-                             ", " + schedule.getSubject());
+    private void handleWeeklySchedule(int collectionId, PrintWriter out) {
+        System.out.println("[ScheduleController] Getting weekly schedule for collection: " + collectionId);
+
+        Map<String, List<UserSchedule>> weeklySchedule = scheduleService.getWeeklySchedule(collectionId);
+
+        // Debug log
+        System.out.println("[ScheduleController] Weekly schedule data:");
+        for (Map.Entry<String, List<UserSchedule>> entry : weeklySchedule.entrySet()) {
+            System.out.println("  " + entry.getKey() + ": " + entry.getValue().size() + " events");
+            for (UserSchedule schedule : entry.getValue()) {
+                System.out.println("    - ID:" + schedule.getScheduleId() +
+                        ", TaskID:" + schedule.getTaskId() +
+                        ", " + schedule.getSubject());
+            }
         }
+
+        out.print(JsonUtil.toJson(weeklySchedule));
+        out.flush();
     }
-    
-    out.print(JsonUtil.toJson(weeklySchedule));
-    out.flush();
-}
 
     /**
      * Handle count schedules

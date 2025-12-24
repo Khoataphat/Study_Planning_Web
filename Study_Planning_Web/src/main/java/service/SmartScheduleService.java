@@ -105,7 +105,7 @@ public class SmartScheduleService {
             java.lang.reflect.Type listType = new com.google.gson.reflect.TypeToken<ArrayList<UserSchedule>>() {
             }.getType();
             List<UserSchedule> generatedSchedules = new com.google.gson.GsonBuilder()
-                    .registerTypeAdapter(java.sql.Time.class, new utils.SqlTimeDeserializer())
+                    .registerTypeAdapter(java.sql.Time.class, new utils.SqlTimeAdapter())
                     .setDateFormat("HH:mm:ss") // Fallback for other Date fields
                     .create()
                     .fromJson(response.toString(), listType);
