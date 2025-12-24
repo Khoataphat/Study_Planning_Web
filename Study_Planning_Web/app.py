@@ -60,28 +60,27 @@ def fetch_user_profile(conn, user_id):
     cursor.close()
     return profile
 
-def fetch_pending_tasks(conn, user_id):
-    """Fetches tasks with status 'pending' by joining with schedule tables."""
+def fetch_pending_tasks(conn, collection_id):
+    """Fetches tasks with status 'pending' strictly for the given collection."""
     cursor = conn.cursor(dictionary=True)
-    # Fix: 'tasks' table has NULL user_id. We must find tasks via user_schedule -> schedule_collection.
-    # We select tasks that are 'pending'.
+    
+    # We filter by collection_id to prevent tasks from OTHER collections (e.g. 'Backlog' or 'Work')
+    # from leaking into the current schedule (e.g. 'Study').
+    # We allow ALL statuses except 'completed' to catch 'pending', 'in_progress', 'todo', etc.
     query = """
-        SELECT DISTINCT t.task_id, t.title, t.description, t.priority, t.duration, t.deadline, us.type
+        SELECT DISTINCT t.task_id, t.title, t.description, t.priority, t.duration, t.deadline, us.type, t.status
         FROM tasks t
         JOIN user_schedule us ON t.task_id = us.task_id
-        JOIN schedule_collection sc ON us.collection_id = sc.collection_id
-        WHERE sc.user_id = %s AND t.status = 'pending'
+        WHERE us.collection_id = %s AND t.status != 'completed'
     """
     
-    # DEBUG: Fetch all tasks to see if any exist at all
-    # cursor.execute("SELECT count(*) as total FROM tasks")
-    # total = cursor.fetchone()
-    # logging.info(f"Total tasks in DB: {total}")
-
-    cursor.execute(query, (user_id,))
+    cursor.execute(query, (collection_id,))
     tasks = cursor.fetchall()
-    logging.info(f"Fetching pending tasks for user_id={user_id}. Found: {len(tasks)}")
-    cursor.close()
+    
+    logging.info(f"Fetching tasks for collection_id={collection_id} (excluding completed). Found: {len(tasks)}")
+    for t in tasks:
+        logging.info(f"   -> Found Task: '{t .get('title')}' [ID: {t.get('task_id')}] Status: {t.get('status')}")
+
     return tasks
 
 def fetch_existing_schedules(conn, collection_id):
@@ -521,7 +520,7 @@ def generate_schedule():
         # 1. Fetch Context
         profile = fetch_user_profile(conn, user_id)
         existing_schedules = fetch_existing_schedules(conn, collection_id)
-        all_tasks = fetch_pending_tasks(conn, user_id)
+        all_tasks = fetch_pending_tasks(conn, collection_id)
         
         # LOGIC: "Reschedule Everything" (Overwrite Mode)
         # 1. Identify Manual Items (Meetings, Breaks) that have NO task_id. Keep these as Constraints.

@@ -10,6 +10,8 @@ import com.google.gson.GsonBuilder;
 public class JsonUtil {
     private static final Gson gson = new GsonBuilder()
             .setDateFormat("yyyy-MM-dd HH:mm:ss")
+            // Register adapter for SQL Time to ensure HH:mm:ss format
+            .registerTypeAdapter(java.sql.Time.class, new utils.SqlTimeAdapter())
             .create();
 
     /**
