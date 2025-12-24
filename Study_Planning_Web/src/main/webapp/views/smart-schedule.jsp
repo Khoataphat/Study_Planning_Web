@@ -220,7 +220,9 @@
                             <div id="aiPreviewState" class="text-center space-y-8 z-10 max-w-lg">
                                 <div class="w-72 h-auto mx-auto transform hover:scale-105 transition-transform duration-500">
                                     <!-- Use a nice placehoder image or illustration -->
-                                    <img src="https://cdni.iconscout.com/illustration/premium/thumb/business-planning-4440059-3683050.png" alt="AI Planning" class="w-full drop-shadow-2xl">
+                                    <div class="flex justify-center items-center h-64">
+                                        <i class="fa-solid fa-wand-magic-sparkles text-9xl bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-600 drop-shadow-lg"></i>
+                                    </div>
                                 </div>
 
                                 <div>

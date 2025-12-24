@@ -134,7 +134,7 @@
             <main id="mainContent" class="flex-1 flex flex-col p-6 lg:p-8 overflow-y-auto">
                 <header class="flex justify-between items-center mb-6">
                     <div>
-                        <h1 class="text-2xl font-bold text-text-color dark:text-white">Chào buổi sáng, ${user.username}!</h1>
+                        <h1 class="text-2xl font-bold text-text-color dark:text-white">Chào ${user.username}!</h1>
                         <p class="text-slate-500 dark:text-slate-400">Đây là trang thêm task</p>
                     </div>
                     <div class="flex items-center space-x-4">
