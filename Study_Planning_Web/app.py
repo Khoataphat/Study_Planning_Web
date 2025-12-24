@@ -151,9 +151,9 @@ class SmartScheduler:
         if self.priority_focus == 'deadline':
             # "Chạy Deadline": Massive boost for HIGH priority
             if p == 'high':
-                base_score += 50
+                base_score += 100 # Increased from 50 to 100
             if p == 'medium':
-                base_score += 20
+                base_score += 40  # Increased from 20 to 40
                 
         elif self.priority_focus in ['focus', 'learning', 'work', 'study']:  # "Tập trung Học tập/Làm việc"
             # Boost detailed "Study/Work" related tasks
@@ -164,9 +164,9 @@ class SmartScheduler:
             
             # Simple heuristic + Type check
             if 'học' in title or 'study' in title or 'work' in title or 'làm' in title:
-                base_score += 40
+                base_score += 80 # Increased from 40 to 80
             elif t_type in ['class', 'self-study', 'work', 'study']:
-                 base_score += 40
+                 base_score += 80 # Increased from 40 to 80
 
         return base_score
 
@@ -211,6 +211,21 @@ class SmartScheduler:
         Returns a multiplier (e.g. 1.0 to 2.0).
         """
         hour = slot_start_time.hour
+        if self.priority_focus == 'deadline':
+            # Deadline Mode: Ignore "productive time" preferences.
+            # We want to schedule tasks AS EARLY AS POSSIBLE.
+            # Since the scheduler scans chronologically and picks the FIRST best slot,
+            # returning a flat score ensures the earliest available slot is chosen.
+            # We add a tiny decay based on hour to break ties explicitly in favor of earlier times.
+            return 1.0 + (24 - hour) * 0.01
+
+        if self.priority_focus == 'focus' or self.priority_focus == 'study':
+             # Focus Mode: Strongly prioritize Productive Hours (Deep Work)
+             for (start_h, end_h) in preferred_slots:
+                if start_h <= hour < end_h:
+                    return 2.5 # Massive boost (was 1.5)
+             return 1.0
+
         for (start_h, end_h) in preferred_slots:
             if start_h <= hour < end_h:
                 return 1.5 # 50% boost for preferred time
@@ -329,22 +344,23 @@ class SmartScheduler:
                     # 2. Calculate Fitness Score
                     time_fitness = self._get_time_fitness_score(proposed_start.time(), preferred_slots)
                     
-                    # --- RELAX MODE: PENALIZE ADJACENCY (Re-applied) ---
+                    # --- RELAX MODE: PENALIZE ADJACENCY ---
                     adjacency_penalty = 0
                     if self.priority_focus == 'relax':
-                        # Check if this slot is immediately adjacent (0 minutes gap) to any other task
+                        # Relax Mode: Enforce 20-minute (1200s) gaps
                         is_adjacent = False
+                        GAP_SECONDS = 1200 # 20 minutes
+
                         # Check vs Existing (manual)
                         for ex in existing_schedules:
-                             # Convert ex string time to time obj if needed
                              ex_st = datetime.strptime(ex['start_time'], "%H:%M:%S").time() if isinstance(ex['start_time'], str) else ex['start_time']
                              ex_end = datetime.strptime(ex['end_time'], "%H:%M:%S").time() if isinstance(ex['end_time'], str) else ex['end_time']
                              
                              if ex['day_of_week'] == day_name:
                                  # End touches Start?
-                                 if abs((datetime.combine(datetime.min, proposed_end) - datetime.combine(datetime.min, ex_st)).total_seconds()) < 60: is_adjacent = True
+                                 if abs((datetime.combine(datetime.min, proposed_end.time()) - datetime.combine(datetime.min, ex_st)).total_seconds()) < GAP_SECONDS: is_adjacent = True
                                  # Start touches End?
-                                 if abs((datetime.combine(datetime.min, proposed_start) - datetime.combine(datetime.min, ex_end)).total_seconds()) < 60: is_adjacent = True
+                                 if abs((datetime.combine(datetime.min, proposed_start.time()) - datetime.combine(datetime.min, ex_end)).total_seconds()) < GAP_SECONDS: is_adjacent = True
                         
                         # Check vs New
                         if not is_adjacent:
@@ -352,12 +368,12 @@ class SmartScheduler:
                                 if new_t['day_of_week'] == day_name:
                                      n_st = datetime.strptime(new_t['start_time'], "%H:%M:%S").time()
                                      n_end = datetime.strptime(new_t['end_time'], "%H:%M:%S").time()
-                                     if abs((datetime.combine(datetime.min, proposed_end) - datetime.combine(datetime.min, n_st)).total_seconds()) < 60: is_adjacent = True
-                                     if abs((datetime.combine(datetime.min, proposed_start) - datetime.combine(datetime.min, n_end)).total_seconds()) < 60: is_adjacent = True
+                                     if abs((datetime.combine(datetime.min, proposed_end.time()) - datetime.combine(datetime.min, n_st)).total_seconds()) < GAP_SECONDS: is_adjacent = True
+                                     if abs((datetime.combine(datetime.min, proposed_start.time()) - datetime.combine(datetime.min, n_end)).total_seconds()) < GAP_SECONDS: is_adjacent = True
                         
                         if is_adjacent:
-                            adjacency_penalty = 5.0 # Significant penalty (base score is around 10-30), so 5 is relevant but not blocking. Let's make it bigger.
-                            adjacency_penalty = 20.0 
+                            adjacency_penalty = 50.0 
+ 
 
                     # Base priority is already handled by sorting tasks, but we can add minor factors
                     # e.g. Prefer earlier days?
@@ -370,7 +386,8 @@ class SmartScheduler:
                         best_slot = {
                             'day': day_name,
                             'start': proposed_start.time(),
-                            'end': proposed_end.time()
+                            'end': proposed_end.time(),
+                            'breakdown': f"Base: {time_fitness} - Day: {day_penalty} - Adj: {adjacency_penalty}"
                         }
                     
                     # Advance search cursor
@@ -379,6 +396,7 @@ class SmartScheduler:
             # Place the task if a slot was found
             if best_slot:
                 new_item = {
+                    'task_id': task.get('task_id'), # Propagate task_id
                     'subject': task['title'],
                     'description': task.get('description', ''),
                     'type': 'self-study',
@@ -402,7 +420,7 @@ class SmartScheduler:
                 new_schedule.append(new_item)
                 try:
                     safe_title = task['title'].encode('ascii', 'replace').decode('ascii')
-                    logging.info(f"Placed '{safe_title}' on {best_slot['day']} at {new_item['start_time']} (Score: {best_score:.2f})")
+                    logging.info(f"Placed '{safe_title}' on {best_slot['day']} at {new_item['start_time']} (Score: {best_score:.2f} | {best_slot.get('breakdown')})")
                 except Exception:
                     logging.info(f"Placed task (ID: {task.get('task_id')}) at {new_item['start_time']}")
             else:
@@ -425,33 +443,58 @@ class SmartScheduler:
             if hasattr(t, 'strftime'): return t.strftime("%H:%M:%S")
             return str(t)
 
-        # 1. Add Existing (Fixed) - Convert snake_case DB keys to camelCase
+        # MERGE & DEDUPLICATE
+        # Sometimes duplicates might sneak in (e.g. data races or logic gaps). 
+        # We enforce uniqueness based on (Day, StartTime, Subject).
+        seen_keys = set()
+        unique_output = []
+        
+        logging.info(f"Finalizing output. Manual: {len(existing_schedules)}, New: {len(new_schedule)}")
+
+        # 1. Add Manual Constraints (Fixed)
         for ex in existing_schedules:
+            s_time = fmt_time(ex.get('start_time'))
+            key = (ex.get('day_of_week'), s_time, ex.get('subject') or ex.get('title'))
+            if key in seen_keys:
+                logging.warning(f"Duplicate Manual item ignored: {key}")
+                continue
+            seen_keys.add(key)
+            
             item = {
+                'taskId': ex.get('task_id'),
                 'subject': ex.get('subject') or ex.get('title'),
                 'description': ex.get('description', ''),
                 'type': ex.get('type', 'self-study'),
                 'dayOfWeek': ex.get('day_of_week'),
-                'startTime': fmt_time(ex.get('start_time')),
+                'startTime': s_time,
                 'endTime': fmt_time(ex.get('end_time')),
                 'collectionId': ex.get('collection_id', 0)
             }
-            final_output.append(item)
+            unique_output.append(item)
             
-        # 2. Add New (Tasks) - Convert internal snake_case to camelCase
+        # 2. Add New (Tasks)
         for task_item in new_schedule:
+            s_time = task_item['start_time']
+            key = (task_item['day_of_week'], s_time, task_item['subject'])
+            if key in seen_keys:
+                 logging.warning(f"Duplicate Scheduled item ignored: {key}")
+                 continue
+            seen_keys.add(key)
+            
             item = {
                 'subject': task_item['subject'],
                 'description': task_item['description'],
                 'type': task_item['type'],
+                'taskId': task_item.get('task_id'),
                 'dayOfWeek': task_item['day_of_week'],
-                'startTime': task_item['start_time'],
+                'startTime': s_time,
                 'endTime': task_item['end_time'],
                 'collectionId': task_item['collection_id']
             }
-            final_output.append(item)
+            unique_output.append(item)
 
-        return final_output
+        logging.info(f"Returning {len(unique_output)} items after deduplication.")
+        return unique_output
 
 
 @app.route('/generate-schedule', methods=['POST'])
@@ -498,38 +541,10 @@ def generate_schedule():
         # 3. Run Scheduler
         # We pass ONLY the manual constraints as 'locked'.
         scheduler = SmartScheduler(start_time_str, end_time_str, include_weekends, profile, priority_focus)
-        new_schedule = scheduler.generate_schedule(tasks_to_schedule, manual_constraints)
         
-        # 4. Format Output
-        final_output = []
+        # generate_schedule returns the FINAL merged list (Manual + New) with correct keys
+        final_output = scheduler.generate_schedule(tasks_to_schedule, manual_constraints)
         
-        # Helper stringify
-        def fmt_time(t):
-            if isinstance(t, timedelta):
-                return (datetime.min + t).time().strftime("%H:%M:%S")
-            if isinstance(t, str): return t
-            if hasattr(t, 'strftime'): return t.strftime("%H:%M:%S")
-            return str(t)
-
-        # Add Manual Constraints (Fixed)
-        for ex in manual_constraints:
-            item = {
-                'taskId': ex.get('task_id'),
-                'subject': ex.get('subject') or ex.get('title') or 'No Title',
-                'description': ex.get('description', ''),
-                'type': ex.get('type', 'self-study'),
-                'dayOfWeek': ex.get('day_of_week'),
-                'startTime': fmt_time(ex.get('start_time')),
-                'endTime': fmt_time(ex.get('end_time')),
-                'collectionId': ex.get('collection_id', 0),
-                'isFixed': True
-            }
-            final_output.append(item)
-
-        # Add New (Scheduled) Tasks
-        for task_item in new_schedule:
-            final_output.append(task_item)
-
         return jsonify(final_output)
 
     except Exception as e:
