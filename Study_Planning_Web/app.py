@@ -21,7 +21,7 @@ DB_CONFIG = {
     'host': '127.0.0.1', # Force IPv4
     'port': 3306,        # Explicit port
     'user': 'root',
-    'password': 'Anhang@204',
+    'password': '123456',
     'database': 'study_planning_db'
 }
 
