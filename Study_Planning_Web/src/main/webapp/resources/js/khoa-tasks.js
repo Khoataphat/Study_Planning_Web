@@ -741,6 +741,13 @@ function createScheduledEventDiv(eventData) {
     const eventDiv = document.createElement('div');
     eventDiv.className = 'calendar-event';
 
+    if (eventData.type) {
+        eventDiv.classList.add(`type-${eventData.type.toLowerCase().replace(/\s+/g, '-')}`);
+    } else {
+        // Mặc định nếu không có type
+        eventDiv.classList.add('type-personal');
+    }
+    
     console.log("📌 Schedule ID:", eventData.scheduleId, "Task ID:", eventData.taskId);
 
     // ⭐️ THÊM: Đánh dấu event đã được lưu (không phải temp)
@@ -850,10 +857,32 @@ function createScheduledEventDiv(eventData) {
     
     console.log("🔧 ===== END DEBUG =====");
 
-    return eventDiv;
-}
+    // Nếu designer script đang dùng `scheduleData`, đồng bộ sự kiện vừa render
+    try {
+        if (window.scheduleData) {
+            const mapToLower = { 'Mon': 'mon', 'Tue': 'tue', 'Wed': 'wed', 'Thu': 'thu', 'Fri': 'fri', 'Sat': 'sat', 'Sun': 'sun' };
+            const dayKey = mapToLower[eventData.dayOfWeek] || (eventData.dayOfWeek || '').toLowerCase();
+            const startKey = eventData.startTime;
 
-// ⭐️ THÊM: Hàm parse time với AM/PM (fallback)
+            if (!window.scheduleData[dayKey]) window.scheduleData[dayKey] = {};
+
+            window.scheduleData[dayKey][startKey] = {
+                type: eventData.type || 'class',
+                name: eventData.subject || eventData.title || 'Untitled',
+                color: eventData.color || null,
+                endTime: eventData.endTime,
+                description: eventData.description || '',
+                taskId: eventData.taskId || null
+            };
+            console.log('🗂️ Synced scheduled event into scheduleData:', dayKey, startKey, window.scheduleData[dayKey][startKey]);
+        }
+    } catch (err) {
+        console.warn('Could not sync scheduled event into scheduleData:', err);
+    }
+
+    return eventDiv;
+} 
+
 function parseTimeWithAMPM(timeStr) {
     console.log(`⏱️ parseTimeWithAMPM: "${timeStr}"`);
     

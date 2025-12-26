@@ -361,18 +361,18 @@
 }
 
 .calendar-task-dot.priority-low {
-    background: #dcfce7;
-    color: #15803d;
+    background: #93C5FD;
+    color: #1E293B;
 }
 
 .calendar-task-dot.priority-medium {
-    background: #fef3c7;
-    color: #b45309;
+    background: #FDE047;
+    color: #1E293B;
 }
 
 .calendar-task-dot.priority-high {
-    background: #fecdd3;
-    color: #be123c;
+    background: #A5B4FC;
+    color: #1E293B;
 }
 
 .calendar-task-dot .dot-icon {
@@ -432,4 +432,155 @@
 
 #taskListContainer::-webkit-scrollbar-thumb:hover {
     background: #94a3b8;
+}
+/* Màu sắc event theo loại - Giống designer */
+.calendar-event {
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    border-radius: 6px;
+    color: white;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    padding: 6px 8px;
+    box-sizing: border-box;
+    cursor: move;
+    user-select: none;
+    touch-action: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+}
+
+/* Màu sắc theo type (giống designer) */
+.calendar-event[data-type="self-study"],
+.calendar-event.type-self-study {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-color: #5a67d8;
+}
+
+.calendar-event[data-type="class"],
+.calendar-event.type-class {
+    background: linear-gradient(135deg, #f093fb, #f5576c);
+    border-color: #e53e3e;
+}
+
+.calendar-event[data-type="exam"],
+.calendar-event.type-exam {
+    background: linear-gradient(135deg, #f6d365, #fda085);
+    border-color: #ed8936;
+}
+
+.calendar-event[data-type="assignment"],
+.calendar-event.type-assignment {
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    border-color: #3182ce;
+}
+
+.calendar-event[data-type="meeting"],
+.calendar-event.type-meeting {
+    background: linear-gradient(135deg, #43e97b, #38f9d7);
+    border-color: #38a169;
+}
+
+.calendar-event[data-type="personal"],
+.calendar-event.type-personal {
+    background: linear-gradient(135deg, #fa709a, #fee140);
+    border-color: #d53f8c;
+}
+
+/* Màu mặc định nếu không có type */
+.calendar-event:not([data-type]) {
+    background: linear-gradient(135deg, #a5b4fc, #818cf8);
+    border-color: #667eea;
+}
+
+/* Temp event (sự kiện tạm thời) */
+.calendar-event.temp-event {
+    background: linear-gradient(135deg, #d1d5db, #9ca3af);
+    border-color: #6b7280;
+    opacity: 0.8;
+}
+
+/* Event hover effects */
+.calendar-event:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Resize handles cho event */
+.resize-handle {
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 8px;
+    cursor: ns-resize;
+    z-index: 11;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.resize-handle::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+}
+
+.top-handle {
+    top: -4px;
+}
+
+.bottom-handle {
+    bottom: -4px;
+}
+
+/* Event text styling */
+.calendar-event span {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 2px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.calendar-event .event-time {
+    font-size: 0.7rem;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+/* Event priority indicators */
+.calendar-event[data-priority="high"] {
+    border-left: 4px solid #f43f5e;
+}
+
+.calendar-event[data-priority="medium"] {
+    border-left: 4px solid #f59e0b;
+}
+
+.calendar-event[data-priority="low"] {
+    border-left: 4px solid #10b981;
+}
+
+/* Animation cho event mới */
+@keyframes eventSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.calendar-event {
+    animation: eventSlideIn 0.3s ease-out;
 }

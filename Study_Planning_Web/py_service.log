@@ -1,0 +1,975 @@
+2025-12-26 08:07:10,440 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.100.229:5000
+2025-12-26 08:07:10,440 - INFO - [33mPress CTRL+C to quit[0m
+2025-12-26 08:07:10,441 - INFO -  * Restarting with stat
+2025-12-26 08:07:10,755 - WARNING -  * Debugger is active!
+2025-12-26 08:07:10,757 - INFO -  * Debugger PIN: 146-017-793
+2025-12-26 08:07:17,051 - ERROR - Error generating schedule: 1055 (42000): Expression #1 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'study_planning_db.t.task_id' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+Traceback (most recent call last):
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\mysql\connector\connection_cext.py", line 772, in cmd_query
+    self._cmysql.query(
+    ~~~~~~~~~~~~~~~~~~^
+        query,
+        ^^^^^^
+    ...<3 lines>...
+        query_attrs=self.query_attrs,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+_mysql_connector.MySQLInterfaceError: Expression #1 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'study_planning_db.t.task_id' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\HK1 IT IU 2025-26\Web\Web Project\Study_Planning_Web\Study_Planning_Web\app.py", line 1045, in generate_schedule
+    all_tasks = fetch_pending_tasks(conn, collection_id)
+  File "D:\HK1 IT IU 2025-26\Web\Web Project\Study_Planning_Web\Study_Planning_Web\app.py", line 168, in fetch_pending_tasks
+    cursor.execute(query, (collection_id,))
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\mysql\connector\cursor_cext.py", line 353, in execute
+    self._connection.cmd_query(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self._stmt_partition["mappable_stmt"],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+        raw_as_string=self._raw_as_string,
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\mysql\connector\opentelemetry\context_propagation.py", line 97, in wrapper
+    return method(cnx, *args, **kwargs)
+  File "C:\Users\Admin\AppData\Local\Programs\Python\Python313\Lib\site-packages\mysql\connector\connection_cext.py", line 781, in cmd_query
+    raise get_mysql_exception(
+        err.errno, msg=err.msg, sqlstate=err.sqlstate
+    ) from err
+mysql.connector.errors.ProgrammingError: 1055 (42000): Expression #1 of SELECT list is not in GROUP BY clause and contains nonaggregated column 'study_planning_db.t.task_id' which is not functionally dependent on columns in GROUP BY clause; this is incompatible with sql_mode=only_full_group_by
+2025-12-26 08:07:17,078 - INFO - 127.0.0.1 - - [26/Dec/2025 08:07:17] "[35m[1mPOST /generate-schedule HTTP/1.1[0m" 500 -
+2025-12-26 08:14:15,086 - INFO -  * Detected change in 'D:\\HK1 IT IU 2025-26\\Web\\Web Project\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-26 08:14:15,170 - INFO -  * Restarting with stat
+2025-12-26 08:14:15,483 - WARNING -  * Debugger is active!
+2025-12-26 08:14:15,485 - INFO -  * Debugger PIN: 146-017-793
+2025-12-26 08:14:26,499 - INFO - Fetching SELF-STUDY tasks for collection_id=29. Found: 5
+2025-12-26 08:14:26,500 - INFO -    -> Self-Study Task: 'Viết báo cáo Mạng máy tính' [ID: 207, Duration: 120 mins]
+2025-12-26 08:14:26,500 - INFO -    -> Self-Study Task: 'Học tiếng Anh IELTS' [Merged 6x, Total Duration: 720 mins]
+2025-12-26 08:14:26,501 - INFO -    -> Self-Study Task: 'Ôn thi giữa kỳ Cơ sở dữ liệu' [Merged 2x, Total Duration: 330 mins]
+2025-12-26 08:14:26,501 - INFO -    -> Self-Study Task: 'Nộp report WEB' [ID: 206, Duration: 180 mins]
+2025-12-26 08:14:26,501 - INFO -    -> Self-Study Task: 'Bài tập Toán Assignment 3' [ID: 208, Duration: 180 mins]
+2025-12-26 08:14:26,502 - INFO -   ✅ Fixed Class: Mon 01:15:00 CH-03:45:00 CH - Engineering Ethics and Professional Skills
+2025-12-26 08:14:26,502 - INFO -   ✅ Fixed Class: Tue 08:00:00 SA-10:30:00 SA - Theoretical Models in Computing
+2025-12-26 08:14:26,503 - INFO -   ✅ Fixed Class: Tue 10:35:00 SA-01:05:00 CH - Net-Centric Programming
+2025-12-26 08:14:26,503 - INFO -   ✅ Fixed Class: Tue 01:15:00 CH-03:45:00 CH - Theoretical Models in Computing
+2025-12-26 08:14:26,503 - INFO -   ✅ Fixed Class: Thu 08:00:00 SA-10:30:00 SA - Information System Management
+2025-12-26 08:14:26,503 - INFO -   ✅ Fixed Class: Thu 10:35:00 SA-01:05:00 CH - Information System Management
+2025-12-26 08:14:26,503 - INFO -   ✅ Fixed Class: Thu 01:15:00 CH-03:45:00 CH - 	 Net-Centric Programming
+2025-12-26 08:14:26,503 - INFO -   ✅ Fixed Class: Fri 08:00:00 SA-10:30:00 SA - System & Network Administration
+2025-12-26 08:14:26,504 - INFO -   ✅ Fixed Class: Fri 01:15:00 CH-03:45:00 CH - System & Network Administration
+2025-12-26 08:14:26,504 - INFO - Found 9 fixed classes for collection 29
+2025-12-26 08:14:26,504 - INFO - ============================================================
+2025-12-26 08:14:26,505 - INFO - FIXED CLASSES (should not be moved):
+2025-12-26 08:14:26,505 - INFO -   Mon 01:15:00-03:45:00: Engineering Ethics and Professional Skills
+2025-12-26 08:14:26,505 - INFO -   Tue 08:00:00-10:30:00: Theoretical Models in Computing
+2025-12-26 08:14:26,505 - INFO -   Tue 10:35:00-01:05:00: Net-Centric Programming
+2025-12-26 08:14:26,505 - INFO -   Tue 01:15:00-03:45:00: Theoretical Models in Computing
+2025-12-26 08:14:26,505 - INFO -   Thu 08:00:00-10:30:00: Information System Management
+2025-12-26 08:14:26,505 - INFO -   Thu 10:35:00-01:05:00: Information System Management
+2025-12-26 08:14:26,506 - INFO -   Thu 01:15:00-03:45:00: 	 Net-Centric Programming
+2025-12-26 08:14:26,506 - INFO -   Fri 08:00:00-10:30:00: System & Network Administration
+2025-12-26 08:14:26,506 - INFO -   Fri 01:15:00-03:45:00: System & Network Administration
+2025-12-26 08:14:26,506 - INFO - OTHER CONSTRAINTS: 0 items
+2025-12-26 08:14:26,506 - INFO - Generating schedule. Start: 09:00, End: 17:00
+2025-12-26 08:14:26,506 - INFO - Total constraints: 9 (fixed classes + other)
+2025-12-26 08:14:26,506 - INFO - Scheduling 5 self-study tasks.
+2025-12-26 08:14:26,511 - INFO - Scheduler initialized: 09:00-17:00, Focus: balance
+2025-12-26 08:14:26,511 - INFO - Using science-based efficiency model with 112 time slots
+2025-12-26 08:14:26,512 - INFO - ============================================================
+2025-12-26 08:14:26,512 - INFO - GENERATING SCIENCE-OPTIMIZED SCHEDULE
+2025-12-26 08:14:26,512 - INFO - Tasks to schedule: 5
+2025-12-26 08:14:26,512 - INFO - Existing constraints: 9
+2025-12-26 08:14:26,512 - INFO - Priority focus: balance
+2025-12-26 08:14:26,512 - INFO - 
+TASK PRIORITY ORDER:
+2025-12-26 08:14:26,513 - INFO -   1. Học tiếng Anh IELTS                      Score: 530
+2025-12-26 08:14:26,513 - INFO -   2. Nộp report WEB                           Score: 330
+2025-12-26 08:14:26,513 - INFO -   3. Bài tập Toán Assignment 3                Score: 330
+2025-12-26 08:14:26,513 - INFO -   4. Ôn thi giữa kỳ Cơ sở dữ liệu             Score: 210
+2025-12-26 08:14:26,513 - INFO -   5. Viết báo cáo Mạng máy tính               Score: 110
+2025-12-26 08:14:26,514 - INFO - Marking 9 constraints as busy slots
+2025-12-26 08:14:26,514 - INFO - Looking for slot for: 'Học tiếng Anh IELTS' (Duration: 720 mins)
+2025-12-26 08:14:26,514 - WARNING -   No slot found for task! Duration may be too long or no available slots.
+2025-12-26 08:14:26,514 - WARNING - Could not place: Học tiếng Anh IELTS
+2025-12-26 08:14:26,515 - INFO - Looking for slot for: 'Nộp report WEB' (Duration: 180 mins)
+2025-12-26 08:14:26,524 - ERROR - Error generating schedule: unsupported type for timedelta minutes component: decimal.Decimal
+Traceback (most recent call last):
+  File "D:\HK1 IT IU 2025-26\Web\Web Project\Study_Planning_Web\Study_Planning_Web\app.py", line 1113, in generate_schedule
+    scheduled_self_study = scheduler.generate_schedule(tasks_to_schedule, all_constraints)
+  File "D:\HK1 IT IU 2025-26\Web\Web Project\Study_Planning_Web\Study_Planning_Web\app.py", line 642, in generate_schedule
+    best_slot = self._find_best_slot_for_task(task, time_grid)
+  File "D:\HK1 IT IU 2025-26\Web\Web Project\Study_Planning_Web\Study_Planning_Web\app.py", line 844, in _find_best_slot_for_task
+    end_dt = start_dt + timedelta(minutes=duration)
+                        ~~~~~~~~~^^^^^^^^^^^^^^^^^^
+TypeError: unsupported type for timedelta minutes component: decimal.Decimal
+2025-12-26 08:14:26,528 - INFO - 127.0.0.1 - - [26/Dec/2025 08:14:26] "[35m[1mPOST /generate-schedule HTTP/1.1[0m" 500 -
+2025-12-26 08:14:51,676 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.100.229:5000
+2025-12-26 08:14:51,676 - INFO - [33mPress CTRL+C to quit[0m
+2025-12-26 08:14:51,677 - INFO -  * Restarting with stat
+2025-12-26 08:14:51,998 - WARNING -  * Debugger is active!
+2025-12-26 08:14:52,000 - INFO -  * Debugger PIN: 146-017-793
+2025-12-26 08:14:58,619 - INFO - Fetching SELF-STUDY tasks for collection_id=29. Found: 5
+2025-12-26 08:14:58,619 - INFO -    -> Self-Study Task: 'Viết báo cáo Mạng máy tính' [ID: 207, Duration: 120 mins]
+2025-12-26 08:14:58,619 - INFO -    -> Self-Study Task: 'Học tiếng Anh IELTS' [Merged 6x, Total Duration: 720 mins]
+2025-12-26 08:14:58,620 - INFO -    -> Self-Study Task: 'Ôn thi giữa kỳ Cơ sở dữ liệu' [Merged 2x, Total Duration: 330 mins]
+2025-12-26 08:14:58,620 - INFO -    -> Self-Study Task: 'Nộp report WEB' [ID: 206, Duration: 180 mins]
+2025-12-26 08:14:58,620 - INFO -    -> Self-Study Task: 'Bài tập Toán Assignment 3' [ID: 208, Duration: 180 mins]
+2025-12-26 08:14:58,621 - INFO -   ✅ Fixed Class: Mon 01:15:00 CH-03:45:00 CH - Engineering Ethics and Professional Skills
+2025-12-26 08:14:58,621 - INFO -   ✅ Fixed Class: Tue 08:00:00 SA-10:30:00 SA - Theoretical Models in Computing
+2025-12-26 08:14:58,621 - INFO -   ✅ Fixed Class: Tue 10:35:00 SA-01:05:00 CH - Net-Centric Programming
+2025-12-26 08:14:58,621 - INFO -   ✅ Fixed Class: Tue 01:15:00 CH-03:45:00 CH - Theoretical Models in Computing
+2025-12-26 08:14:58,622 - INFO -   ✅ Fixed Class: Thu 08:00:00 SA-10:30:00 SA - Information System Management
+2025-12-26 08:14:58,622 - INFO -   ✅ Fixed Class: Thu 10:35:00 SA-01:05:00 CH - Information System Management
+2025-12-26 08:14:58,622 - INFO -   ✅ Fixed Class: Thu 01:15:00 CH-03:45:00 CH - 	 Net-Centric Programming
+2025-12-26 08:14:58,622 - INFO -   ✅ Fixed Class: Fri 08:00:00 SA-10:30:00 SA - System & Network Administration
+2025-12-26 08:14:58,622 - INFO -   ✅ Fixed Class: Fri 01:15:00 CH-03:45:00 CH - System & Network Administration
+2025-12-26 08:14:58,622 - INFO - Found 9 fixed classes for collection 29
+2025-12-26 08:14:58,623 - INFO - ============================================================
+2025-12-26 08:14:58,623 - INFO - FIXED CLASSES (should not be moved):
+2025-12-26 08:14:58,623 - INFO -   Mon 01:15:00-03:45:00: Engineering Ethics and Professional Skills
+2025-12-26 08:14:58,623 - INFO -   Tue 08:00:00-10:30:00: Theoretical Models in Computing
+2025-12-26 08:14:58,623 - INFO -   Tue 10:35:00-01:05:00: Net-Centric Programming
+2025-12-26 08:14:58,623 - INFO -   Tue 01:15:00-03:45:00: Theoretical Models in Computing
+2025-12-26 08:14:58,623 - INFO -   Thu 08:00:00-10:30:00: Information System Management
+2025-12-26 08:14:58,624 - INFO -   Thu 10:35:00-01:05:00: Information System Management
+2025-12-26 08:14:58,624 - INFO -   Thu 01:15:00-03:45:00: 	 Net-Centric Programming
+2025-12-26 08:14:58,624 - INFO -   Fri 08:00:00-10:30:00: System & Network Administration
+2025-12-26 08:14:58,624 - INFO -   Fri 01:15:00-03:45:00: System & Network Administration
+2025-12-26 08:14:58,624 - INFO - OTHER CONSTRAINTS: 0 items
+2025-12-26 08:14:58,624 - INFO - Generating schedule. Start: 09:00, End: 17:00
+2025-12-26 08:14:58,624 - INFO - Total constraints: 9 (fixed classes + other)
+2025-12-26 08:14:58,624 - INFO - Scheduling 5 self-study tasks.
+2025-12-26 08:14:58,628 - INFO - Scheduler initialized: 09:00-17:00, Focus: balance
+2025-12-26 08:14:58,629 - INFO - Using science-based efficiency model with 112 time slots
+2025-12-26 08:14:58,629 - INFO - ============================================================
+2025-12-26 08:14:58,629 - INFO - GENERATING SCIENCE-OPTIMIZED SCHEDULE
+2025-12-26 08:14:58,629 - INFO - Tasks to schedule: 5
+2025-12-26 08:14:58,629 - INFO - Existing constraints: 9
+2025-12-26 08:14:58,630 - INFO - Priority focus: balance
+2025-12-26 08:14:58,630 - INFO - 
+TASK PRIORITY ORDER:
+2025-12-26 08:14:58,630 - INFO -   1. Học tiếng Anh IELTS                      Score: 530
+2025-12-26 08:14:58,630 - INFO -   2. Nộp report WEB                           Score: 330
+2025-12-26 08:14:58,630 - INFO -   3. Bài tập Toán Assignment 3                Score: 330
+2025-12-26 08:14:58,630 - INFO -   4. Ôn thi giữa kỳ Cơ sở dữ liệu             Score: 210
+2025-12-26 08:14:58,630 - INFO -   5. Viết báo cáo Mạng máy tính               Score: 110
+2025-12-26 08:14:58,631 - INFO - Marking 9 constraints as busy slots
+2025-12-26 08:14:58,631 - INFO - Looking for slot for: 'Học tiếng Anh IELTS' (Duration: 720 mins)
+2025-12-26 08:14:58,631 - WARNING -   No slot found for task! Duration may be too long or no available slots.
+2025-12-26 08:14:58,631 - WARNING - Could not place: Học tiếng Anh IELTS
+2025-12-26 08:14:58,632 - INFO - Looking for slot for: 'Nộp report WEB' (Duration: 180 mins)
+2025-12-26 08:14:58,632 - ERROR - Error generating schedule: unsupported type for timedelta minutes component: decimal.Decimal
+Traceback (most recent call last):
+  File "D:\HK1 IT IU 2025-26\Web\Web Project\Study_Planning_Web\Study_Planning_Web\app.py", line 1113, in generate_schedule
+    scheduled_self_study = scheduler.generate_schedule(tasks_to_schedule, all_constraints)
+  File "D:\HK1 IT IU 2025-26\Web\Web Project\Study_Planning_Web\Study_Planning_Web\app.py", line 642, in generate_schedule
+    best_slot = self._find_best_slot_for_task(task, time_grid)
+  File "D:\HK1 IT IU 2025-26\Web\Web Project\Study_Planning_Web\Study_Planning_Web\app.py", line 844, in _find_best_slot_for_task
+    end_dt = start_dt + timedelta(minutes=duration)
+                        ~~~~~~~~~^^^^^^^^^^^^^^^^^^
+TypeError: unsupported type for timedelta minutes component: decimal.Decimal
+2025-12-26 08:14:58,634 - INFO - 127.0.0.1 - - [26/Dec/2025 08:14:58] "[35m[1mPOST /generate-schedule HTTP/1.1[0m" 500 -
+2025-12-26 08:17:42,806 - INFO -  * Detected change in 'D:\\HK1 IT IU 2025-26\\Web\\Web Project\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-26 08:17:42,910 - INFO -  * Restarting with stat
+2025-12-26 08:17:43,241 - WARNING -  * Debugger is active!
+2025-12-26 08:17:43,244 - INFO -  * Debugger PIN: 146-017-793
+2025-12-26 08:18:48,721 - INFO -  * Detected change in 'D:\\HK1 IT IU 2025-26\\Web\\Web Project\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-26 08:18:48,775 - INFO -  * Restarting with stat
+2025-12-26 08:18:49,087 - WARNING -  * Debugger is active!
+2025-12-26 08:18:49,089 - INFO -  * Debugger PIN: 146-017-793
+2025-12-26 08:18:56,856 - INFO - Fetching SELF-STUDY tasks for collection_id=29. Found: 5
+2025-12-26 08:18:56,857 - INFO -    -> Self-Study Task: 'Viết báo cáo Mạng máy tính' [ID: 207, Duration: 120 mins]
+2025-12-26 08:18:56,857 - INFO -    -> Self-Study Task: 'Học tiếng Anh IELTS' [Merged 6x, Total Duration: 720 mins]
+2025-12-26 08:18:56,857 - INFO -    -> Self-Study Task: 'Ôn thi giữa kỳ Cơ sở dữ liệu' [Merged 2x, Total Duration: 330 mins]
+2025-12-26 08:18:56,857 - INFO -    -> Self-Study Task: 'Nộp report WEB' [ID: 206, Duration: 180 mins]
+2025-12-26 08:18:56,858 - INFO -    -> Self-Study Task: 'Bài tập Toán Assignment 3' [ID: 208, Duration: 180 mins]
+2025-12-26 08:18:56,858 - INFO -   ✅ Fixed Class: Mon 01:15:00 CH-03:45:00 CH - Engineering Ethics and Professional Skills
+2025-12-26 08:18:56,859 - INFO -   ✅ Fixed Class: Tue 08:00:00 SA-10:30:00 SA - Theoretical Models in Computing
+2025-12-26 08:18:56,859 - INFO -   ✅ Fixed Class: Tue 10:35:00 SA-01:05:00 CH - Net-Centric Programming
+2025-12-26 08:18:56,859 - INFO -   ✅ Fixed Class: Tue 01:15:00 CH-03:45:00 CH - Theoretical Models in Computing
+2025-12-26 08:18:56,859 - INFO -   ✅ Fixed Class: Thu 08:00:00 SA-10:30:00 SA - Information System Management
+2025-12-26 08:18:56,859 - INFO -   ✅ Fixed Class: Thu 10:35:00 SA-01:05:00 CH - Information System Management
+2025-12-26 08:18:56,859 - INFO -   ✅ Fixed Class: Thu 01:15:00 CH-03:45:00 CH - 	 Net-Centric Programming
+2025-12-26 08:18:56,859 - INFO -   ✅ Fixed Class: Fri 08:00:00 SA-10:30:00 SA - System & Network Administration
+2025-12-26 08:18:56,860 - INFO -   ✅ Fixed Class: Fri 01:15:00 CH-03:45:00 CH - System & Network Administration
+2025-12-26 08:18:56,860 - INFO - Found 9 fixed classes for collection 29
+2025-12-26 08:18:56,861 - INFO - ============================================================
+2025-12-26 08:18:56,861 - INFO - FIXED CLASSES (should not be moved):
+2025-12-26 08:18:56,861 - INFO -   Mon 01:15:00-03:45:00: Engineering Ethics and Professional Skills
+2025-12-26 08:18:56,861 - INFO -   Tue 08:00:00-10:30:00: Theoretical Models in Computing
+2025-12-26 08:18:56,862 - INFO -   Tue 10:35:00-01:05:00: Net-Centric Programming
+2025-12-26 08:18:56,862 - INFO -   Tue 01:15:00-03:45:00: Theoretical Models in Computing
+2025-12-26 08:18:56,862 - INFO -   Thu 08:00:00-10:30:00: Information System Management
+2025-12-26 08:18:56,862 - INFO -   Thu 10:35:00-01:05:00: Information System Management
+2025-12-26 08:18:56,862 - INFO -   Thu 01:15:00-03:45:00: 	 Net-Centric Programming
+2025-12-26 08:18:56,862 - INFO -   Fri 08:00:00-10:30:00: System & Network Administration
+2025-12-26 08:18:56,863 - INFO -   Fri 01:15:00-03:45:00: System & Network Administration
+2025-12-26 08:18:56,863 - INFO - OTHER CONSTRAINTS: 0 items
+2025-12-26 08:18:56,863 - INFO - Generating schedule. Start: 09:00, End: 17:00
+2025-12-26 08:18:56,863 - INFO - Total constraints: 9 (fixed classes + other)
+2025-12-26 08:18:56,863 - INFO - Scheduling 5 self-study tasks.
+2025-12-26 08:18:56,868 - INFO - Scheduler initialized: 09:00-17:00, Focus: balance
+2025-12-26 08:18:56,868 - INFO - Using science-based efficiency model with 112 time slots
+2025-12-26 08:18:56,868 - INFO - ============================================================
+2025-12-26 08:18:56,868 - INFO - GENERATING SCIENCE-OPTIMIZED SCHEDULE
+2025-12-26 08:18:56,869 - INFO - Tasks to schedule: 5
+2025-12-26 08:18:56,869 - INFO - Existing constraints: 9
+2025-12-26 08:18:56,869 - INFO - Priority focus: balance
+2025-12-26 08:18:56,869 - INFO - 
+TASK PRIORITY ORDER:
+2025-12-26 08:18:56,869 - INFO -   1. Học tiếng Anh IELTS                      Score: 530
+2025-12-26 08:18:56,869 - INFO -   2. Nộp report WEB                           Score: 330
+2025-12-26 08:18:56,869 - INFO -   3. Bài tập Toán Assignment 3                Score: 330
+2025-12-26 08:18:56,869 - INFO -   4. Ôn thi giữa kỳ Cơ sở dữ liệu             Score: 210
+2025-12-26 08:18:56,869 - INFO -   5. Viết báo cáo Mạng máy tính               Score: 110
+2025-12-26 08:18:56,870 - INFO - Marking 9 constraints as busy slots
+2025-12-26 08:18:56,870 - INFO - Looking for slot for: 'Học tiếng Anh IELTS' (Duration: 720 mins)
+2025-12-26 08:18:56,870 - WARNING -   No slot found for task! Duration may be too long or no available slots.
+2025-12-26 08:18:56,871 - WARNING - Could not place: Học tiếng Anh IELTS
+2025-12-26 08:18:56,871 - INFO - Looking for slot for: 'Nộp report WEB' (Duration: 180 mins)
+2025-12-26 08:18:56,872 - INFO -   Best slot found: Tue 10:30:00 SA-01:30:00 CH
+2025-12-26 08:18:56,872 - INFO - Placed: 'Nộp report WEB' at Tue 10:30:00 SA-01:30:00 CH
+2025-12-26 08:18:56,872 - INFO - Looking for slot for: 'Bài tập Toán Assignment 3' (Duration: 180 mins)
+2025-12-26 08:18:56,873 - INFO -   Best slot found: Wed 10:00:00 SA-01:00:00 CH
+2025-12-26 08:18:56,873 - INFO - Placed: 'Bài tập Toán Assignment 3' at Wed 10:00:00 SA-01:00:00 CH
+2025-12-26 08:18:56,873 - INFO - Looking for slot for: 'Ôn thi giữa kỳ Cơ sở dữ liệu' (Duration: 330 mins)
+2025-12-26 08:18:56,874 - INFO -   Best slot found: Thu 10:30:00 SA-04:00:00 CH
+2025-12-26 08:18:56,874 - INFO - Placed: 'Ôn thi giữa kỳ Cơ sở dữ liệu' at Thu 10:30:00 SA-04:00:00 CH
+2025-12-26 08:18:56,874 - INFO - Looking for slot for: 'Viết báo cáo Mạng máy tính' (Duration: 120 mins)
+2025-12-26 08:18:56,875 - INFO -   Best slot found: Mon 10:00:00 SA-12:00:00 CH
+2025-12-26 08:18:56,875 - INFO - Placed: 'Viết báo cáo Mạng máy tính' at Mon 10:00:00 SA-12:00:00 CH
+2025-12-26 08:18:56,875 - INFO - 
+SCHEDULE ANALYSIS:
+2025-12-26 08:18:56,876 - INFO - Total items scheduled: 13
+2025-12-26 08:18:56,876 - INFO -   Fri: 2 items
+2025-12-26 08:18:56,876 - INFO -   Mon: 2 items
+2025-12-26 08:18:56,877 - INFO -   Thu: 4 items
+2025-12-26 08:18:56,877 - INFO -   Tue: 4 items
+2025-12-26 08:18:56,877 - INFO -   Wed: 1 items
+2025-12-26 08:18:56,878 - INFO - Total study hours: 96.0h
+2025-12-26 08:18:56,878 - INFO - Exam-related tasks scheduled: 2
+2025-12-26 08:18:56,878 - INFO -   - Mon 01:15:00: Engineering Ethics and Professional Skil
+2025-12-26 08:18:56,878 - INFO -   - Thu 10:30:00: Ôn thi giữa kỳ Cơ sở dữ liệu
+2025-12-26 08:18:56,879 - INFO - 
+FINAL SCHEDULE COMPOSITION (AFTER DEDUPLICATION):
+2025-12-26 08:18:56,879 - INFO -   Fixed classes: 9
+2025-12-26 08:18:56,879 - INFO -   Scheduled self-study items: 13
+2025-12-26 08:18:56,879 - INFO -   Final unique items: 13
+2025-12-26 08:18:56,879 - INFO - 
+ALL UNIQUE ITEMS IN FINAL SCHEDULE:
+2025-12-26 08:18:56,879 - INFO -    1. FIXED: Mon 01:15:00 CH-03:45:00 CH - Engineering Ethics and Professional Skil
+2025-12-26 08:18:56,879 - INFO -    2. FIXED: Tue 08:00:00 SA-10:30:00 SA - Theoretical Models in Computing
+2025-12-26 08:18:56,879 - INFO -    3. FIXED: Tue 10:35:00 SA-01:05:00 CH - Net-Centric Programming
+2025-12-26 08:18:56,879 - INFO -    4. FIXED: Tue 01:15:00 CH-03:45:00 CH - Theoretical Models in Computing
+2025-12-26 08:18:56,879 - INFO -    5. FIXED: Thu 08:00:00 SA-10:30:00 SA - Information System Management
+2025-12-26 08:18:56,879 - INFO -    6. FIXED: Thu 10:35:00 SA-01:05:00 CH - Information System Management
+2025-12-26 08:18:56,880 - INFO -    7. FIXED: Thu 01:15:00 CH-03:45:00 CH - 	 Net-Centric Programming
+2025-12-26 08:18:56,880 - INFO -    8. FIXED: Fri 08:00:00 SA-10:30:00 SA - System & Network Administration
+2025-12-26 08:18:56,880 - INFO -    9. FIXED: Fri 01:15:00 CH-03:45:00 CH - System & Network Administration
+2025-12-26 08:18:56,880 - INFO -   10. SELF-STUDY: Tue 10:30:00 SA-01:30:00 CH - Nộp report WEB
+2025-12-26 08:18:56,880 - INFO -   11. SELF-STUDY: Wed 10:00:00 SA-01:00:00 CH - Bài tập Toán Assignment 3
+2025-12-26 08:18:56,880 - INFO -   12. SELF-STUDY: Thu 10:30:00 SA-04:00:00 CH - Ôn thi giữa kỳ Cơ sở dữ liệu
+2025-12-26 08:18:56,880 - INFO -   13. SELF-STUDY: Mon 10:00:00 SA-12:00:00 CH - Viết báo cáo Mạng máy tính
+2025-12-26 08:18:56,881 - INFO - 127.0.0.1 - - [26/Dec/2025 08:18:56] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-26 08:19:12,832 - INFO -  * Detected change in 'D:\\HK1 IT IU 2025-26\\Web\\Web Project\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-26 08:19:12,905 - INFO -  * Restarting with stat
+2025-12-26 08:19:13,205 - WARNING -  * Debugger is active!
+2025-12-26 08:19:13,207 - INFO -  * Debugger PIN: 146-017-793
+2025-12-26 08:19:21,160 - INFO - Fetching SELF-STUDY tasks for collection_id=29. Found: 5
+2025-12-26 08:19:21,161 - INFO -    -> Self-Study Task: 'Viết báo cáo Mạng máy tính' [ID: 207, Duration: 120 mins]
+2025-12-26 08:19:21,161 - INFO -    -> Self-Study Task: 'Học tiếng Anh IELTS' [Merged 6x, Total Duration: 720 mins]
+2025-12-26 08:19:21,161 - INFO -    -> Self-Study Task: 'Ôn thi giữa kỳ Cơ sở dữ liệu' [Merged 2x, Total Duration: 330 mins]
+2025-12-26 08:19:21,161 - INFO -    -> Self-Study Task: 'Nộp report WEB' [ID: 206, Duration: 180 mins]
+2025-12-26 08:19:21,162 - INFO -    -> Self-Study Task: 'Bài tập Toán Assignment 3' [ID: 208, Duration: 180 mins]
+2025-12-26 08:19:21,163 - INFO -   ✅ Fixed Class: Mon 01:15:00 CH-03:45:00 CH - Engineering Ethics and Professional Skills
+2025-12-26 08:19:21,163 - INFO -   ✅ Fixed Class: Tue 08:00:00 SA-10:30:00 SA - Theoretical Models in Computing
+2025-12-26 08:19:21,163 - INFO -   ✅ Fixed Class: Tue 10:35:00 SA-01:05:00 CH - Net-Centric Programming
+2025-12-26 08:19:21,163 - INFO -   ✅ Fixed Class: Tue 01:15:00 CH-03:45:00 CH - Theoretical Models in Computing
+2025-12-26 08:19:21,164 - INFO -   ✅ Fixed Class: Thu 08:00:00 SA-10:30:00 SA - Information System Management
+2025-12-26 08:19:21,164 - INFO -   ✅ Fixed Class: Thu 10:35:00 SA-01:05:00 CH - Information System Management
+2025-12-26 08:19:21,164 - INFO -   ✅ Fixed Class: Thu 01:15:00 CH-03:45:00 CH - 	 Net-Centric Programming
+2025-12-26 08:19:21,164 - INFO -   ✅ Fixed Class: Fri 08:00:00 SA-10:30:00 SA - System & Network Administration
+2025-12-26 08:19:21,164 - INFO -   ✅ Fixed Class: Fri 01:15:00 CH-03:45:00 CH - System & Network Administration
+2025-12-26 08:19:21,164 - INFO - Found 9 fixed classes for collection 29
+2025-12-26 08:19:21,165 - INFO - ============================================================
+2025-12-26 08:19:21,165 - INFO - FIXED CLASSES (should not be moved):
+2025-12-26 08:19:21,165 - INFO -   Mon 01:15:00-03:45:00: Engineering Ethics and Professional Skills
+2025-12-26 08:19:21,165 - INFO -   Tue 08:00:00-10:30:00: Theoretical Models in Computing
+2025-12-26 08:19:21,165 - INFO -   Tue 10:35:00-01:05:00: Net-Centric Programming
+2025-12-26 08:19:21,165 - INFO -   Tue 01:15:00-03:45:00: Theoretical Models in Computing
+2025-12-26 08:19:21,165 - INFO -   Thu 08:00:00-10:30:00: Information System Management
+2025-12-26 08:19:21,165 - INFO -   Thu 10:35:00-01:05:00: Information System Management
+2025-12-26 08:19:21,165 - INFO -   Thu 01:15:00-03:45:00: 	 Net-Centric Programming
+2025-12-26 08:19:21,165 - INFO -   Fri 08:00:00-10:30:00: System & Network Administration
+2025-12-26 08:19:21,165 - INFO -   Fri 01:15:00-03:45:00: System & Network Administration
+2025-12-26 08:19:21,165 - INFO - OTHER CONSTRAINTS: 0 items
+2025-12-26 08:19:21,165 - INFO - Generating schedule. Start: 09:00, End: 17:00
+2025-12-26 08:19:21,165 - INFO - Total constraints: 9 (fixed classes + other)
+2025-12-26 08:19:21,166 - INFO - Scheduling 5 self-study tasks.
+2025-12-26 08:19:21,169 - INFO - Scheduler initialized: 09:00-17:00, Focus: balance
+2025-12-26 08:19:21,169 - INFO - Using science-based efficiency model with 112 time slots
+2025-12-26 08:19:21,169 - INFO - ============================================================
+2025-12-26 08:19:21,169 - INFO - GENERATING SCIENCE-OPTIMIZED SCHEDULE
+2025-12-26 08:19:21,169 - INFO - Tasks to schedule: 5
+2025-12-26 08:19:21,169 - INFO - Existing constraints: 9
+2025-12-26 08:19:21,169 - INFO - Priority focus: balance
+2025-12-26 08:19:21,169 - INFO - 
+TASK PRIORITY ORDER:
+2025-12-26 08:19:21,169 - INFO -   1. Học tiếng Anh IELTS                      Score: 530
+2025-12-26 08:19:21,170 - INFO -   2. Nộp report WEB                           Score: 330
+2025-12-26 08:19:21,170 - INFO -   3. Bài tập Toán Assignment 3                Score: 330
+2025-12-26 08:19:21,170 - INFO -   4. Ôn thi giữa kỳ Cơ sở dữ liệu             Score: 210
+2025-12-26 08:19:21,170 - INFO -   5. Viết báo cáo Mạng máy tính               Score: 110
+2025-12-26 08:19:21,170 - INFO - Marking 9 constraints as busy slots
+2025-12-26 08:19:21,170 - INFO - Looking for slot for: 'Học tiếng Anh IELTS' (Duration: 720 mins)
+2025-12-26 08:19:21,171 - WARNING -   No slot found for task! Duration may be too long or no available slots.
+2025-12-26 08:19:21,171 - WARNING - Could not place: Học tiếng Anh IELTS
+2025-12-26 08:19:21,171 - INFO - Looking for slot for: 'Nộp report WEB' (Duration: 180 mins)
+2025-12-26 08:19:21,172 - INFO -   Best slot found: Tue 10:30:00 SA-01:30:00 CH
+2025-12-26 08:19:21,172 - INFO - Placed: 'Nộp report WEB' at Tue 10:30:00 SA-01:30:00 CH
+2025-12-26 08:19:21,172 - INFO - Looking for slot for: 'Bài tập Toán Assignment 3' (Duration: 180 mins)
+2025-12-26 08:19:21,173 - INFO -   Best slot found: Wed 10:00:00 SA-01:00:00 CH
+2025-12-26 08:19:21,173 - INFO - Placed: 'Bài tập Toán Assignment 3' at Wed 10:00:00 SA-01:00:00 CH
+2025-12-26 08:19:21,173 - INFO - Looking for slot for: 'Ôn thi giữa kỳ Cơ sở dữ liệu' (Duration: 330 mins)
+2025-12-26 08:19:21,174 - INFO -   Best slot found: Thu 10:30:00 SA-04:00:00 CH
+2025-12-26 08:19:21,174 - INFO - Placed: 'Ôn thi giữa kỳ Cơ sở dữ liệu' at Thu 10:30:00 SA-04:00:00 CH
+2025-12-26 08:19:21,174 - INFO - Looking for slot for: 'Viết báo cáo Mạng máy tính' (Duration: 120 mins)
+2025-12-26 08:19:21,175 - INFO -   Best slot found: Mon 10:00:00 SA-12:00:00 CH
+2025-12-26 08:19:21,175 - INFO - Placed: 'Viết báo cáo Mạng máy tính' at Mon 10:00:00 SA-12:00:00 CH
+2025-12-26 08:19:21,175 - INFO - 
+SCHEDULE ANALYSIS:
+2025-12-26 08:19:21,175 - INFO - Total items scheduled: 13
+2025-12-26 08:19:21,175 - INFO -   Fri: 2 items
+2025-12-26 08:19:21,175 - INFO -   Mon: 2 items
+2025-12-26 08:19:21,175 - INFO -   Thu: 4 items
+2025-12-26 08:19:21,175 - INFO -   Tue: 4 items
+2025-12-26 08:19:21,175 - INFO -   Wed: 1 items
+2025-12-26 08:19:21,176 - INFO - Total study hours: 96.0h
+2025-12-26 08:19:21,176 - INFO - Exam-related tasks scheduled: 2
+2025-12-26 08:19:21,176 - INFO -   - Mon 01:15:00: Engineering Ethics and Professional Skil
+2025-12-26 08:19:21,176 - INFO -   - Thu 10:30:00: Ôn thi giữa kỳ Cơ sở dữ liệu
+2025-12-26 08:19:21,176 - INFO - 
+FINAL SCHEDULE COMPOSITION (AFTER DEDUPLICATION):
+2025-12-26 08:19:21,176 - INFO -   Fixed classes: 9
+2025-12-26 08:19:21,176 - INFO -   Scheduled self-study items: 13
+2025-12-26 08:19:21,176 - INFO -   Final unique items: 13
+2025-12-26 08:19:21,176 - INFO - 
+ALL UNIQUE ITEMS IN FINAL SCHEDULE:
+2025-12-26 08:19:21,176 - INFO -    1. FIXED: Mon 01:15:00 CH-03:45:00 CH - Engineering Ethics and Professional Skil
+2025-12-26 08:19:21,176 - INFO -    2. FIXED: Tue 08:00:00 SA-10:30:00 SA - Theoretical Models in Computing
+2025-12-26 08:19:21,176 - INFO -    3. FIXED: Tue 10:35:00 SA-01:05:00 CH - Net-Centric Programming
+2025-12-26 08:19:21,176 - INFO -    4. FIXED: Tue 01:15:00 CH-03:45:00 CH - Theoretical Models in Computing
+2025-12-26 08:19:21,177 - INFO -    5. FIXED: Thu 08:00:00 SA-10:30:00 SA - Information System Management
+2025-12-26 08:19:21,177 - INFO -    6. FIXED: Thu 10:35:00 SA-01:05:00 CH - Information System Management
+2025-12-26 08:19:21,177 - INFO -    7. FIXED: Thu 01:15:00 CH-03:45:00 CH - 	 Net-Centric Programming
+2025-12-26 08:19:21,177 - INFO -    8. FIXED: Fri 08:00:00 SA-10:30:00 SA - System & Network Administration
+2025-12-26 08:19:21,177 - INFO -    9. FIXED: Fri 01:15:00 CH-03:45:00 CH - System & Network Administration
+2025-12-26 08:19:21,177 - INFO -   10. SELF-STUDY: Tue 10:30:00 SA-01:30:00 CH - Nộp report WEB
+2025-12-26 08:19:21,177 - INFO -   11. SELF-STUDY: Wed 10:00:00 SA-01:00:00 CH - Bài tập Toán Assignment 3
+2025-12-26 08:19:21,177 - INFO -   12. SELF-STUDY: Thu 10:30:00 SA-04:00:00 CH - Ôn thi giữa kỳ Cơ sở dữ liệu
+2025-12-26 08:19:21,177 - INFO -   13. SELF-STUDY: Mon 10:00:00 SA-12:00:00 CH - Viết báo cáo Mạng máy tính
+2025-12-26 08:19:21,178 - INFO - 127.0.0.1 - - [26/Dec/2025 08:19:21] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-26 08:19:45,600 - INFO -  * Detected change in 'D:\\HK1 IT IU 2025-26\\Web\\Web Project\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-26 08:19:45,657 - INFO -  * Restarting with stat
+2025-12-26 08:19:45,965 - WARNING -  * Debugger is active!
+2025-12-26 08:19:45,967 - INFO -  * Debugger PIN: 146-017-793
+2025-12-26 08:19:52,421 - INFO - Fetching SELF-STUDY tasks for collection_id=29. Found: 5
+2025-12-26 08:19:52,422 - INFO -    -> Self-Study Task: 'Viết báo cáo Mạng máy tính' [ID: 207, Duration: 120 mins]
+2025-12-26 08:19:52,422 - INFO -    -> Self-Study Task: 'Học tiếng Anh IELTS' [Merged 6x, Total Duration: 720 mins]
+2025-12-26 08:19:52,422 - INFO -    -> Self-Study Task: 'Ôn thi giữa kỳ Cơ sở dữ liệu' [Merged 2x, Total Duration: 330 mins]
+2025-12-26 08:19:52,423 - INFO -    -> Self-Study Task: 'Nộp report WEB' [ID: 206, Duration: 180 mins]
+2025-12-26 08:19:52,423 - INFO -    -> Self-Study Task: 'Bài tập Toán Assignment 3' [ID: 208, Duration: 180 mins]
+2025-12-26 08:19:52,424 - INFO -   ✅ Fixed Class: Mon 01:15:00 CH-03:45:00 CH - Engineering Ethics and Professional Skills
+2025-12-26 08:19:52,424 - INFO -   ✅ Fixed Class: Tue 08:00:00 SA-10:30:00 SA - Theoretical Models in Computing
+2025-12-26 08:19:52,424 - INFO -   ✅ Fixed Class: Tue 10:35:00 SA-01:05:00 CH - Net-Centric Programming
+2025-12-26 08:19:52,424 - INFO -   ✅ Fixed Class: Tue 01:15:00 CH-03:45:00 CH - Theoretical Models in Computing
+2025-12-26 08:19:52,424 - INFO -   ✅ Fixed Class: Thu 08:00:00 SA-10:30:00 SA - Information System Management
+2025-12-26 08:19:52,424 - INFO -   ✅ Fixed Class: Thu 10:35:00 SA-01:05:00 CH - Information System Management
+2025-12-26 08:19:52,425 - INFO -   ✅ Fixed Class: Thu 01:15:00 CH-03:45:00 CH - 	 Net-Centric Programming
+2025-12-26 08:19:52,425 - INFO -   ✅ Fixed Class: Fri 08:00:00 SA-10:30:00 SA - System & Network Administration
+2025-12-26 08:19:52,425 - INFO -   ✅ Fixed Class: Fri 01:15:00 CH-03:45:00 CH - System & Network Administration
+2025-12-26 08:19:52,425 - INFO - Found 9 fixed classes for collection 29
+2025-12-26 08:19:52,426 - INFO - ============================================================
+2025-12-26 08:19:52,426 - INFO - FIXED CLASSES (should not be moved):
+2025-12-26 08:19:52,426 - INFO -   Mon 01:15:00-03:45:00: Engineering Ethics and Professional Skills
+2025-12-26 08:19:52,426 - INFO -   Tue 08:00:00-10:30:00: Theoretical Models in Computing
+2025-12-26 08:19:52,426 - INFO -   Tue 10:35:00-01:05:00: Net-Centric Programming
+2025-12-26 08:19:52,427 - INFO -   Tue 01:15:00-03:45:00: Theoretical Models in Computing
+2025-12-26 08:19:52,427 - INFO -   Thu 08:00:00-10:30:00: Information System Management
+2025-12-26 08:19:52,427 - INFO -   Thu 10:35:00-01:05:00: Information System Management
+2025-12-26 08:19:52,427 - INFO -   Thu 01:15:00-03:45:00: 	 Net-Centric Programming
+2025-12-26 08:19:52,427 - INFO -   Fri 08:00:00-10:30:00: System & Network Administration
+2025-12-26 08:19:52,427 - INFO -   Fri 01:15:00-03:45:00: System & Network Administration
+2025-12-26 08:19:52,428 - INFO - OTHER CONSTRAINTS: 0 items
+2025-12-26 08:19:52,428 - INFO - Generating schedule. Start: 09:00, End: 17:00
+2025-12-26 08:19:52,428 - INFO - Total constraints: 9 (fixed classes + other)
+2025-12-26 08:19:52,428 - INFO - Scheduling 5 self-study tasks.
+2025-12-26 08:19:52,432 - INFO - Scheduler initialized: 09:00-17:00, Focus: balance
+2025-12-26 08:19:52,432 - INFO - Using science-based efficiency model with 112 time slots
+2025-12-26 08:19:52,433 - INFO - ============================================================
+2025-12-26 08:19:52,433 - INFO - GENERATING SCIENCE-OPTIMIZED SCHEDULE
+2025-12-26 08:19:52,433 - INFO - Tasks to schedule: 5
+2025-12-26 08:19:52,433 - INFO - Existing constraints: 9
+2025-12-26 08:19:52,433 - INFO - Priority focus: balance
+2025-12-26 08:19:52,433 - INFO - 
+TASK PRIORITY ORDER:
+2025-12-26 08:19:52,434 - INFO -   1. Học tiếng Anh IELTS                      Score: 530
+2025-12-26 08:19:52,434 - INFO -   2. Nộp report WEB                           Score: 330
+2025-12-26 08:19:52,434 - INFO -   3. Bài tập Toán Assignment 3                Score: 330
+2025-12-26 08:19:52,434 - INFO -   4. Ôn thi giữa kỳ Cơ sở dữ liệu             Score: 210
+2025-12-26 08:19:52,435 - INFO -   5. Viết báo cáo Mạng máy tính               Score: 110
+2025-12-26 08:19:52,435 - INFO - Marking 9 constraints as busy slots
+2025-12-26 08:19:52,436 - INFO - Looking for slot for: 'Học tiếng Anh IELTS' (Duration: 720 mins)
+2025-12-26 08:19:52,436 - WARNING -   No slot found for task! Duration may be too long or no available slots.
+2025-12-26 08:19:52,436 - WARNING - Could not place: Học tiếng Anh IELTS
+2025-12-26 08:19:52,436 - INFO - Looking for slot for: 'Nộp report WEB' (Duration: 180 mins)
+2025-12-26 08:19:52,437 - ERROR - Error generating schedule: unsupported type for timedelta minutes component: decimal.Decimal
+Traceback (most recent call last):
+  File "D:\HK1 IT IU 2025-26\Web\Web Project\Study_Planning_Web\Study_Planning_Web\app.py", line 1113, in generate_schedule
+    scheduled_self_study = scheduler.generate_schedule(tasks_to_schedule, all_constraints)
+  File "D:\HK1 IT IU 2025-26\Web\Web Project\Study_Planning_Web\Study_Planning_Web\app.py", line 642, in generate_schedule
+    best_slot = self._find_best_slot_for_task(task, time_grid)
+  File "D:\HK1 IT IU 2025-26\Web\Web Project\Study_Planning_Web\Study_Planning_Web\app.py", line 844, in _find_best_slot_for_task
+    end_dt = start_dt + timedelta(minutes=duration)
+                        ~~~~~~~~~^^^^^^^^^^^^^^^^^^
+TypeError: unsupported type for timedelta minutes component: decimal.Decimal
+2025-12-26 08:19:52,439 - INFO - 127.0.0.1 - - [26/Dec/2025 08:19:52] "[35m[1mPOST /generate-schedule HTTP/1.1[0m" 500 -
+2025-12-26 08:21:42,092 - INFO - Fetching SELF-STUDY tasks for collection_id=29. Found: 5
+2025-12-26 08:21:42,092 - INFO -    -> Self-Study Task: 'Viết báo cáo Mạng máy tính' [ID: 207, Duration: 120 mins]
+2025-12-26 08:21:42,092 - INFO -    -> Self-Study Task: 'Học tiếng Anh IELTS' [Merged 6x, Total Duration: 720 mins]
+2025-12-26 08:21:42,092 - INFO -    -> Self-Study Task: 'Ôn thi giữa kỳ Cơ sở dữ liệu' [Merged 2x, Total Duration: 330 mins]
+2025-12-26 08:21:42,092 - INFO -    -> Self-Study Task: 'Nộp report WEB' [ID: 206, Duration: 180 mins]
+2025-12-26 08:21:42,092 - INFO -    -> Self-Study Task: 'Bài tập Toán Assignment 3' [ID: 208, Duration: 180 mins]
+2025-12-26 08:21:42,093 - INFO -   ✅ Fixed Class: Mon 01:15:00 CH-03:45:00 CH - Engineering Ethics and Professional Skills
+2025-12-26 08:21:42,093 - INFO -   ✅ Fixed Class: Tue 08:00:00 SA-10:30:00 SA - Theoretical Models in Computing
+2025-12-26 08:21:42,093 - INFO -   ✅ Fixed Class: Tue 10:35:00 SA-01:05:00 CH - Net-Centric Programming
+2025-12-26 08:21:42,093 - INFO -   ✅ Fixed Class: Tue 01:15:00 CH-03:45:00 CH - Theoretical Models in Computing
+2025-12-26 08:21:42,093 - INFO -   ✅ Fixed Class: Thu 08:00:00 SA-10:30:00 SA - Information System Management
+2025-12-26 08:21:42,093 - INFO -   ✅ Fixed Class: Thu 10:35:00 SA-01:05:00 CH - Information System Management
+2025-12-26 08:21:42,093 - INFO -   ✅ Fixed Class: Thu 01:15:00 CH-03:45:00 CH - 	 Net-Centric Programming
+2025-12-26 08:21:42,094 - INFO -   ✅ Fixed Class: Fri 08:00:00 SA-10:30:00 SA - System & Network Administration
+2025-12-26 08:21:42,094 - INFO -   ✅ Fixed Class: Fri 01:15:00 CH-03:45:00 CH - System & Network Administration
+2025-12-26 08:21:42,094 - INFO - Found 9 fixed classes for collection 29
+2025-12-26 08:21:42,094 - INFO - ============================================================
+2025-12-26 08:21:42,094 - INFO - FIXED CLASSES (should not be moved):
+2025-12-26 08:21:42,094 - INFO -   Mon 01:15:00-03:45:00: Engineering Ethics and Professional Skills
+2025-12-26 08:21:42,094 - INFO -   Tue 08:00:00-10:30:00: Theoretical Models in Computing
+2025-12-26 08:21:42,095 - INFO -   Tue 10:35:00-01:05:00: Net-Centric Programming
+2025-12-26 08:21:42,095 - INFO -   Tue 01:15:00-03:45:00: Theoretical Models in Computing
+2025-12-26 08:21:42,095 - INFO -   Thu 08:00:00-10:30:00: Information System Management
+2025-12-26 08:21:42,095 - INFO -   Thu 10:35:00-01:05:00: Information System Management
+2025-12-26 08:21:42,095 - INFO -   Thu 01:15:00-03:45:00: 	 Net-Centric Programming
+2025-12-26 08:21:42,095 - INFO -   Fri 08:00:00-10:30:00: System & Network Administration
+2025-12-26 08:21:42,095 - INFO -   Fri 01:15:00-03:45:00: System & Network Administration
+2025-12-26 08:21:42,095 - INFO - OTHER CONSTRAINTS: 0 items
+2025-12-26 08:21:42,095 - INFO - Generating schedule. Start: 09:00, End: 17:00
+2025-12-26 08:21:42,095 - INFO - Total constraints: 9 (fixed classes + other)
+2025-12-26 08:21:42,095 - INFO - Scheduling 5 self-study tasks.
+2025-12-26 08:21:42,096 - INFO - Scheduler initialized: 09:00-17:00, Focus: balance
+2025-12-26 08:21:42,096 - INFO - Using science-based efficiency model with 112 time slots
+2025-12-26 08:21:42,096 - INFO - ============================================================
+2025-12-26 08:21:42,096 - INFO - GENERATING SCIENCE-OPTIMIZED SCHEDULE
+2025-12-26 08:21:42,096 - INFO - Tasks to schedule: 5
+2025-12-26 08:21:42,096 - INFO - Existing constraints: 9
+2025-12-26 08:21:42,096 - INFO - Priority focus: balance
+2025-12-26 08:21:42,096 - INFO - 
+TASK PRIORITY ORDER:
+2025-12-26 08:21:42,096 - INFO -   1. Học tiếng Anh IELTS                      Score: 530
+2025-12-26 08:21:42,097 - INFO -   2. Nộp report WEB                           Score: 330
+2025-12-26 08:21:42,097 - INFO -   3. Bài tập Toán Assignment 3                Score: 330
+2025-12-26 08:21:42,097 - INFO -   4. Ôn thi giữa kỳ Cơ sở dữ liệu             Score: 210
+2025-12-26 08:21:42,097 - INFO -   5. Viết báo cáo Mạng máy tính               Score: 110
+2025-12-26 08:21:42,097 - INFO - Marking 9 constraints as busy slots
+2025-12-26 08:21:42,097 - INFO - Looking for slot for: 'Học tiếng Anh IELTS' (Duration: 720 mins)
+2025-12-26 08:21:42,097 - WARNING -   No slot found for task! Duration may be too long or no available slots.
+2025-12-26 08:21:42,098 - WARNING - Could not place: Học tiếng Anh IELTS
+2025-12-26 08:21:42,098 - INFO - Looking for slot for: 'Nộp report WEB' (Duration: 180 mins)
+2025-12-26 08:21:42,098 - ERROR - Error generating schedule: unsupported type for timedelta minutes component: decimal.Decimal
+Traceback (most recent call last):
+  File "D:\HK1 IT IU 2025-26\Web\Web Project\Study_Planning_Web\Study_Planning_Web\app.py", line 1113, in generate_schedule
+    scheduled_self_study = scheduler.generate_schedule(tasks_to_schedule, all_constraints)
+  File "D:\HK1 IT IU 2025-26\Web\Web Project\Study_Planning_Web\Study_Planning_Web\app.py", line 642, in generate_schedule
+    best_slot = self._find_best_slot_for_task(task, time_grid)
+  File "D:\HK1 IT IU 2025-26\Web\Web Project\Study_Planning_Web\Study_Planning_Web\app.py", line 844, in _find_best_slot_for_task
+    end_dt = start_dt + timedelta(minutes=duration)
+                        ~~~~~~~~~^^^^^^^^^^^^^^^^^^
+TypeError: unsupported type for timedelta minutes component: decimal.Decimal
+2025-12-26 08:21:42,099 - INFO - 127.0.0.1 - - [26/Dec/2025 08:21:42] "[35m[1mPOST /generate-schedule HTTP/1.1[0m" 500 -
+2025-12-26 08:25:27,716 - INFO -  * Detected change in 'D:\\HK1 IT IU 2025-26\\Web\\Web Project\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-26 08:25:27,807 - INFO -  * Restarting with stat
+2025-12-26 08:28:13,365 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.100.229:5000
+2025-12-26 08:28:13,366 - INFO - [33mPress CTRL+C to quit[0m
+2025-12-26 08:28:13,367 - INFO -  * Restarting with stat
+2025-12-26 08:28:13,658 - WARNING -  * Debugger is active!
+2025-12-26 08:28:13,660 - INFO -  * Debugger PIN: 146-017-793
+2025-12-26 08:28:25,520 - INFO - Fetching SELF-STUDY tasks for collection_id=29. Found: 5
+2025-12-26 08:28:25,520 - INFO -    -> Self-Study Task: 'Viết báo cáo Mạng máy tính' [ID: 207, Duration: 120 mins]
+2025-12-26 08:28:25,520 - INFO -    -> Self-Study Task: 'Học tiếng Anh IELTS' [Merged 6x, Total Duration: 720 mins]
+2025-12-26 08:28:25,521 - INFO -    -> Self-Study Task: 'Ôn thi giữa kỳ Cơ sở dữ liệu' [Merged 2x, Total Duration: 330 mins]
+2025-12-26 08:28:25,521 - INFO -    -> Self-Study Task: 'Nộp report WEB' [ID: 206, Duration: 180 mins]
+2025-12-26 08:28:25,521 - INFO -    -> Self-Study Task: 'Bài tập Toán Assignment 3' [ID: 208, Duration: 180 mins]
+2025-12-26 08:28:25,522 - INFO -   ✅ Fixed Class: Mon 01:15:00 CH-03:45:00 CH - Engineering Ethics and Professional Skills
+2025-12-26 08:28:25,522 - INFO -   ✅ Fixed Class: Tue 08:00:00 SA-10:30:00 SA - Theoretical Models in Computing
+2025-12-26 08:28:25,522 - INFO -   ✅ Fixed Class: Tue 10:35:00 SA-01:05:00 CH - Net-Centric Programming
+2025-12-26 08:28:25,523 - INFO -   ✅ Fixed Class: Tue 01:15:00 CH-03:45:00 CH - Theoretical Models in Computing
+2025-12-26 08:28:25,523 - INFO -   ✅ Fixed Class: Thu 08:00:00 SA-10:30:00 SA - Information System Management
+2025-12-26 08:28:25,523 - INFO -   ✅ Fixed Class: Thu 10:35:00 SA-01:05:00 CH - Information System Management
+2025-12-26 08:28:25,523 - INFO -   ✅ Fixed Class: Thu 01:15:00 CH-03:45:00 CH - 	 Net-Centric Programming
+2025-12-26 08:28:25,523 - INFO -   ✅ Fixed Class: Fri 08:00:00 SA-10:30:00 SA - System & Network Administration
+2025-12-26 08:28:25,523 - INFO -   ✅ Fixed Class: Fri 01:15:00 CH-03:45:00 CH - System & Network Administration
+2025-12-26 08:28:25,523 - INFO - Found 9 fixed classes for collection 29
+2025-12-26 08:28:25,524 - INFO - ============================================================
+2025-12-26 08:28:25,524 - INFO - FIXED CLASSES (should not be moved):
+2025-12-26 08:28:25,524 - INFO -   Mon 01:15:00-03:45:00: Engineering Ethics and Professional Skills
+2025-12-26 08:28:25,524 - INFO -   Tue 08:00:00-10:30:00: Theoretical Models in Computing
+2025-12-26 08:28:25,524 - INFO -   Tue 10:35:00-01:05:00: Net-Centric Programming
+2025-12-26 08:28:25,524 - INFO -   Tue 01:15:00-03:45:00: Theoretical Models in Computing
+2025-12-26 08:28:25,524 - INFO -   Thu 08:00:00-10:30:00: Information System Management
+2025-12-26 08:28:25,524 - INFO -   Thu 10:35:00-01:05:00: Information System Management
+2025-12-26 08:28:25,524 - INFO -   Thu 01:15:00-03:45:00: 	 Net-Centric Programming
+2025-12-26 08:28:25,524 - INFO -   Fri 08:00:00-10:30:00: System & Network Administration
+2025-12-26 08:28:25,525 - INFO -   Fri 01:15:00-03:45:00: System & Network Administration
+2025-12-26 08:28:25,525 - INFO - OTHER CONSTRAINTS: 0 items
+2025-12-26 08:28:25,525 - INFO - Generating schedule. Start: 09:00, End: 17:00
+2025-12-26 08:28:25,525 - INFO - Total constraints: 9 (fixed classes + other)
+2025-12-26 08:28:25,525 - INFO - Scheduling 5 self-study tasks.
+2025-12-26 08:28:25,528 - INFO - Scheduler initialized: 09:00-17:00, Focus: balance
+2025-12-26 08:28:25,528 - INFO - Using science-based efficiency model with 112 time slots
+2025-12-26 08:28:25,528 - INFO - ============================================================
+2025-12-26 08:28:25,528 - INFO - GENERATING SCIENCE-OPTIMIZED SCHEDULE
+2025-12-26 08:28:25,528 - INFO - Tasks to schedule: 5
+2025-12-26 08:28:25,528 - INFO - Existing constraints: 9
+2025-12-26 08:28:25,528 - INFO - Priority focus: balance
+2025-12-26 08:28:25,528 - INFO - 
+TASK PRIORITY ORDER:
+2025-12-26 08:28:25,528 - INFO -   1. Học tiếng Anh IELTS                      Score: 530
+2025-12-26 08:28:25,528 - INFO -   2. Nộp report WEB                           Score: 330
+2025-12-26 08:28:25,528 - INFO -   3. Bài tập Toán Assignment 3                Score: 330
+2025-12-26 08:28:25,528 - INFO -   4. Ôn thi giữa kỳ Cơ sở dữ liệu             Score: 210
+2025-12-26 08:28:25,528 - INFO -   5. Viết báo cáo Mạng máy tính               Score: 110
+2025-12-26 08:28:25,529 - INFO - Marking 9 constraints as busy slots
+2025-12-26 08:28:25,529 - INFO - Looking for slot for: 'Học tiếng Anh IELTS' (Duration: 720 mins)
+2025-12-26 08:28:25,529 - WARNING -   No slot found for task! Duration may be too long or no available slots.
+2025-12-26 08:28:25,529 - WARNING - Could not place: Học tiếng Anh IELTS
+2025-12-26 08:28:25,529 - INFO - Looking for slot for: 'Nộp report WEB' (Duration: 180 mins)
+2025-12-26 08:28:25,529 - ERROR - Error generating schedule: unsupported type for timedelta minutes component: decimal.Decimal
+Traceback (most recent call last):
+  File "D:\HK1 IT IU 2025-26\Web\Web Project\Study_Planning_Web\Study_Planning_Web\app.py", line 1113, in generate_schedule
+    scheduled_self_study = scheduler.generate_schedule(tasks_to_schedule, all_constraints)
+  File "D:\HK1 IT IU 2025-26\Web\Web Project\Study_Planning_Web\Study_Planning_Web\app.py", line 642, in generate_schedule
+    best_slot = self._find_best_slot_for_task(task, time_grid)
+  File "D:\HK1 IT IU 2025-26\Web\Web Project\Study_Planning_Web\Study_Planning_Web\app.py", line 844, in _find_best_slot_for_task
+    end_dt = start_dt + timedelta(minutes=duration)
+                        ~~~~~~~~~^^^^^^^^^^^^^^^^^^
+TypeError: unsupported type for timedelta minutes component: decimal.Decimal
+2025-12-26 08:28:25,531 - INFO - 127.0.0.1 - - [26/Dec/2025 08:28:25] "[35m[1mPOST /generate-schedule HTTP/1.1[0m" 500 -
+2025-12-26 08:30:00,950 - INFO -  * Detected change in 'D:\\HK1 IT IU 2025-26\\Web\\Web Project\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-26 08:30:01,040 - INFO -  * Restarting with stat
+2025-12-26 08:30:01,376 - WARNING -  * Debugger is active!
+2025-12-26 08:30:01,378 - INFO -  * Debugger PIN: 146-017-793
+2025-12-26 08:30:41,727 - INFO -  * Detected change in 'D:\\HK1 IT IU 2025-26\\Web\\Web Project\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-26 08:30:41,802 - INFO -  * Restarting with stat
+2025-12-26 08:30:42,121 - WARNING -  * Debugger is active!
+2025-12-26 08:30:42,124 - INFO -  * Debugger PIN: 146-017-793
+2025-12-26 08:30:53,336 - INFO - Fetching SELF-STUDY tasks for collection_id=29. Found: 5
+2025-12-26 08:30:53,336 - INFO -    -> Self-Study Task: 'Viết báo cáo Mạng máy tính' [ID: 207, Duration: 120 mins]
+2025-12-26 08:30:53,336 - INFO -    -> Self-Study Task: 'Học tiếng Anh IELTS' [Merged 6x, Total Duration: 720 mins]
+2025-12-26 08:30:53,336 - INFO -    -> Self-Study Task: 'Ôn thi giữa kỳ Cơ sở dữ liệu' [Merged 2x, Total Duration: 330 mins]
+2025-12-26 08:30:53,337 - INFO -    -> Self-Study Task: 'Nộp report WEB' [ID: 206, Duration: 180 mins]
+2025-12-26 08:30:53,337 - INFO -    -> Self-Study Task: 'Bài tập Toán Assignment 3' [ID: 208, Duration: 180 mins]
+2025-12-26 08:30:53,338 - INFO -   ✅ Fixed Class: Mon 01:15:00 CH-03:45:00 CH - Engineering Ethics and Professional Skills
+2025-12-26 08:30:53,338 - INFO -   ✅ Fixed Class: Tue 08:00:00 SA-10:30:00 SA - Theoretical Models in Computing
+2025-12-26 08:30:53,338 - INFO -   ✅ Fixed Class: Tue 10:35:00 SA-01:05:00 CH - Net-Centric Programming
+2025-12-26 08:30:53,338 - INFO -   ✅ Fixed Class: Tue 01:15:00 CH-03:45:00 CH - Theoretical Models in Computing
+2025-12-26 08:30:53,339 - INFO -   ✅ Fixed Class: Thu 08:00:00 SA-10:30:00 SA - Information System Management
+2025-12-26 08:30:53,339 - INFO -   ✅ Fixed Class: Thu 10:35:00 SA-01:05:00 CH - Information System Management
+2025-12-26 08:30:53,339 - INFO -   ✅ Fixed Class: Thu 01:15:00 CH-03:45:00 CH - 	 Net-Centric Programming
+2025-12-26 08:30:53,339 - INFO -   ✅ Fixed Class: Fri 08:00:00 SA-10:30:00 SA - System & Network Administration
+2025-12-26 08:30:53,339 - INFO -   ✅ Fixed Class: Fri 01:15:00 CH-03:45:00 CH - System & Network Administration
+2025-12-26 08:30:53,339 - INFO - Found 9 fixed classes for collection 29
+2025-12-26 08:30:53,340 - INFO - ============================================================
+2025-12-26 08:30:53,340 - INFO - FIXED CLASSES (should not be moved):
+2025-12-26 08:30:53,340 - INFO -   Mon 01:15:00-03:45:00: Engineering Ethics and Professional Skills
+2025-12-26 08:30:53,340 - INFO -   Tue 08:00:00-10:30:00: Theoretical Models in Computing
+2025-12-26 08:30:53,340 - INFO -   Tue 10:35:00-01:05:00: Net-Centric Programming
+2025-12-26 08:30:53,340 - INFO -   Tue 01:15:00-03:45:00: Theoretical Models in Computing
+2025-12-26 08:30:53,340 - INFO -   Thu 08:00:00-10:30:00: Information System Management
+2025-12-26 08:30:53,340 - INFO -   Thu 10:35:00-01:05:00: Information System Management
+2025-12-26 08:30:53,340 - INFO -   Thu 01:15:00-03:45:00: 	 Net-Centric Programming
+2025-12-26 08:30:53,340 - INFO -   Fri 08:00:00-10:30:00: System & Network Administration
+2025-12-26 08:30:53,340 - INFO -   Fri 01:15:00-03:45:00: System & Network Administration
+2025-12-26 08:30:53,341 - INFO - OTHER CONSTRAINTS: 0 items
+2025-12-26 08:30:53,341 - INFO - Generating schedule. Start: 09:00, End: 17:00
+2025-12-26 08:30:53,341 - INFO - Total constraints: 9 (fixed classes + other)
+2025-12-26 08:30:53,341 - INFO - Scheduling 5 self-study tasks.
+2025-12-26 08:30:53,344 - INFO - Scheduler initialized: 09:00-17:00, Focus: balance
+2025-12-26 08:30:53,344 - INFO - Using science-based efficiency model with 112 time slots
+2025-12-26 08:30:53,344 - INFO - ============================================================
+2025-12-26 08:30:53,344 - INFO - GENERATING SCIENCE-OPTIMIZED SCHEDULE
+2025-12-26 08:30:53,344 - INFO - Tasks to schedule: 5
+2025-12-26 08:30:53,344 - INFO - Existing constraints: 9
+2025-12-26 08:30:53,344 - INFO - Priority focus: balance
+2025-12-26 08:30:53,344 - INFO - 
+TASK PRIORITY ORDER:
+2025-12-26 08:30:53,344 - INFO -   1. Học tiếng Anh IELTS                      Score: 530
+2025-12-26 08:30:53,344 - INFO -   2. Nộp report WEB                           Score: 330
+2025-12-26 08:30:53,344 - INFO -   3. Bài tập Toán Assignment 3                Score: 330
+2025-12-26 08:30:53,344 - INFO -   4. Ôn thi giữa kỳ Cơ sở dữ liệu             Score: 210
+2025-12-26 08:30:53,344 - INFO -   5. Viết báo cáo Mạng máy tính               Score: 110
+2025-12-26 08:30:53,345 - INFO - Marking 9 constraints as busy slots
+2025-12-26 08:30:53,345 - INFO - Looking for slot for: 'Học tiếng Anh IELTS' (Duration: 720 mins)
+2025-12-26 08:30:53,345 - WARNING -   No slot found for task! Duration may be too long or no available slots.
+2025-12-26 08:30:53,345 - WARNING - Could not place: Học tiếng Anh IELTS
+2025-12-26 08:30:53,345 - INFO - Looking for slot for: 'Nộp report WEB' (Duration: 180 mins)
+2025-12-26 08:30:53,346 - INFO -   Best slot found: Tue 10:30:00 SA-01:30:00 CH
+2025-12-26 08:30:53,346 - INFO - Placed: 'Nộp report WEB' at Tue 10:30:00 SA-01:30:00 CH
+2025-12-26 08:30:53,346 - INFO - Looking for slot for: 'Bài tập Toán Assignment 3' (Duration: 180 mins)
+2025-12-26 08:30:53,347 - INFO -   Best slot found: Wed 10:00:00 SA-01:00:00 CH
+2025-12-26 08:30:53,348 - INFO - Placed: 'Bài tập Toán Assignment 3' at Wed 10:00:00 SA-01:00:00 CH
+2025-12-26 08:30:53,348 - INFO - Looking for slot for: 'Ôn thi giữa kỳ Cơ sở dữ liệu' (Duration: 330 mins)
+2025-12-26 08:30:53,348 - INFO -   Best slot found: Thu 10:30:00 SA-04:00:00 CH
+2025-12-26 08:30:53,348 - INFO - Placed: 'Ôn thi giữa kỳ Cơ sở dữ liệu' at Thu 10:30:00 SA-04:00:00 CH
+2025-12-26 08:30:53,348 - INFO - Looking for slot for: 'Viết báo cáo Mạng máy tính' (Duration: 120 mins)
+2025-12-26 08:30:53,349 - INFO -   Best slot found: Mon 10:00:00 SA-12:00:00 CH
+2025-12-26 08:30:53,349 - INFO - Placed: 'Viết báo cáo Mạng máy tính' at Mon 10:00:00 SA-12:00:00 CH
+2025-12-26 08:30:53,350 - INFO - 
+SCHEDULE ANALYSIS:
+2025-12-26 08:30:53,350 - INFO - Total items scheduled: 13
+2025-12-26 08:30:53,350 - INFO -   Fri: 2 items
+2025-12-26 08:30:53,350 - INFO -   Mon: 2 items
+2025-12-26 08:30:53,350 - INFO -   Thu: 4 items
+2025-12-26 08:30:53,351 - INFO -   Tue: 4 items
+2025-12-26 08:30:53,351 - INFO -   Wed: 1 items
+2025-12-26 08:30:53,351 - INFO - Total study hours: 96.0h
+2025-12-26 08:30:53,352 - INFO - Exam-related tasks scheduled: 2
+2025-12-26 08:30:53,352 - INFO -   - Mon 01:15:00: Engineering Ethics and Professional Skil
+2025-12-26 08:30:53,352 - INFO -   - Thu 10:30:00: Ôn thi giữa kỳ Cơ sở dữ liệu
+2025-12-26 08:30:53,352 - INFO - 
+FINAL SCHEDULE COMPOSITION (AFTER DEDUPLICATION):
+2025-12-26 08:30:53,352 - INFO -   Fixed classes: 9
+2025-12-26 08:30:53,352 - INFO -   Scheduled self-study items: 13
+2025-12-26 08:30:53,352 - INFO -   Final unique items: 13
+2025-12-26 08:30:53,352 - INFO - 
+ALL UNIQUE ITEMS IN FINAL SCHEDULE:
+2025-12-26 08:30:53,352 - INFO -    1. FIXED: Mon 01:15:00 CH-03:45:00 CH - Engineering Ethics and Professional Skil
+2025-12-26 08:30:53,352 - INFO -    2. FIXED: Tue 08:00:00 SA-10:30:00 SA - Theoretical Models in Computing
+2025-12-26 08:30:53,352 - INFO -    3. FIXED: Tue 10:35:00 SA-01:05:00 CH - Net-Centric Programming
+2025-12-26 08:30:53,352 - INFO -    4. FIXED: Tue 01:15:00 CH-03:45:00 CH - Theoretical Models in Computing
+2025-12-26 08:30:53,352 - INFO -    5. FIXED: Thu 08:00:00 SA-10:30:00 SA - Information System Management
+2025-12-26 08:30:53,352 - INFO -    6. FIXED: Thu 10:35:00 SA-01:05:00 CH - Information System Management
+2025-12-26 08:30:53,352 - INFO -    7. FIXED: Thu 01:15:00 CH-03:45:00 CH - 	 Net-Centric Programming
+2025-12-26 08:30:53,353 - INFO -    8. FIXED: Fri 08:00:00 SA-10:30:00 SA - System & Network Administration
+2025-12-26 08:30:53,353 - INFO -    9. FIXED: Fri 01:15:00 CH-03:45:00 CH - System & Network Administration
+2025-12-26 08:30:53,353 - INFO -   10. SELF-STUDY: Tue 10:30:00 SA-01:30:00 CH - Nộp report WEB
+2025-12-26 08:30:53,353 - INFO -   11. SELF-STUDY: Wed 10:00:00 SA-01:00:00 CH - Bài tập Toán Assignment 3
+2025-12-26 08:30:53,353 - INFO -   12. SELF-STUDY: Thu 10:30:00 SA-04:00:00 CH - Ôn thi giữa kỳ Cơ sở dữ liệu
+2025-12-26 08:30:53,353 - INFO -   13. SELF-STUDY: Mon 10:00:00 SA-12:00:00 CH - Viết báo cáo Mạng máy tính
+2025-12-26 08:30:53,353 - INFO - 127.0.0.1 - - [26/Dec/2025 08:30:53] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-26 08:31:00,267 - INFO - Fetching SELF-STUDY tasks for collection_id=29. Found: 5
+2025-12-26 08:31:00,268 - INFO -    -> Self-Study Task: 'Viết báo cáo Mạng máy tính' [ID: 207, Duration: 120 mins]
+2025-12-26 08:31:00,268 - INFO -    -> Self-Study Task: 'Học tiếng Anh IELTS' [Merged 6x, Total Duration: 720 mins]
+2025-12-26 08:31:00,268 - INFO -    -> Self-Study Task: 'Ôn thi giữa kỳ Cơ sở dữ liệu' [Merged 2x, Total Duration: 330 mins]
+2025-12-26 08:31:00,268 - INFO -    -> Self-Study Task: 'Nộp report WEB' [ID: 206, Duration: 180 mins]
+2025-12-26 08:31:00,268 - INFO -    -> Self-Study Task: 'Bài tập Toán Assignment 3' [ID: 208, Duration: 180 mins]
+2025-12-26 08:31:00,269 - INFO -   ✅ Fixed Class: Mon 01:15:00 CH-03:45:00 CH - Engineering Ethics and Professional Skills
+2025-12-26 08:31:00,269 - INFO -   ✅ Fixed Class: Tue 08:00:00 SA-10:30:00 SA - Theoretical Models in Computing
+2025-12-26 08:31:00,269 - INFO -   ✅ Fixed Class: Tue 10:35:00 SA-01:05:00 CH - Net-Centric Programming
+2025-12-26 08:31:00,269 - INFO -   ✅ Fixed Class: Tue 01:15:00 CH-03:45:00 CH - Theoretical Models in Computing
+2025-12-26 08:31:00,269 - INFO -   ✅ Fixed Class: Thu 08:00:00 SA-10:30:00 SA - Information System Management
+2025-12-26 08:31:00,269 - INFO -   ✅ Fixed Class: Thu 10:35:00 SA-01:05:00 CH - Information System Management
+2025-12-26 08:31:00,269 - INFO -   ✅ Fixed Class: Thu 01:15:00 CH-03:45:00 CH - 	 Net-Centric Programming
+2025-12-26 08:31:00,269 - INFO -   ✅ Fixed Class: Fri 08:00:00 SA-10:30:00 SA - System & Network Administration
+2025-12-26 08:31:00,269 - INFO -   ✅ Fixed Class: Fri 01:15:00 CH-03:45:00 CH - System & Network Administration
+2025-12-26 08:31:00,269 - INFO - Found 9 fixed classes for collection 29
+2025-12-26 08:31:00,270 - INFO - ============================================================
+2025-12-26 08:31:00,270 - INFO - FIXED CLASSES (should not be moved):
+2025-12-26 08:31:00,270 - INFO -   Mon 01:15:00-03:45:00: Engineering Ethics and Professional Skills
+2025-12-26 08:31:00,270 - INFO -   Tue 08:00:00-10:30:00: Theoretical Models in Computing
+2025-12-26 08:31:00,271 - INFO -   Tue 10:35:00-01:05:00: Net-Centric Programming
+2025-12-26 08:31:00,271 - INFO -   Tue 01:15:00-03:45:00: Theoretical Models in Computing
+2025-12-26 08:31:00,271 - INFO -   Thu 08:00:00-10:30:00: Information System Management
+2025-12-26 08:31:00,271 - INFO -   Thu 10:35:00-01:05:00: Information System Management
+2025-12-26 08:31:00,271 - INFO -   Thu 01:15:00-03:45:00: 	 Net-Centric Programming
+2025-12-26 08:31:00,271 - INFO -   Fri 08:00:00-10:30:00: System & Network Administration
+2025-12-26 08:31:00,271 - INFO -   Fri 01:15:00-03:45:00: System & Network Administration
+2025-12-26 08:31:00,271 - INFO - OTHER CONSTRAINTS: 0 items
+2025-12-26 08:31:00,271 - INFO - Generating schedule. Start: 09:00, End: 17:00
+2025-12-26 08:31:00,271 - INFO - Total constraints: 9 (fixed classes + other)
+2025-12-26 08:31:00,272 - INFO - Scheduling 5 self-study tasks.
+2025-12-26 08:31:00,272 - INFO - Scheduler initialized: 09:00-17:00, Focus: balance
+2025-12-26 08:31:00,272 - INFO - Using science-based efficiency model with 112 time slots
+2025-12-26 08:31:00,272 - INFO - ============================================================
+2025-12-26 08:31:00,272 - INFO - GENERATING SCIENCE-OPTIMIZED SCHEDULE
+2025-12-26 08:31:00,272 - INFO - Tasks to schedule: 5
+2025-12-26 08:31:00,272 - INFO - Existing constraints: 9
+2025-12-26 08:31:00,272 - INFO - Priority focus: balance
+2025-12-26 08:31:00,273 - INFO - 
+TASK PRIORITY ORDER:
+2025-12-26 08:31:00,273 - INFO -   1. Học tiếng Anh IELTS                      Score: 530
+2025-12-26 08:31:00,273 - INFO -   2. Nộp report WEB                           Score: 330
+2025-12-26 08:31:00,273 - INFO -   3. Bài tập Toán Assignment 3                Score: 330
+2025-12-26 08:31:00,273 - INFO -   4. Ôn thi giữa kỳ Cơ sở dữ liệu             Score: 210
+2025-12-26 08:31:00,273 - INFO -   5. Viết báo cáo Mạng máy tính               Score: 110
+2025-12-26 08:31:00,273 - INFO - Marking 9 constraints as busy slots
+2025-12-26 08:31:00,274 - INFO - Looking for slot for: 'Học tiếng Anh IELTS' (Duration: 720 mins)
+2025-12-26 08:31:00,274 - WARNING -   No slot found for task! Duration may be too long or no available slots.
+2025-12-26 08:31:00,274 - WARNING - Could not place: Học tiếng Anh IELTS
+2025-12-26 08:31:00,274 - INFO - Looking for slot for: 'Nộp report WEB' (Duration: 180 mins)
+2025-12-26 08:31:00,275 - INFO -   Best slot found: Tue 10:30:00 SA-01:30:00 CH
+2025-12-26 08:31:00,275 - INFO - Placed: 'Nộp report WEB' at Tue 10:30:00 SA-01:30:00 CH
+2025-12-26 08:31:00,275 - INFO - Looking for slot for: 'Bài tập Toán Assignment 3' (Duration: 180 mins)
+2025-12-26 08:31:00,276 - INFO -   Best slot found: Wed 10:00:00 SA-01:00:00 CH
+2025-12-26 08:31:00,276 - INFO - Placed: 'Bài tập Toán Assignment 3' at Wed 10:00:00 SA-01:00:00 CH
+2025-12-26 08:31:00,276 - INFO - Looking for slot for: 'Ôn thi giữa kỳ Cơ sở dữ liệu' (Duration: 330 mins)
+2025-12-26 08:31:00,276 - INFO -   Best slot found: Thu 10:30:00 SA-04:00:00 CH
+2025-12-26 08:31:00,277 - INFO - Placed: 'Ôn thi giữa kỳ Cơ sở dữ liệu' at Thu 10:30:00 SA-04:00:00 CH
+2025-12-26 08:31:00,277 - INFO - Looking for slot for: 'Viết báo cáo Mạng máy tính' (Duration: 120 mins)
+2025-12-26 08:31:00,277 - INFO -   Best slot found: Mon 10:00:00 SA-12:00:00 CH
+2025-12-26 08:31:00,277 - INFO - Placed: 'Viết báo cáo Mạng máy tính' at Mon 10:00:00 SA-12:00:00 CH
+2025-12-26 08:31:00,277 - INFO - 
+SCHEDULE ANALYSIS:
+2025-12-26 08:31:00,277 - INFO - Total items scheduled: 13
+2025-12-26 08:31:00,277 - INFO -   Fri: 2 items
+2025-12-26 08:31:00,277 - INFO -   Mon: 2 items
+2025-12-26 08:31:00,278 - INFO -   Thu: 4 items
+2025-12-26 08:31:00,278 - INFO -   Tue: 4 items
+2025-12-26 08:31:00,278 - INFO -   Wed: 1 items
+2025-12-26 08:31:00,278 - INFO - Total study hours: 96.0h
+2025-12-26 08:31:00,278 - INFO - Exam-related tasks scheduled: 2
+2025-12-26 08:31:00,278 - INFO -   - Mon 01:15:00: Engineering Ethics and Professional Skil
+2025-12-26 08:31:00,278 - INFO -   - Thu 10:30:00: Ôn thi giữa kỳ Cơ sở dữ liệu
+2025-12-26 08:31:00,278 - INFO - 
+FINAL SCHEDULE COMPOSITION (AFTER DEDUPLICATION):
+2025-12-26 08:31:00,278 - INFO -   Fixed classes: 9
+2025-12-26 08:31:00,278 - INFO -   Scheduled self-study items: 13
+2025-12-26 08:31:00,279 - INFO -   Final unique items: 13
+2025-12-26 08:31:00,279 - INFO - 
+ALL UNIQUE ITEMS IN FINAL SCHEDULE:
+2025-12-26 08:31:00,279 - INFO -    1. FIXED: Mon 01:15:00 CH-03:45:00 CH - Engineering Ethics and Professional Skil
+2025-12-26 08:31:00,279 - INFO -    2. FIXED: Tue 08:00:00 SA-10:30:00 SA - Theoretical Models in Computing
+2025-12-26 08:31:00,279 - INFO -    3. FIXED: Tue 10:35:00 SA-01:05:00 CH - Net-Centric Programming
+2025-12-26 08:31:00,279 - INFO -    4. FIXED: Tue 01:15:00 CH-03:45:00 CH - Theoretical Models in Computing
+2025-12-26 08:31:00,279 - INFO -    5. FIXED: Thu 08:00:00 SA-10:30:00 SA - Information System Management
+2025-12-26 08:31:00,279 - INFO -    6. FIXED: Thu 10:35:00 SA-01:05:00 CH - Information System Management
+2025-12-26 08:31:00,279 - INFO -    7. FIXED: Thu 01:15:00 CH-03:45:00 CH - 	 Net-Centric Programming
+2025-12-26 08:31:00,279 - INFO -    8. FIXED: Fri 08:00:00 SA-10:30:00 SA - System & Network Administration
+2025-12-26 08:31:00,279 - INFO -    9. FIXED: Fri 01:15:00 CH-03:45:00 CH - System & Network Administration
+2025-12-26 08:31:00,279 - INFO -   10. SELF-STUDY: Tue 10:30:00 SA-01:30:00 CH - Nộp report WEB
+2025-12-26 08:31:00,279 - INFO -   11. SELF-STUDY: Wed 10:00:00 SA-01:00:00 CH - Bài tập Toán Assignment 3
+2025-12-26 08:31:00,279 - INFO -   12. SELF-STUDY: Thu 10:30:00 SA-04:00:00 CH - Ôn thi giữa kỳ Cơ sở dữ liệu
+2025-12-26 08:31:00,280 - INFO -   13. SELF-STUDY: Mon 10:00:00 SA-12:00:00 CH - Viết báo cáo Mạng máy tính
+2025-12-26 08:31:00,280 - INFO - 127.0.0.1 - - [26/Dec/2025 08:31:00] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-26 08:35:18,275 - INFO - Fetching SELF-STUDY tasks for collection_id=29. Found: 5
+2025-12-26 08:35:18,275 - INFO -    -> Self-Study Task: 'Viết báo cáo Mạng máy tính' [ID: 207, Duration: 120 mins]
+2025-12-26 08:35:18,276 - INFO -    -> Self-Study Task: 'Học tiếng Anh IELTS' [Merged 6x, Total Duration: 720 mins]
+2025-12-26 08:35:18,276 - INFO -    -> Self-Study Task: 'Ôn thi giữa kỳ Cơ sở dữ liệu' [Merged 2x, Total Duration: 330 mins]
+2025-12-26 08:35:18,276 - INFO -    -> Self-Study Task: 'Nộp report WEB' [ID: 206, Duration: 180 mins]
+2025-12-26 08:35:18,276 - INFO -    -> Self-Study Task: 'Bài tập Toán Assignment 3' [ID: 208, Duration: 180 mins]
+2025-12-26 08:35:18,278 - INFO -   ✅ Fixed Class: Mon 01:15:00 CH-03:45:00 CH - Engineering Ethics and Professional Skills
+2025-12-26 08:35:18,278 - INFO -   ✅ Fixed Class: Tue 08:00:00 SA-10:30:00 SA - Theoretical Models in Computing
+2025-12-26 08:35:18,278 - INFO -   ✅ Fixed Class: Tue 10:35:00 SA-01:05:00 CH - Net-Centric Programming
+2025-12-26 08:35:18,278 - INFO -   ✅ Fixed Class: Tue 01:15:00 CH-03:45:00 CH - Theoretical Models in Computing
+2025-12-26 08:35:18,278 - INFO -   ✅ Fixed Class: Thu 08:00:00 SA-10:30:00 SA - Information System Management
+2025-12-26 08:35:18,278 - INFO -   ✅ Fixed Class: Thu 10:35:00 SA-01:05:00 CH - Information System Management
+2025-12-26 08:35:18,278 - INFO -   ✅ Fixed Class: Thu 01:15:00 CH-03:45:00 CH - 	 Net-Centric Programming
+2025-12-26 08:35:18,279 - INFO -   ✅ Fixed Class: Fri 08:00:00 SA-10:30:00 SA - System & Network Administration
+2025-12-26 08:35:18,279 - INFO -   ✅ Fixed Class: Fri 01:15:00 CH-03:45:00 CH - System & Network Administration
+2025-12-26 08:35:18,279 - INFO - Found 9 fixed classes for collection 29
+2025-12-26 08:35:18,279 - INFO - ============================================================
+2025-12-26 08:35:18,280 - INFO - FIXED CLASSES (should not be moved):
+2025-12-26 08:35:18,280 - INFO -   Mon 01:15:00-03:45:00: Engineering Ethics and Professional Skills
+2025-12-26 08:35:18,280 - INFO -   Tue 08:00:00-10:30:00: Theoretical Models in Computing
+2025-12-26 08:35:18,280 - INFO -   Tue 10:35:00-01:05:00: Net-Centric Programming
+2025-12-26 08:35:18,280 - INFO -   Tue 01:15:00-03:45:00: Theoretical Models in Computing
+2025-12-26 08:35:18,280 - INFO -   Thu 08:00:00-10:30:00: Information System Management
+2025-12-26 08:35:18,280 - INFO -   Thu 10:35:00-01:05:00: Information System Management
+2025-12-26 08:35:18,280 - INFO -   Thu 01:15:00-03:45:00: 	 Net-Centric Programming
+2025-12-26 08:35:18,280 - INFO -   Fri 08:00:00-10:30:00: System & Network Administration
+2025-12-26 08:35:18,280 - INFO -   Fri 01:15:00-03:45:00: System & Network Administration
+2025-12-26 08:35:18,280 - INFO - OTHER CONSTRAINTS: 0 items
+2025-12-26 08:35:18,280 - INFO - Generating schedule. Start: 09:00, End: 17:00
+2025-12-26 08:35:18,280 - INFO - Total constraints: 9 (fixed classes + other)
+2025-12-26 08:35:18,280 - INFO - Scheduling 5 self-study tasks.
+2025-12-26 08:35:18,281 - INFO - Scheduler initialized: 09:00-17:00, Focus: balance
+2025-12-26 08:35:18,281 - INFO - Using science-based efficiency model with 112 time slots
+2025-12-26 08:35:18,281 - INFO - ============================================================
+2025-12-26 08:35:18,281 - INFO - GENERATING SCIENCE-OPTIMIZED SCHEDULE
+2025-12-26 08:35:18,281 - INFO - Tasks to schedule: 5
+2025-12-26 08:35:18,281 - INFO - Existing constraints: 9
+2025-12-26 08:35:18,281 - INFO - Priority focus: balance
+2025-12-26 08:35:18,281 - INFO - 
+TASK PRIORITY ORDER:
+2025-12-26 08:35:18,281 - INFO -   1. Học tiếng Anh IELTS                      Score: 530
+2025-12-26 08:35:18,281 - INFO -   2. Nộp report WEB                           Score: 330
+2025-12-26 08:35:18,282 - INFO -   3. Bài tập Toán Assignment 3                Score: 330
+2025-12-26 08:35:18,282 - INFO -   4. Ôn thi giữa kỳ Cơ sở dữ liệu             Score: 210
+2025-12-26 08:35:18,282 - INFO -   5. Viết báo cáo Mạng máy tính               Score: 110
+2025-12-26 08:35:18,282 - INFO - Marking 9 constraints as busy slots
+2025-12-26 08:35:18,283 - INFO - Looking for slot for: 'Học tiếng Anh IELTS' (Duration: 720 mins)
+2025-12-26 08:35:18,283 - WARNING -   No slot found for task! Duration may be too long or no available slots.
+2025-12-26 08:35:18,283 - WARNING - Could not place: Học tiếng Anh IELTS
+2025-12-26 08:35:18,283 - INFO - Looking for slot for: 'Nộp report WEB' (Duration: 180 mins)
+2025-12-26 08:35:18,284 - INFO -   Best slot found: Tue 10:30:00 SA-01:30:00 CH
+2025-12-26 08:35:18,284 - INFO - Placed: 'Nộp report WEB' at Tue 10:30:00 SA-01:30:00 CH
+2025-12-26 08:35:18,284 - INFO - Looking for slot for: 'Bài tập Toán Assignment 3' (Duration: 180 mins)
+2025-12-26 08:35:18,285 - INFO -   Best slot found: Wed 10:00:00 SA-01:00:00 CH
+2025-12-26 08:35:18,285 - INFO - Placed: 'Bài tập Toán Assignment 3' at Wed 10:00:00 SA-01:00:00 CH
+2025-12-26 08:35:18,285 - INFO - Looking for slot for: 'Ôn thi giữa kỳ Cơ sở dữ liệu' (Duration: 330 mins)
+2025-12-26 08:35:18,286 - INFO -   Best slot found: Thu 10:30:00 SA-04:00:00 CH
+2025-12-26 08:35:18,286 - INFO - Placed: 'Ôn thi giữa kỳ Cơ sở dữ liệu' at Thu 10:30:00 SA-04:00:00 CH
+2025-12-26 08:35:18,286 - INFO - Looking for slot for: 'Viết báo cáo Mạng máy tính' (Duration: 120 mins)
+2025-12-26 08:35:18,287 - INFO -   Best slot found: Mon 10:00:00 SA-12:00:00 CH
+2025-12-26 08:35:18,287 - INFO - Placed: 'Viết báo cáo Mạng máy tính' at Mon 10:00:00 SA-12:00:00 CH
+2025-12-26 08:35:18,287 - INFO - 
+SCHEDULE ANALYSIS:
+2025-12-26 08:35:18,287 - INFO - Total items scheduled: 13
+2025-12-26 08:35:18,287 - INFO -   Fri: 2 items
+2025-12-26 08:35:18,287 - INFO -   Mon: 2 items
+2025-12-26 08:35:18,287 - INFO -   Thu: 4 items
+2025-12-26 08:35:18,287 - INFO -   Tue: 4 items
+2025-12-26 08:35:18,287 - INFO -   Wed: 1 items
+2025-12-26 08:35:18,287 - INFO - Total study hours: 96.0h
+2025-12-26 08:35:18,288 - INFO - Exam-related tasks scheduled: 2
+2025-12-26 08:35:18,288 - INFO -   - Mon 01:15:00: Engineering Ethics and Professional Skil
+2025-12-26 08:35:18,288 - INFO -   - Thu 10:30:00: Ôn thi giữa kỳ Cơ sở dữ liệu
+2025-12-26 08:35:18,288 - INFO - 
+FINAL SCHEDULE COMPOSITION (AFTER DEDUPLICATION):
+2025-12-26 08:35:18,288 - INFO -   Fixed classes: 9
+2025-12-26 08:35:18,288 - INFO -   Scheduled self-study items: 13
+2025-12-26 08:35:18,288 - INFO -   Final unique items: 13
+2025-12-26 08:35:18,288 - INFO - 
+ALL UNIQUE ITEMS IN FINAL SCHEDULE:
+2025-12-26 08:35:18,288 - INFO -    1. FIXED: Mon 01:15:00 CH-03:45:00 CH - Engineering Ethics and Professional Skil
+2025-12-26 08:35:18,288 - INFO -    2. FIXED: Tue 08:00:00 SA-10:30:00 SA - Theoretical Models in Computing
+2025-12-26 08:35:18,288 - INFO -    3. FIXED: Tue 10:35:00 SA-01:05:00 CH - Net-Centric Programming
+2025-12-26 08:35:18,288 - INFO -    4. FIXED: Tue 01:15:00 CH-03:45:00 CH - Theoretical Models in Computing
+2025-12-26 08:35:18,288 - INFO -    5. FIXED: Thu 08:00:00 SA-10:30:00 SA - Information System Management
+2025-12-26 08:35:18,288 - INFO -    6. FIXED: Thu 10:35:00 SA-01:05:00 CH - Information System Management
+2025-12-26 08:35:18,288 - INFO -    7. FIXED: Thu 01:15:00 CH-03:45:00 CH - 	 Net-Centric Programming
+2025-12-26 08:35:18,288 - INFO -    8. FIXED: Fri 08:00:00 SA-10:30:00 SA - System & Network Administration
+2025-12-26 08:35:18,288 - INFO -    9. FIXED: Fri 01:15:00 CH-03:45:00 CH - System & Network Administration
+2025-12-26 08:35:18,288 - INFO -   10. SELF-STUDY: Tue 10:30:00 SA-01:30:00 CH - Nộp report WEB
+2025-12-26 08:35:18,288 - INFO -   11. SELF-STUDY: Wed 10:00:00 SA-01:00:00 CH - Bài tập Toán Assignment 3
+2025-12-26 08:35:18,288 - INFO -   12. SELF-STUDY: Thu 10:30:00 SA-04:00:00 CH - Ôn thi giữa kỳ Cơ sở dữ liệu
+2025-12-26 08:35:18,289 - INFO -   13. SELF-STUDY: Mon 10:00:00 SA-12:00:00 CH - Viết báo cáo Mạng máy tính
+2025-12-26 08:35:18,289 - INFO - 127.0.0.1 - - [26/Dec/2025 08:35:18] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-26 08:37:13,922 - INFO - Fetching SELF-STUDY tasks for collection_id=29. Found: 5
+2025-12-26 08:37:13,922 - INFO -    -> Self-Study Task: 'Viết báo cáo Mạng máy tính' [ID: 207, Duration: 120 mins]
+2025-12-26 08:37:13,922 - INFO -    -> Self-Study Task: 'Học tiếng Anh IELTS' [Merged 6x, Total Duration: 720 mins]
+2025-12-26 08:37:13,922 - INFO -    -> Self-Study Task: 'Ôn thi giữa kỳ Cơ sở dữ liệu' [Merged 2x, Total Duration: 330 mins]
+2025-12-26 08:37:13,923 - INFO -    -> Self-Study Task: 'Nộp report WEB' [ID: 206, Duration: 180 mins]
+2025-12-26 08:37:13,923 - INFO -    -> Self-Study Task: 'Bài tập Toán Assignment 3' [ID: 208, Duration: 180 mins]
+2025-12-26 08:37:13,923 - INFO -   ✅ Fixed Class: Mon 01:15:00 CH-03:45:00 CH - Engineering Ethics and Professional Skills
+2025-12-26 08:37:13,924 - INFO -   ✅ Fixed Class: Tue 08:00:00 SA-10:30:00 SA - Theoretical Models in Computing
+2025-12-26 08:37:13,924 - INFO -   ✅ Fixed Class: Tue 10:35:00 SA-01:05:00 CH - Net-Centric Programming
+2025-12-26 08:37:13,924 - INFO -   ✅ Fixed Class: Tue 01:15:00 CH-03:45:00 CH - Theoretical Models in Computing
+2025-12-26 08:37:13,924 - INFO -   ✅ Fixed Class: Thu 08:00:00 SA-10:30:00 SA - Information System Management
+2025-12-26 08:37:13,924 - INFO -   ✅ Fixed Class: Thu 10:35:00 SA-01:05:00 CH - Information System Management
+2025-12-26 08:37:13,924 - INFO -   ✅ Fixed Class: Thu 01:15:00 CH-03:45:00 CH - 	 Net-Centric Programming
+2025-12-26 08:37:13,924 - INFO -   ✅ Fixed Class: Fri 08:00:00 SA-10:30:00 SA - System & Network Administration
+2025-12-26 08:37:13,924 - INFO -   ✅ Fixed Class: Fri 01:15:00 CH-03:45:00 CH - System & Network Administration
+2025-12-26 08:37:13,924 - INFO - Found 9 fixed classes for collection 29
+2025-12-26 08:37:13,925 - INFO - ============================================================
+2025-12-26 08:37:13,925 - INFO - FIXED CLASSES (should not be moved):
+2025-12-26 08:37:13,925 - INFO -   Mon 01:15:00-03:45:00: Engineering Ethics and Professional Skills
+2025-12-26 08:37:13,925 - INFO -   Tue 08:00:00-10:30:00: Theoretical Models in Computing
+2025-12-26 08:37:13,925 - INFO -   Tue 10:35:00-01:05:00: Net-Centric Programming
+2025-12-26 08:37:13,925 - INFO -   Tue 01:15:00-03:45:00: Theoretical Models in Computing
+2025-12-26 08:37:13,925 - INFO -   Thu 08:00:00-10:30:00: Information System Management
+2025-12-26 08:37:13,925 - INFO -   Thu 10:35:00-01:05:00: Information System Management
+2025-12-26 08:37:13,925 - INFO -   Thu 01:15:00-03:45:00: 	 Net-Centric Programming
+2025-12-26 08:37:13,925 - INFO -   Fri 08:00:00-10:30:00: System & Network Administration
+2025-12-26 08:37:13,925 - INFO -   Fri 01:15:00-03:45:00: System & Network Administration
+2025-12-26 08:37:13,925 - INFO - OTHER CONSTRAINTS: 0 items
+2025-12-26 08:37:13,926 - INFO - Generating schedule. Start: 09:00, End: 17:00
+2025-12-26 08:37:13,926 - INFO - Total constraints: 9 (fixed classes + other)
+2025-12-26 08:37:13,926 - INFO - Scheduling 5 self-study tasks.
+2025-12-26 08:37:13,926 - INFO - Scheduler initialized: 09:00-17:00, Focus: balance
+2025-12-26 08:37:13,926 - INFO - Using science-based efficiency model with 112 time slots
+2025-12-26 08:37:13,926 - INFO - ============================================================
+2025-12-26 08:37:13,926 - INFO - GENERATING SCIENCE-OPTIMIZED SCHEDULE
+2025-12-26 08:37:13,926 - INFO - Tasks to schedule: 5
+2025-12-26 08:37:13,926 - INFO - Existing constraints: 9
+2025-12-26 08:37:13,926 - INFO - Priority focus: balance
+2025-12-26 08:37:13,926 - INFO - 
+TASK PRIORITY ORDER:
+2025-12-26 08:37:13,927 - INFO -   1. Học tiếng Anh IELTS                      Score: 530
+2025-12-26 08:37:13,927 - INFO -   2. Nộp report WEB                           Score: 330
+2025-12-26 08:37:13,927 - INFO -   3. Bài tập Toán Assignment 3                Score: 330
+2025-12-26 08:37:13,927 - INFO -   4. Ôn thi giữa kỳ Cơ sở dữ liệu             Score: 210
+2025-12-26 08:37:13,927 - INFO -   5. Viết báo cáo Mạng máy tính               Score: 110
+2025-12-26 08:37:13,927 - INFO - Marking 9 constraints as busy slots
+2025-12-26 08:37:13,928 - INFO - Looking for slot for: 'Học tiếng Anh IELTS' (Duration: 720 mins)
+2025-12-26 08:37:13,928 - WARNING -   No slot found for task! Duration may be too long or no available slots.
+2025-12-26 08:37:13,928 - WARNING - Could not place: Học tiếng Anh IELTS
+2025-12-26 08:37:13,928 - INFO - Looking for slot for: 'Nộp report WEB' (Duration: 180 mins)
+2025-12-26 08:37:13,929 - INFO -   Best slot found: Tue 10:30:00 SA-01:30:00 CH
+2025-12-26 08:37:13,929 - INFO - Placed: 'Nộp report WEB' at Tue 10:30:00 SA-01:30:00 CH
+2025-12-26 08:37:13,929 - INFO - Looking for slot for: 'Bài tập Toán Assignment 3' (Duration: 180 mins)
+2025-12-26 08:37:13,930 - INFO -   Best slot found: Wed 10:00:00 SA-01:00:00 CH
+2025-12-26 08:37:13,930 - INFO - Placed: 'Bài tập Toán Assignment 3' at Wed 10:00:00 SA-01:00:00 CH
+2025-12-26 08:37:13,931 - INFO - Looking for slot for: 'Ôn thi giữa kỳ Cơ sở dữ liệu' (Duration: 330 mins)
+2025-12-26 08:37:13,931 - INFO -   Best slot found: Thu 10:30:00 SA-04:00:00 CH
+2025-12-26 08:37:13,931 - INFO - Placed: 'Ôn thi giữa kỳ Cơ sở dữ liệu' at Thu 10:30:00 SA-04:00:00 CH
+2025-12-26 08:37:13,931 - INFO - Looking for slot for: 'Viết báo cáo Mạng máy tính' (Duration: 120 mins)
+2025-12-26 08:37:13,932 - INFO -   Best slot found: Mon 10:00:00 SA-12:00:00 CH
+2025-12-26 08:37:13,932 - INFO - Placed: 'Viết báo cáo Mạng máy tính' at Mon 10:00:00 SA-12:00:00 CH
+2025-12-26 08:37:13,933 - INFO - 
+SCHEDULE ANALYSIS:
+2025-12-26 08:37:13,933 - INFO - Total items scheduled: 13
+2025-12-26 08:37:13,933 - INFO -   Fri: 2 items
+2025-12-26 08:37:13,933 - INFO -   Mon: 2 items
+2025-12-26 08:37:13,933 - INFO -   Thu: 4 items
+2025-12-26 08:37:13,933 - INFO -   Tue: 4 items
+2025-12-26 08:37:13,933 - INFO -   Wed: 1 items
+2025-12-26 08:37:13,933 - INFO - Total study hours: 96.0h
+2025-12-26 08:37:13,934 - INFO - Exam-related tasks scheduled: 2
+2025-12-26 08:37:13,934 - INFO -   - Mon 01:15:00: Engineering Ethics and Professional Skil
+2025-12-26 08:37:13,934 - INFO -   - Thu 10:30:00: Ôn thi giữa kỳ Cơ sở dữ liệu
+2025-12-26 08:37:13,934 - INFO - 
+FINAL SCHEDULE COMPOSITION (AFTER DEDUPLICATION):
+2025-12-26 08:37:13,934 - INFO -   Fixed classes: 9
+2025-12-26 08:37:13,934 - INFO -   Scheduled self-study items: 13
+2025-12-26 08:37:13,934 - INFO -   Final unique items: 13
+2025-12-26 08:37:13,934 - INFO - 
+ALL UNIQUE ITEMS IN FINAL SCHEDULE:
+2025-12-26 08:37:13,934 - INFO -    1. FIXED: Mon 01:15:00 CH-03:45:00 CH - Engineering Ethics and Professional Skil
+2025-12-26 08:37:13,934 - INFO -    2. FIXED: Tue 08:00:00 SA-10:30:00 SA - Theoretical Models in Computing
+2025-12-26 08:37:13,934 - INFO -    3. FIXED: Tue 10:35:00 SA-01:05:00 CH - Net-Centric Programming
+2025-12-26 08:37:13,934 - INFO -    4. FIXED: Tue 01:15:00 CH-03:45:00 CH - Theoretical Models in Computing
+2025-12-26 08:37:13,934 - INFO -    5. FIXED: Thu 08:00:00 SA-10:30:00 SA - Information System Management
+2025-12-26 08:37:13,934 - INFO -    6. FIXED: Thu 10:35:00 SA-01:05:00 CH - Information System Management
+2025-12-26 08:37:13,934 - INFO -    7. FIXED: Thu 01:15:00 CH-03:45:00 CH - 	 Net-Centric Programming
+2025-12-26 08:37:13,934 - INFO -    8. FIXED: Fri 08:00:00 SA-10:30:00 SA - System & Network Administration
+2025-12-26 08:37:13,934 - INFO -    9. FIXED: Fri 01:15:00 CH-03:45:00 CH - System & Network Administration
+2025-12-26 08:37:13,934 - INFO -   10. SELF-STUDY: Tue 10:30:00 SA-01:30:00 CH - Nộp report WEB
+2025-12-26 08:37:13,935 - INFO -   11. SELF-STUDY: Wed 10:00:00 SA-01:00:00 CH - Bài tập Toán Assignment 3
+2025-12-26 08:37:13,935 - INFO -   12. SELF-STUDY: Thu 10:30:00 SA-04:00:00 CH - Ôn thi giữa kỳ Cơ sở dữ liệu
+2025-12-26 08:37:13,935 - INFO -   13. SELF-STUDY: Mon 10:00:00 SA-12:00:00 CH - Viết báo cáo Mạng máy tính
+2025-12-26 08:37:13,935 - INFO - 127.0.0.1 - - [26/Dec/2025 08:37:13] "POST /generate-schedule HTTP/1.1" 200 -
+2025-12-26 08:38:42,098 - INFO -  * Detected change in 'D:\\HK1 IT IU 2025-26\\Web\\Web Project\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-26 08:38:42,190 - INFO -  * Restarting with stat
+2025-12-26 08:38:42,509 - WARNING -  * Debugger is active!
+2025-12-26 08:38:42,511 - INFO -  * Debugger PIN: 146-017-793
+2025-12-26 08:39:16,414 - INFO -  * Detected change in 'D:\\HK1 IT IU 2025-26\\Web\\Web Project\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-26 08:39:16,484 - INFO -  * Restarting with stat
+2025-12-26 08:39:16,799 - WARNING -  * Debugger is active!
+2025-12-26 08:39:16,802 - INFO -  * Debugger PIN: 146-017-793
+2025-12-26 08:40:01,956 - INFO -  * Detected change in 'D:\\HK1 IT IU 2025-26\\Web\\Web Project\\Study_Planning_Web\\Study_Planning_Web\\app.py', reloading
+2025-12-26 08:40:02,008 - INFO -  * Restarting with stat
+2025-12-26 08:40:02,347 - WARNING -  * Debugger is active!
+2025-12-26 08:40:02,349 - INFO -  * Debugger PIN: 146-017-793

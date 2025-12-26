@@ -402,7 +402,9 @@ function createEventElement(cell, data) {
         name: data.name,
         color: data.color,
         endTime: data.endTime,
-        description: data.description
+        description: data.description,
+        // Preserve task association when present
+        taskId: data.taskId || null
     };
 }
 
@@ -602,7 +604,9 @@ function saveSchedule() {
                 startTime: time,
                 endTime: endTime,
                 subject: event.name,
-                type: typeMapping[event.type] || 'class'
+                type: typeMapping[event.type] || 'class',
+                // include taskId if the event is linked to a task (0 = none)
+                taskId: event.taskId || 0
             });
         });
     });

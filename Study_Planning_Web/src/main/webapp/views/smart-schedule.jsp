@@ -26,6 +26,26 @@
         <link rel="stylesheet" href="../resources/css/pastel-overrides.css">
         <link rel="stylesheet" href="/resources/css/sidebar.css">
 
+        <link rel="stylesheet" href="../resources/css/pastel-overrides.css">
+        <link rel="stylesheet" href="../resources/css/tasks.css">
+        <!-- khoa -->
+        <link rel="stylesheet" href="/resources/css/khoa-task.css">
+        <!-- khoa -->
+        <style>
+            /* Thêm vào style trong buildCalendarHTML */
+            .calendar-event {
+                position: absolute !important;
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                border-radius: 6px;
+                padding: 4px;
+                font-size: 11px;
+                overflow: hidden;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                border: 1px solid rgba(255,255,255,0.3);
+            }
+        </style>
         <script>
 
             tailwind.config = {
@@ -106,8 +126,8 @@
                         <span class="material-icons-outlined text-3xl shrink-0">psychology</span>
                         <span class="ml-4 whitespace-nowrap sidebar-text">Khám phá bản thân</span>
                     </a>
-                        
-                                        <%-- Timer --%>
+
+                    <%-- Timer --%>
                     <a class="nav-link w-full rounded-lg transition-colors hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300"
                        href="${pageContext.request.contextPath}/timer">
                         <span class="material-icons-outlined text-3xl shrink-0">timer</span>
@@ -244,7 +264,7 @@
         <%-- 1. THÊM LỚP PHỦ CÀI ĐẶT TẠI ĐÂY --%>
         <%-- Đảm bảo toàn bộ HTML của lớp phủ được tải vào DOM trước khi JS chạy --%>
         <%@ include file="settings-overlay.jsp" %>   
-        <script src="../resources/js/smart-schedule.js"></script>
+        <script src="/resources/js/smart-schedule.js"></script>
         <script src="/resources/js/sidebar.js"></script>
         <!-- khoa -->
         <script src="/resources/js/setting.js"></script>
@@ -291,9 +311,9 @@
                             <div class="sm:flex sm:items-start">
                                 <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
                                     <h3 class="text-xl font-bold leading-6 text-gray-900 mb-4" id="modal-title">Góp ý về Thời khóa biểu của bạn</h3>
-                                    
+
                                     <p class="text-sm text-gray-500 mb-4">Mức độ hài lòng của bạn?</p>
-                                    
+
                                     <div class="flex justify-center gap-4 mb-6" id="ratingContainer">
                                         <button onclick="selectRating(1)" class="rating-btn text-3xl opacity-50 hover:opacity-100 hover:scale-110 transition-all filter grayscale hover:grayscale-0" data-rating="1">😫</button>
                                         <button onclick="selectRating(2)" class="rating-btn text-3xl opacity-50 hover:opacity-100 hover:scale-110 transition-all filter grayscale hover:grayscale-0" data-rating="2">😟</button>

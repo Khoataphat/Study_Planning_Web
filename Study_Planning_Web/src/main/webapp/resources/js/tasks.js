@@ -1406,7 +1406,8 @@ function renderCalendar() {
                             endTime: event.endTime,
                             dayOfWeek: day,
                             widthPercentage: event.width,
-                            leftPercentage: event.left
+                            leftPercentage: event.left,
+                            type: event.type || 'self-study'
                         });
 
                         if (!eventDiv) {
