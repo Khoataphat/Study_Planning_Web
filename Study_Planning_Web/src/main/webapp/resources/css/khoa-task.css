@@ -144,3 +144,51 @@
     background-color: rgba(255, 255, 255, 0.9) !important;
     border: 1px solid rgba(245, 158, 11, 0.2) !important;
 }
+
+/* THÊM MÀU CHO KHOẠ-TASK: VÀNG CHO TASK, XANH CHO LOẠI KHÁC */
+
+/* MÀU VÀNG CHO TASK (Tự học, Bài tập, Exam) */
+.calendar-event.type-self-study {
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    border-color: #d97706;
+}
+
+.calendar-event.type-assignment {
+    background: linear-gradient(135deg, #fcd34d, #fbbf24);
+    border-color: #f59e0b;
+}
+
+.calendar-event.type-exam {
+    background: linear-gradient(135deg, #fde68a, #fcd34d);
+    border-color: #fbbf24;
+}
+
+/* MÀU XANH CHO CÁC LOẠI KHÁC */
+.calendar-event.type-class {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    border-color: #1d4ed8;
+}
+
+.calendar-event.type-meeting {
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-color: #047857;
+}
+
+.calendar-event.type-personal {
+    background: linear-gradient(135deg, #06b6d4, #0891b2);
+    border-color: #0e7490;
+}
+
+/* Event temp (chưa lưu) - vẫn giữ màu xám */
+.calendar-event.temp-event {
+    background: linear-gradient(135deg, #d1d5db, #9ca3af);
+    border-color: #6b7280;
+    opacity: 0.8;
+}
+
+/* Cải thiện hiển thị text trên nền màu sắc */
+.calendar-event span {
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    font-weight: 600;
+}

@@ -8,30 +8,54 @@ package utils;
  *
  * @author Admin
  */
+import dao.MBTIQuestionDAO;
 import model.MBTIResult;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
+import model.MBTIQuestion;
 
 public class MBTICalculator {
+    private static MBTIQuestionDAO questionDAO;
     
+    static {
+        questionDAO = new MBTIQuestionDAO();
+    }
     public static MBTIResult calculateMBTI(Map<Integer, String> answers) {
         Map<String, Integer> scores = new HashMap<>();
         scores.put("E", 0); scores.put("I", 0);
         scores.put("S", 0); scores.put("N", 0);
-        scores.put("T", 0); scores.put("F", 0);
-        scores.put("J", 0); scores.put("P", 0);
-        
+        scores.put("T", 0);
+        scores.put("F", 0);
+        scores.put("J", 0);
+        scores.put("P", 0);
+
         // Calculate scores from answers
         // Note: In real implementation, you would need question data
         // to know which dimension each answer belongs to
-        
-        // For now, simulate calculation
-        scores.put("E", 3); scores.put("I", 2);
-        scores.put("S", 4); scores.put("N", 1);
-        scores.put("T", 2); scores.put("F", 3);
-        scores.put("J", 3); scores.put("P", 2);
-        
+        // 2. Tính điểm từng câu
+        for (Map.Entry<Integer, String> entry : answers.entrySet()) {
+            int questionId = entry.getKey();
+            String answer = entry.getValue(); // "A" hoặc "B"
+
+            MBTIQuestion question = questionDAO.getQuestionById(questionId);
+            if (question != null && answer != null) {
+                if (answer.equals("A")) {
+                    // Cộng điểm cho preference của option A
+                    String preference = question.getOptionAValue();
+                    if (preference != null) {
+                        scores.put(preference, scores.get(preference) + 1);
+                    }
+                } else if (answer.equals("B")) {
+                    // Cộng điểm cho preference của option B  
+                    String preference = question.getOptionBValue();
+                    if (preference != null) {
+                        scores.put(preference, scores.get(preference) + 1);
+                    }
+                }
+            }
+        }
+
         // Determine MBTI type
         StringBuilder mbtiType = new StringBuilder();
         mbtiType.append(scores.get("E") >= scores.get("I") ? "E" : "I");

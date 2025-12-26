@@ -324,8 +324,6 @@
         <script src="/resources/js/khoa-tasks.js"></script>
         <script src="/resources/js/calendar-highlight.js"></script>
 
-
-        <script src="../resources/js/smart-schedule.js"></script>
         <!-- khoa -->
         <script src="/resources/js/sidebar.js"></script>
         <!-- khoa -->
